@@ -1,0 +1,253 @@
+  <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Shop — BigBoyPeps</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Permanent+Marker&family=Barlow:wght@300;400;500;600&family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/global.css" />
+  <link rel="stylesheet" href="css/shared.css" />
+  <style>
+    body { display: flex; flex-direction: column; min-height: 100vh; }
+
+    .shop-header {
+      padding: 64px 0 48px; border-bottom: 1px solid var(--border);
+      position: relative; overflow: hidden;
+    }
+    .shop-header-graffiti {
+      position: absolute; font-family: var(--font-m);
+      color: var(--red); opacity: .05; pointer-events: none; user-select: none;
+    }
+    .shop-header-inner { position: relative; z-index: 1; }
+    .shop-eyebrow {
+      font-family: var(--font-c); font-size: .68rem; font-weight: 700;
+      letter-spacing: .28em; text-transform: uppercase; color: var(--red);
+      margin-bottom: 12px; display: flex; align-items: center; gap: 10px;
+    }
+    .shop-eyebrow::before { content: ''; width: 28px; height: 2px; background: var(--red); }
+    .shop-title {
+      font-family: var(--font-d); font-size: clamp(3rem,7vw,6rem);
+      line-height: .92; letter-spacing: .03em; color: var(--white); margin-bottom: 16px;
+    }
+    .shop-title em { color: var(--red); font-style: normal; }
+    .shop-desc { font-size: .9rem; color: var(--smoke); max-width: 480px; line-height: 1.75; }
+
+    .filters-bar {
+      display: flex; align-items: center; gap: 8px;
+      padding: 28px 0; flex-wrap: wrap; border-bottom: 1px solid var(--border);
+    }
+    .filters-label {
+      font-family: var(--font-c); font-size: .68rem; font-weight: 700;
+      letter-spacing: .2em; text-transform: uppercase; color: var(--smoke); margin-right: 8px;
+    }
+    .filter-btn {
+      padding: 7px 18px; font-family: var(--font-c); font-size: .7rem; font-weight: 700;
+      letter-spacing: .14em; text-transform: uppercase;
+      color: var(--smoke); border: 1px solid var(--border); background: transparent; transition: all .18s;
+    }
+    .filter-btn:hover  { border-color: var(--ash); color: var(--light); }
+    .filter-btn.active { background: var(--red); color: var(--white); border-color: var(--red); }
+
+    .products-section { padding: 48px 0 80px; flex: 1; }
+    .products-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(256px, 1fr)); gap: 20px;
+    }
+
+    .product-card {
+      background: var(--card); border: 1px solid var(--border);
+      transition: border-color .22s, transform .22s, box-shadow .22s;
+      display: flex; flex-direction: column;
+    }
+    .product-card:hover {
+      border-color: var(--red); transform: translateY(-4px); box-shadow: 0 12px 36px rgba(0,0,0,.5);
+    }
+    .product-thumb {
+      height: 200px; display: flex; align-items: center; justify-content: center;
+      position: relative; overflow: hidden; border-bottom: 1px solid var(--border);
+    }
+    .product-thumb::after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(to bottom, transparent 60%, rgba(12,12,12,.6) 100%);
+    }
+    .thumb-glow { position: absolute; inset: 0; background: rgba(204,31,31,.06); opacity: 0; transition: opacity .22s; z-index: 1; }
+    .product-card:hover .thumb-glow { opacity: 1; }
+    .product-badge {
+      position: absolute; top: 12px; left: 12px; z-index: 2;
+      font-family: var(--font-c); font-size: .6rem; font-weight: 700;
+      letter-spacing: .18em; text-transform: uppercase;
+      padding: 4px 10px; border: 1px solid var(--border); background: rgba(12,12,12,.8); color: var(--smoke);
+    }
+    .product-badge.badge-hot { background: rgba(204,31,31,.15); color: var(--red); border-color: rgba(204,31,31,.3); }
+    .heat-row { position: absolute; bottom: 12px; left: 12px; z-index: 2; display: flex; gap: 3px; }
+    .pip { width: 9px; height: 9px; background: var(--border); }
+    .pip.on { background: var(--red); }
+
+    .product-info { padding: 18px 20px 20px; display: flex; flex-direction: column; flex: 1; }
+    .product-cat {
+      font-family: var(--font-c); font-size: .62rem; font-weight: 700;
+      letter-spacing: .2em; text-transform: uppercase; color: var(--red); margin-bottom: 5px;
+    }
+    .product-name {
+      font-family: var(--font-c); font-size: 1.05rem; font-weight: 700;
+      letter-spacing: .04em; text-transform: uppercase; color: var(--white); margin-bottom: 4px; line-height: 1.25;
+    }
+    .product-research { font-size: .67rem; color: var(--smoke); font-style: italic; margin-bottom: 9px; }
+    .product-desc { font-size: .8rem; color: var(--smoke); line-height: 1.6; margin-bottom: 18px; flex: 1; }
+    .product-footer { display: flex; align-items: center; justify-content: space-between; }
+    .product-price { font-family: var(--font-d); font-size: 1.5rem; letter-spacing: .04em; color: var(--white); }
+    .add-btn {
+      width: 34px; height: 34px; background: var(--red); color: var(--white);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem; transition: background .18s, transform .18s;
+    }
+    .add-btn:hover { background: var(--red-hot); transform: scale(1.08); }
+
+    .add-flash {
+      position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(16px);
+      background: var(--off); border: 1px solid var(--border); border-left: 3px solid var(--red);
+      font-family: var(--font-c); font-size: .78rem; font-weight: 700; letter-spacing: .08em;
+      color: var(--light); padding: 12px 24px;
+      opacity: 0; transition: all .26s; pointer-events: none; white-space: nowrap; z-index: 100;
+    }
+    .add-flash.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    @media (max-width: 700px) { .products-grid { grid-template-columns: 1fr 1fr; gap: 12px; } .nav-links { display: none; } }
+    @media (max-width: 420px) { .products-grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <div id="nav-mount"></div>
+  <div id="banner-mount"></div>
+
+  <div class="shop-header">
+    <div class="shop-header-graffiti" style="font-size:14rem;top:-60px;right:-40px;transform:rotate(-8deg)">HOT</div>
+    <div class="shop-header-graffiti" style="font-size:5rem;bottom:0;left:200px;transform:rotate(4deg)">🌶🌶</div>
+    <div class="shop-header-inner container">
+      <div class="shop-eyebrow">All Products</div>
+      <div class="shop-title">The Full <em>Heat</em><br/>Lineup.</div>
+      <p class="shop-desc">Small-batch peppers, blends, and oils. Sold for research purposes only — not for human consumption.</p>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="filters-bar" id="filters">
+      <span class="filters-label">Filter</span>
+      <button class="filter-btn active" data-cat="All">All</button>
+      <button class="filter-btn" data-cat="Single Origin">Single Origin</button>
+      <button class="filter-btn" data-cat="Blends">Blends</button>
+      <button class="filter-btn" data-cat="Oils &amp; Sauces">Oils &amp; Sauces</button>
+      <button class="filter-btn" data-cat="Bundles">Bundles</button>
+    </div>
+  </div>
+
+  <div class="products-section">
+    <div class="container">
+      <div class="products-grid" id="products-grid"></div>
+    </div>
+  </div>
+
+  <div id="footer-mount"></div>
+  <div class="add-flash" id="add-flash"></div>
+
+  <script type="module" src="js/auth.js"></script>
+  <script type="module" src="js/cart.js"></script>
+  <script type="module">
+    import { supabase } from './js/supabase.js';
+
+    await initPage('shop');
+
+    /* Load and map products from public.products */
+    const grid = document.getElementById('products-grid');
+    const { data: productRows, error: productsError } = await supabase
+      .from('products')
+      .select('id, name, category, price, heat_level, description, badge, active')
+      .order('id', { ascending: true });
+
+    if (productsError) {
+      console.error('Failed to load products:', productsError);
+      grid.innerHTML = `<div style="grid-column:1/-1;padding:20px;border:1px solid var(--border);color:#ff6b6b;font-family:var(--font-c);letter-spacing:.04em">Failed to load products: ${productsError.message}</div>`;
+    }
+
+    const PRODUCTS = (productRows || []).map((row, index) => ({
+      id: row.id ?? index + 1,
+      name: row.name || 'Untitled Product',
+      category: row.category || 'Uncategorized',
+      price: Number(row.price || 0),
+      heat_level: Number(row.heat_level || 1),
+      description: row.description || '',
+      badge: row.badge || null,
+      active: row.active,
+    }));
+
+    const COLORS = ['#3a1a1a','#1a2a1a','#2a1a2a','#1a1a2a','#2a2a1a','#1a2a2a'];
+
+    function pepperShape(id, heat) {
+      const hue = heat === 5 ? '#CC1F1F' : heat >= 3 ? '#c05010' : '#4a7a20';
+      const s = [
+        `<svg width="70" height="110" viewBox="0 0 70 110" fill="none"><path d="M35 10C25 10 18 25 18 50C18 78 25 100 35 102C45 100 52 78 52 50C52 25 45 10 35 10Z" fill="${hue}" opacity=".8"/><path d="M35 10C34 4 37 1 39 3C41 5 38 8 35 10Z" fill="#555"/><path d="M18 50C12 53 10 64 13 70" fill="${hue}" opacity=".5"/><ellipse cx="29" cy="38" rx="3" ry="4" fill="rgba(0,0,0,.3)"/><ellipse cx="41" cy="38" rx="3" ry="4" fill="rgba(0,0,0,.3)"/></svg>`,
+        `<svg width="90" height="90" viewBox="0 0 90 90" fill="none"><path d="M55 12C68 18 74 36 70 56C66 72 54 82 44 80C34 78 26 64 30 48C34 30 44 10 55 12Z" fill="${hue}" opacity=".8"/><path d="M55 12C53 5 57 1 60 4C63 7 58 10 55 12Z" fill="#555"/><path d="M30 48C22 50 18 62 22 68" fill="${hue}" opacity=".5"/></svg>`,
+        `<svg width="90" height="90" viewBox="0 0 90 90" fill="none"><ellipse cx="45" cy="52" rx="26" ry="30" fill="${hue}" opacity=".8"/><path d="M45 22C43 16 47 11 50 14C53 17 48 20 45 22Z" fill="#555"/><ellipse cx="37" cy="46" rx="4" ry="5" fill="rgba(0,0,0,.25)"/><ellipse cx="53" cy="46" rx="4" ry="5" fill="rgba(0,0,0,.25)"/></svg>`,
+        `<svg width="100" height="70" viewBox="0 0 100 70" fill="none"><path d="M20 52C22 38 32 22 50 14C64 8 76 10 78 18C80 26 68 34 54 36C38 40 28 50 26 62" fill="${hue}" opacity=".8"/><path d="M26 62C22 68 18 72 22 70C26 68 28 64 26 62Z" fill="${hue}" opacity=".6"/><path d="M78 18C82 14 86 12 84 16C82 20 80 18 78 18Z" fill="#555"/></svg>`,
+        `<svg width="100" height="90" viewBox="0 0 100 90" fill="none"><path d="M60 10C70 14 74 28 70 46C66 60 58 70 52 70C46 68 42 58 46 44C50 28 52 12 60 10Z" fill="#2a7a2a" opacity=".75"/><path d="M42 18C34 24 30 40 34 54C36 64 44 72 50 70C46 66 44 56 42 46C40 34 40 22 42 18Z" fill="${hue}" opacity=".75"/><path d="M26 28C20 36 20 52 24 62C27 70 34 76 40 74C36 70 34 60 32 50C30 38 28 34 26 28Z" fill="#c07010" opacity=".65"/><path d="M60 10C58 4 62 1 64 4Z" fill="#555"/><path d="M42 18C40 12 43 8 45 11Z" fill="#555"/><path d="M26 28C23 22 26 18 28 21Z" fill="#555"/></svg>`,
+      ];
+      return s[(id - 1) % s.length];
+    }
+
+    function heatPips(h) {
+      return Array.from({length:5},(_,i)=>`<div class="pip${i<h?' on':''}"></div>`).join('');
+    }
+
+    function renderProducts(cat) {
+      const activeProducts = PRODUCTS.filter(p => p.active !== false);
+      const listBase = activeProducts.length ? activeProducts : PRODUCTS;
+      const list = cat === 'All' ? listBase : listBase.filter(p => p.category === cat);
+      if (!list.length) {
+        grid.innerHTML = `<div style="grid-column:1/-1;padding:20px;border:1px solid var(--border);color:var(--smoke);font-family:var(--font-c);letter-spacing:.06em;text-transform:uppercase">No products found in public.products yet.</div>`;
+        return;
+      }
+
+      grid.innerHTML = list.map(p => `
+        <div class="product-card">
+          <div class="product-thumb" style="background:${COLORS[(p.id-1)%COLORS.length]}">
+            <div class="thumb-glow"></div>
+            ${p.badge ? `<span class="product-badge${p.badge.includes('🔥')?' badge-hot':''}">${p.badge}</span>` : ''}
+            ${pepperShape(p.id, p.heat_level)}
+            <div class="heat-row">${heatPips(p.heat_level)}</div>
+          </div>
+          <div class="product-info">
+            <div class="product-cat">${p.category}</div>
+            <div class="product-name">${p.name}</div>
+            <div class="product-research">For research purposes only · Not for human consumption</div>
+            <div class="product-desc">${p.description}</div>
+            <div class="product-footer">
+              <div class="product-price">$${Number(p.price).toFixed(2)}</div>
+              <button class="add-btn" onclick="addToCart(${p.id})">+</button>
+            </div>
+          </div>
+        </div>`).join('');
+    }
+
+    window.addToCart = function(id) {
+      const p = PRODUCTS.find(p => p.id === id);
+      if (!p) return;
+      Cart.add(p);
+      const f = document.getElementById('add-flash');
+      f.textContent = `${p.name} added to cart`;
+      f.classList.add('show');
+      clearTimeout(f._t);
+      f._t = setTimeout(() => f.classList.remove('show'), 2200);
+    };
+
+    document.getElementById('filters').addEventListener('click', e => {
+      const btn = e.target.closest('.filter-btn');
+      if (!btn) return;
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderProducts(btn.dataset.cat);
+    });
+
+    renderProducts('All');
+  </script>
+</body>
+</html>

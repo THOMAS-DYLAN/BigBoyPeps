@@ -1,0 +1,202 @@
+/* ── SHARED NAV STYLES ─────────────────────────────────── */
+nav {
+  position: sticky; top: 0; z-index: 200;
+  background: rgba(12,12,12,.96);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--border);
+  height: 62px; display: flex; align-items: center;
+}
+.nav-inner {
+  max-width: 1200px; margin: 0 auto; padding: 0 32px;
+  display: flex; align-items: center; justify-content: space-between; width: 100%;
+}
+.nav-brand {
+  display: flex; align-items: center; gap: 10px;
+  font-family: var(--font-d); font-size: 1.5rem; letter-spacing: .06em; color: var(--white);
+}
+.nav-brand span { color: var(--red); }
+.nav-links { display: flex; gap: 4px; }
+.nav-link {
+  font-family: var(--font-c); font-size: .72rem; font-weight: 700;
+  letter-spacing: .14em; text-transform: uppercase;
+  color: var(--smoke); padding: 7px 14px; transition: color .18s;
+}
+.nav-link:hover { color: var(--white); }
+.nav-link.active { color: var(--red); }
+.nav-right { display: flex; align-items: center; gap: 10px; }
+.nav-signin {
+  font-family: var(--font-c); font-size: .72rem; font-weight: 700;
+  letter-spacing: .14em; text-transform: uppercase;
+  background: transparent; color: var(--smoke);
+  padding: 7px 14px; transition: color .18s;
+}
+.nav-signin:hover { color: var(--white); }
+.cart-nav-btn {
+  display: flex; align-items: center; gap: 8px;
+  font-family: var(--font-c); font-size: .72rem; font-weight: 700;
+  letter-spacing: .14em; text-transform: uppercase;
+  background: var(--red); color: var(--white);
+  padding: 8px 18px;
+  clip-path: polygon(0 0,calc(100% - 6px) 0,100% 6px,100% 100%,6px 100%,0 calc(100% - 6px));
+  transition: background .18s;
+}
+.cart-nav-btn:hover { background: var(--red-hot); }
+.cart-badge {
+  background: var(--white); color: var(--red);
+  font-size: .6rem; font-weight: 700;
+  width: 17px; height: 17px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+}
+
+/* ── RESEARCH BANNER ──────────────────────────────────── */
+.research-banner {
+  background: rgba(204,31,31,.07);
+  border-bottom: 1px solid rgba(204,31,31,.18);
+  padding: 9px 32px;
+  text-align: center;
+}
+.research-banner p {
+  font-family: var(--font-c); font-size: .68rem; font-weight: 700;
+  letter-spacing: .2em; text-transform: uppercase; color: var(--red);
+  display: inline;
+}
+.research-banner p span {
+  font-family: var(--font-b); font-size: .68rem; font-weight: 400;
+  letter-spacing: .04em; text-transform: none; color: var(--smoke); margin-left: 8px;
+}
+
+/* ── FOOTER ───────────────────────────────────────────── */
+footer {
+  border-top: 1px solid var(--border);
+  padding: 36px 0; background: var(--off); margin-top: auto;
+}
+.footer-inner {
+  max-width: 1200px; margin: 0 auto; padding: 0 32px;
+  display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+}
+.footer-brand { font-family: var(--font-d); font-size: 1.3rem; letter-spacing: .08em; color: var(--white); }
+.footer-brand span { color: var(--red); }
+.footer-copy {
+  font-family: var(--font-c); font-size: .65rem; font-weight: 700;
+  letter-spacing: .16em; text-transform: uppercase; color: var(--smoke);
+}
+
+/* ── CHECKOUT MODAL ───────────────────────────────────── */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,.75);
+  z-index: 500; display: flex; align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none; transition: opacity .25s;
+  padding: 20px;
+}
+.modal-overlay.open { opacity: 1; pointer-events: all; }
+.modal {
+  background: var(--off); border: 1px solid var(--border);
+  width: 100%; max-width: 580px; max-height: 90vh; overflow-y: auto;
+  transform: translateY(20px); transition: transform .28s;
+  display: flex; flex-direction: column;
+}
+.modal-overlay.open .modal { transform: translateY(0); }
+.modal::-webkit-scrollbar { width: 4px; }
+.modal::-webkit-scrollbar-thumb { background: var(--border); }
+.modal-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 22px 28px; border-bottom: 1px solid var(--border);
+  position: sticky; top: 0; background: var(--off); z-index: 1;
+}
+.modal-title { font-family: var(--font-d); font-size: 1.8rem; letter-spacing: .06em; color: var(--white); }
+.modal-close {
+  width: 34px; height: 34px; display: flex; align-items: center; justify-content: center;
+  color: var(--smoke); font-size: 1.4rem; line-height: 1; transition: color .18s;
+  border: 1px solid var(--border);
+}
+.modal-close:hover { color: var(--white); border-color: var(--ash); }
+.modal-body { padding: 28px; }
+.modal-section { margin-bottom: 28px; }
+.modal-section-title {
+  font-family: var(--font-c); font-size: .68rem; font-weight: 700;
+  letter-spacing: .22em; text-transform: uppercase; color: var(--red);
+  margin-bottom: 16px; padding-bottom: 10px; border-bottom: 1px solid var(--border);
+}
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.form-field { margin-bottom: 14px; }
+.form-field label {
+  display: block; font-family: var(--font-c); font-size: .66rem; font-weight: 700;
+  letter-spacing: .18em; text-transform: uppercase; color: var(--ash); margin-bottom: 7px;
+}
+.form-field input, .form-field select {
+  width: 100%; padding: 11px 14px;
+  background: var(--card); color: var(--light);
+  border: 1px solid var(--border); font-size: .88rem;
+  outline: none; transition: border-color .18s;
+}
+.form-field input:focus, .form-field select:focus {
+  border-color: var(--red);
+  box-shadow: 0 0 0 3px rgba(204,31,31,.1);
+}
+.form-field input::placeholder { color: #3a3a3a; }
+.form-field select { color: var(--light); appearance: none; cursor: pointer; }
+.form-field select option { background: var(--card); }
+.modal-order-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 0; border-bottom: 1px solid var(--border);
+  font-size: .85rem;
+}
+.modal-order-row:last-of-type { border-bottom: none; }
+.modal-order-name { color: var(--light); }
+.modal-order-qty { color: var(--smoke); font-size: .78rem; margin-left: 6px; }
+.modal-order-price { font-family: var(--font-d); font-size: 1rem; color: var(--white); }
+.modal-total-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 0 0; margin-top: 4px;
+}
+.modal-total-label {
+  font-family: var(--font-c); font-size: .7rem; font-weight: 700;
+  letter-spacing: .2em; text-transform: uppercase; color: var(--smoke);
+}
+.modal-total-val { font-family: var(--font-d); font-size: 1.8rem; color: var(--white); }
+.modal-submit {
+  width: 100%; padding: 16px;
+  font-family: var(--font-c); font-size: .85rem; font-weight: 700;
+  letter-spacing: .18em; text-transform: uppercase;
+  background: var(--red); color: var(--white);
+  clip-path: polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,8px 100%,0 calc(100% - 8px));
+  transition: background .2s; margin-top: 20px;
+}
+.modal-submit:hover { background: var(--red-hot); }
+.modal-disclaimer {
+  font-size: .68rem; color: var(--smoke); text-align: center;
+  margin-top: 14px; line-height: 1.6; font-style: italic;
+}
+
+/* ── SUCCESS STATE ────────────────────────────────────── */
+.order-success {
+  text-align: center; padding: 48px 28px;
+}
+.order-success-icon {
+  width: 64px; height: 64px; background: rgba(204,31,31,.15);
+  border: 1px solid rgba(204,31,31,.3); border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.6rem; margin: 0 auto 20px;
+}
+.order-success h2 { font-family: var(--font-d); font-size: 2rem; letter-spacing: .06em; color: var(--white); margin-bottom: 10px; }
+.order-success p { font-size: .85rem; color: var(--smoke); line-height: 1.7; }
+
+/* ── CHECKOUT FIELD ERRORS ────────────────────────────── */
+.field-err {
+  font-size: .68rem; color: #FF3030;
+  min-height: 16px; margin-top: 4px;
+  font-family: var(--font-c); letter-spacing: .06em;
+}
+.req-note {
+  font-family: var(--font-b); font-size: .62rem; font-weight: 400;
+  letter-spacing: 0; text-transform: none; color: var(--smoke); margin-left: 6px;
+}
+
+/* ── SIGN OUT BUTTON IN NAV ───────────────────────────── */
+.nav-signout {
+  font-family: var(--font-c); font-size: .72rem; font-weight: 700;
+  letter-spacing: .14em; text-transform: uppercase;
+  background: transparent; color: var(--smoke);
+  padding: 7px 14px; transition: color .18s;
+}
+.nav-signout:hover { color: var(--red); }
