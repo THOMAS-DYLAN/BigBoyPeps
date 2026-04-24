@@ -180,10 +180,10 @@
     </div>
   </div>
 
-  <script type="module" src="js/auth.js"></script>
-  <script type="module" src="js/cart.js"></script>
   <script type="module">
     import { supabase } from './js/supabase.js';
+    import './js/auth.js';
+    import './js/cart.js';
 
     /* ── If already logged in, skip straight to dashboard ── */
     const { data } = await supabase.auth.getSession();

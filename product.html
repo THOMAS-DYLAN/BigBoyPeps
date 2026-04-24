@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Product — BigBoyPeps</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Permanent+Marker&family=Barlow:wght@300;400;500;600&family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/global.css" />
+  <link rel="stylesheet" href="css/shared.css" />
+  <style>
+    body { display: flex; flex-direction: column; min-height: 100vh; }
+
+    /* ── BREADCRUMB ───────────────────────────────── */
+    .breadcrumb {
+      padding: 18px 0;
+      border-bottom: 1px solid var(--border);
+      font-family: var(--font-c); font-size: .65rem; font-weight: 600;
+      letter-spacing: .14em; text-transform: uppercase; color: var(--smoke);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .breadcrumb a { color: var(--smoke); transition: color .18s; }
+    .breadcrumb a:hover { color: var(--red); }
+    .breadcrumb-sep { opacity: .4; }
+
+    /* ── PRODUCT LAYOUT ──────────────────────────── */
+    .product-page { flex: 1; padding: 52px 0 80px; }
+    .product-layout {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: start;
+    }
+
+    /* ── VISUAL PANEL ────────────────────────────── */
+    .product-visual { position: sticky; top: 82px; }
+    .product-main-thumb {
+      width: 100%; aspect-ratio: 1 / 1;
+      display: flex; align-items: center; justify-content: center;
+      border: 1px solid var(--border); position: relative; overflow: hidden;
+    }
+    .product-main-thumb::after {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(ellipse at center, transparent 40%, rgba(12,12,12,.5) 100%);
+    }
+    .product-graffiti {
+      position: absolute; font-family: var(--font-m); color: var(--red);
+      opacity: .06; user-select: none; pointer-events: none;
+    }
+    .product-svg-wrap {
+      position: relative; z-index: 1;
+      display: flex; align-items: center; justify-content: center;
+      transform: scale(2.2); /* blow up the mini SVG to fill the panel nicely */
+    }
+
+    /* badge on visual */
+    .product-visual-badge {
+      position: absolute; top: 16px; left: 16px; z-index: 2;
+      font-family: var(--font-c); font-size: .65rem; font-weight: 700;
+      letter-spacing: .18em; text-transform: uppercase;
+      padding: 5px 14px; border: 1px solid rgba(204,31,31,.4);
+      background: rgba(204,31,31,.15); color: var(--red);
+    }
+
+    /* research tag */
+    .product-research-tag {
+      margin-top: 16px; padding: 12px 16px;
+      border: 1px solid var(--border); background: var(--off);
+      font-size: .7rem; color: var(--smoke); font-style: italic;
+      line-height: 1.6; text-align: center;
+    }
+
+    /* ── INFO PANEL ──────────────────────────────── */
+    .product-info-panel { padding-top: 4px; }
+
+    .product-cat-tag {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-family: var(--font-c); font-size: .65rem; font-weight: 700;
+      letter-spacing: .22em; text-transform: uppercase; color: var(--red);
+      margin-bottom: 14px;
+    }
+    .product-cat-tag::before { content: ''; width: 20px; height: 2px; background: var(--red); }
+
+    .product-title {
+      font-family: var(--font-d); font-size: clamp(2.2rem, 4vw, 3.4rem);
+      letter-spacing: .04em; line-height: .95; color: var(--white); margin-bottom: 20px;
+    }
+
+    .product-heat-row {
+      display: flex; align-items: center; gap: 12px; margin-bottom: 24px;
+    }
+    .product-heat-label {
+      font-family: var(--font-c); font-size: .65rem; font-weight: 700;
+      letter-spacing: .18em; text-transform: uppercase; color: var(--smoke);
+    }
+    .heat-pips { display: flex; gap: 4px; }
+    .pip { width: 10px; height: 10px; background: var(--border); }
+    .pip.on { background: var(--red); }
+
+    .product-description {
+      font-size: .95rem; color: var(--ash); line-height: 1.8; margin-bottom: 32px;
+      border-left: 2px solid var(--border); padding-left: 20px;
+    }
+
+    .product-divider { height: 1px; background: var(--border); margin: 28px 0; }
+
+    .product-price-row {
+      display: flex; align-items: baseline; gap: 16px; margin-bottom: 28px;
+    }
+    .product-price-big {
+      font-family: var(--font-d); font-size: 3rem; letter-spacing: .04em; color: var(--white);
+    }
+    .product-price-note {
+      font-size: .75rem; color: var(--smoke); font-style: italic;
+    }
+
+    /* qty + CTA row */
+    .product-actions { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+    .qty-control {
+      display: flex; align-items: center; gap: 0;
+      border: 1px solid var(--border);
+    }
+    .qty-dec, .qty-inc {
+      width: 38px; height: 48px; display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem; color: var(--ash); transition: all .18s; background: var(--card);
+    }
+    .qty-dec:hover, .qty-inc:hover { color: var(--white); background: var(--charcoal, #2a2a2a); }
+    .qty-display {
+      width: 52px; height: 48px; display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-d); font-size: 1.2rem; letter-spacing: .04em;
+      color: var(--white); background: var(--off); border-left: 1px solid var(--border); border-right: 1px solid var(--border);
+      user-select: none;
+    }
+    .add-to-cart-btn {
+      flex: 1; min-width: 180px; height: 48px;
+      font-family: var(--font-c); font-size: .8rem; font-weight: 700;
+      letter-spacing: .18em; text-transform: uppercase;
+      background: var(--red); color: var(--white);
+      clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+      transition: background .2s, transform .2s;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    .add-to-cart-btn:hover { background: var(--red-hot); transform: translateY(-1px); }
+    .add-to-cart-btn.added { background: #2a6a2a; clip-path: none; }
+
+    /* details list */
+    .product-details { margin-top: 32px; }
+    .detail-row {
+      display: flex; padding: 12px 0; border-bottom: 1px solid var(--border);
+      font-size: .85rem;
+    }
+    .detail-row:first-child { border-top: 1px solid var(--border); }
+    .detail-key {
+      font-family: var(--font-c); font-size: .65rem; font-weight: 700;
+      letter-spacing: .14em; text-transform: uppercase; color: var(--smoke);
+      width: 120px; flex-shrink: 0; padding-top: 2px;
+    }
+    .detail-val { color: var(--light); }
+
+    /* related products strip — horizontal scroll row */
+    .related-section { padding: 48px 0; border-top: 1px solid var(--border); }
+    .related-title {
+      font-family: var(--font-d); font-size: 1.8rem; letter-spacing: .04em;
+      color: var(--white); margin-bottom: 24px;
+    }
+    .related-title em { color: var(--red); font-style: normal; }
+    .related-row {
+      display: flex; gap: 16px;
+      overflow-x: auto; padding-bottom: 12px;
+      scrollbar-width: thin; scrollbar-color: var(--border) transparent;
+    }
+    .related-row::-webkit-scrollbar { height: 4px; }
+    .related-row::-webkit-scrollbar-track { background: transparent; }
+    .related-row::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+    .related-card {
+      background: var(--card); border: 1px solid var(--border);
+      cursor: pointer; transition: border-color .2s, transform .2s;
+      display: flex; flex-direction: column;
+      flex: 0 0 200px; /* fixed width, never shrinks */
+    }
+    .related-card:hover { border-color: var(--red); transform: translateY(-3px); }
+    .related-thumb {
+      height: 130px; display: flex; align-items: center; justify-content: center;
+      border-bottom: 1px solid var(--border); position: relative; overflow: hidden;
+    }
+    .related-thumb::after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(to bottom, transparent 50%, rgba(12,12,12,.5) 100%);
+    }
+    .related-info { padding: 14px 16px; }
+    .related-name {
+      font-family: var(--font-c); font-size: .85rem; font-weight: 700;
+      letter-spacing: .04em; text-transform: uppercase; color: var(--white);
+      margin-bottom: 4px; line-height: 1.2;
+    }
+    .related-price {
+      font-family: var(--font-d); font-size: 1.1rem; color: var(--white); letter-spacing: .04em;
+    }
+
+    /* toast */
+    .add-toast {
+      position: fixed; bottom: 28px; left: 50%;
+      transform: translateX(-50%) translateY(16px);
+      background: var(--off); border: 1px solid var(--border); border-left: 3px solid var(--red);
+      font-family: var(--font-c); font-size: .78rem; font-weight: 700; letter-spacing: .08em;
+      color: var(--light); padding: 13px 26px;
+      opacity: 0; transition: all .26s; pointer-events: none; white-space: nowrap; z-index: 100;
+    }
+    .add-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    /* ── REVIEWS ─────────────────────────────────── */
+    .reviews-area {
+      padding: 64px 0;
+      border-top: 1px solid var(--border);
+    }
+    .reviews-header-row {
+      display: flex; align-items: baseline; justify-content: space-between;
+      flex-wrap: wrap; gap: 16px; margin-bottom: 32px;
+    }
+    .reviews-title {
+      font-family: var(--font-d); font-size: 1.8rem; letter-spacing: .04em; color: var(--white);
+    }
+    .reviews-summary {
+      display: flex; align-items: center; gap: 12px;
+    }
+    .review-avg {
+      font-family: var(--font-d); font-size: 2.4rem; letter-spacing: .04em; color: var(--white);
+    }
+    .review-stars-display { display: flex; gap: 3px; }
+    .star {
+      width: 18px; height: 18px; position: relative;
+    }
+    .star svg { width: 18px; height: 18px; }
+    .review-count {
+      font-family: var(--font-c); font-size: .7rem; font-weight: 700;
+      letter-spacing: .14em; text-transform: uppercase; color: var(--smoke);
+    }
+
+    /* your rating */
+    .your-rating-panel {
+      background: var(--off); border: 1px solid var(--border);
+      padding: 22px 24px; margin-bottom: 32px;
+      display: flex; align-items: center; gap: 20px; flex-wrap: wrap;
+    }
+    .your-rating-label {
+      font-family: var(--font-c); font-size: .68rem; font-weight: 700;
+      letter-spacing: .18em; text-transform: uppercase; color: var(--smoke);
+      flex-shrink: 0;
+    }
+    .star-picker { display: flex; gap: 6px; }
+    .star-btn {
+      width: 32px; height: 32px; background: none; border: none;
+      cursor: pointer; padding: 0; transition: transform .15s;
+    }
+    .star-btn:hover { transform: scale(1.15); }
+    .star-btn svg { width: 32px; height: 32px; display: block; }
+    .rating-saved {
+      font-family: var(--font-c); font-size: .68rem; font-weight: 700;
+      letter-spacing: .14em; text-transform: uppercase;
+      color: #5BC75B; display: none;
+    }
+    .rating-saved.show { display: block; }
+
+    /* ── loading / error ─────────────────────────── */
+    .loading-state, .error-state {
+      text-align: center; padding: 80px 0;
+    }
+    .loading-state p, .error-state p {
+      font-family: var(--font-c); font-size: .8rem; font-weight: 700;
+      letter-spacing: .16em; text-transform: uppercase; color: var(--smoke);
+    }
+    .error-state a {
+      display: inline-block; margin-top: 20px; color: var(--red);
+      text-decoration: underline; text-underline-offset: 3px;
+      font-family: var(--font-c); font-size: .72rem; font-weight: 700;
+      letter-spacing: .14em; text-transform: uppercase;
+    }
+
+    @media (max-width: 860px) {
+      .product-layout { grid-template-columns: 1fr; gap: 36px; }
+      .product-visual { position: static; }
+      .product-main-thumb { aspect-ratio: 4/3; }
+      .nav-links { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div id="nav-mount"></div>
+  <div id="banner-mount"></div>
+
+  <!-- BREADCRUMB -->
+  <div class="container">
+    <div class="breadcrumb">
+      <a href="shop.html">Shop</a>
+      <span class="breadcrumb-sep">›</span>
+      <span id="breadcrumb-name">Loading…</span>
+    </div>
+  </div>
+
+  <!-- PRODUCT PAGE -->
+  <div class="product-page">
+    <div class="container">
+      <div id="product-content">
+        <div class="loading-state"><p>Loading product…</p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- REVIEWS SECTION — always shown, stars work even with zero reviews -->
+  <div class="container" id="reviews-section">
+    <div class="reviews-area">
+      <div class="reviews-header-row">
+        <div class="reviews-title">Reviews</div>
+        <div class="reviews-summary" id="reviews-summary"></div>
+      </div>
+      <div class="your-rating-panel" id="your-rating-panel"></div>
+      <div class="reviews-list" id="reviews-list"></div>
+    </div>
+  </div>
+
+  <!-- RELATED PRODUCTS -->
+  <div class="container" id="related-section" style="display:none">
+    <div class="related-section">
+      <div class="related-title">More <em>Heat</em></div>
+      <div class="related-row" id="related-grid"></div>
+    </div>
+  </div>
+
+  <div id="footer-mount"></div>
+  <div class="add-toast" id="add-toast"></div>
+
+  <script type="module">
+    import './js/auth.js';
+    import './js/cart.js';
+    import { loadProducts, allProducts, getProduct, pepperSVG, miniPepperSVG, heatPips } from './js/products.js';
+
+    await window.initPage('shop'); // marks Shop as active in nav
+    await loadProducts();
+
+    /* ── Read ?id= from URL ── */
+    const params = new URLSearchParams(window.location.search);
+    const productId = parseInt(params.get('id'), 10);
+
+    const content = document.getElementById('product-content');
+
+    if (!productId || isNaN(productId)) {
+      content.innerHTML = `<div class="error-state"><p>No product specified.</p><a href="shop.html">← Back to Shop</a></div>`;
+    } else {
+      const p = getProduct(productId);
+      if (!p) {
+        content.innerHTML = `<div class="error-state"><p>Product not found.</p><a href="shop.html">← Back to Shop</a></div>`;
+      } else {
+        renderProduct(p);
+        renderRelated(p);
+        renderReviews(productId);
+      }
+    }
+
+    /* ── Render full product ── */
+    function renderProduct(p) {
+      document.title = `${p.name} — BigBoyPeps`;
+      document.getElementById('breadcrumb-name').textContent = p.name;
+
+      const heatLabel = p.heat_level >= 5 ? 'Extreme' : p.heat_level >= 4 ? 'Very Hot' : p.heat_level >= 3 ? 'Hot' : p.heat_level >= 2 ? 'Medium' : 'Mild';
+
+      content.innerHTML = `
+        <div class="product-layout">
+
+          <!-- Visual -->
+          <div class="product-visual">
+            <div class="product-main-thumb" style="background:${p.thumb_color}">
+              <div class="product-graffiti" style="font-size:8rem;bottom:-20px;right:-20px;transform:rotate(-8deg)">HOT</div>
+              ${p.badge ? `<div class="product-visual-badge">${p.badge}</div>` : ''}
+              <div class="product-svg-wrap">${pepperSVG(p)}</div>
+            </div>
+            <div class="product-research-tag">
+              ⚠️ For research purposes only · Not intended for human consumption · Handle with care
+            </div>
+          </div>
+
+          <!-- Info -->
+          <div class="product-info-panel">
+            <div class="product-cat-tag">${p.category}</div>
+            <div class="product-title">${p.name}</div>
+
+            <div class="product-heat-row">
+              <span class="product-heat-label">Heat Level</span>
+              <div class="heat-pips">${heatPips(p.heat_level)}</div>
+              <span style="font-family:var(--font-c);font-size:.65rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--red)">${heatLabel}</span>
+            </div>
+
+            <div class="product-description">${p.description}</div>
+
+            <div class="product-divider"></div>
+
+            <div class="product-price-row">
+              <span class="product-price-big">$${Number(p.price).toFixed(2)}</span>
+              <span class="product-price-note">per unit · research grade</span>
+            </div>
+
+            <div class="product-actions">
+              <div class="qty-control">
+                <button class="qty-dec" onclick="changeQty(-1)">−</button>
+                <div class="qty-display" id="qty-display">1</div>
+                <button class="qty-inc" onclick="changeQty(1)">+</button>
+              </div>
+              <button class="add-to-cart-btn" id="add-btn" onclick="addToCart(${p.id})">
+                Add to Cart
+              </button>
+            </div>
+
+            <div class="product-details">
+              <div class="detail-row">
+                <div class="detail-key">Category</div>
+                <div class="detail-val">${p.category}</div>
+              </div>
+              <div class="detail-row">
+                <div class="detail-key">Heat Level</div>
+                <div class="detail-val">${heatLabel} (${p.heat_level}/5)</div>
+              </div>
+              <div class="detail-row">
+                <div class="detail-key">Use</div>
+                <div class="detail-val">Research purposes only</div>
+              </div>
+              <div class="detail-row">
+                <div class="detail-key">Consumption</div>
+                <div class="detail-val">Not for human consumption</div>
+              </div>
+              <div class="detail-row">
+                <div class="detail-key">Status</div>
+                <div class="detail-val" style="color:#5BC75B">In Stock</div>
+              </div>
+            </div>
+          </div>
+
+        </div>`;
+    }
+
+    /* ── Qty control ── */
+    let qty = 1;
+    window.changeQty = function(delta) {
+      qty = Math.max(1, qty + delta);
+      const el = document.getElementById('qty-display');
+      if (el) el.textContent = qty;
+    };
+
+    /* ── Add to cart ── */
+    window.addToCart = function(id) {
+      const p = getProduct(id);
+      if (!p) return;
+      for (let i = 0; i < qty; i++) Cart.add(p);
+
+      const btn = document.getElementById('add-btn');
+      if (btn) {
+        btn.textContent = '✓ Added';
+        btn.classList.add('added');
+        setTimeout(() => {
+          btn.textContent = 'Add to Cart';
+          btn.classList.remove('added');
+        }, 1800);
+      }
+
+      const toast = document.getElementById('add-toast');
+      toast.textContent = `${qty}× ${p.name} added to cart`;
+      toast.classList.add('show');
+      clearTimeout(toast._t);
+      toast._t = setTimeout(() => toast.classList.remove('show'), 2400);
+    };
+
+    /* ── Related products ── */
+    function renderRelated(current) {
+      const others = allProducts()
+        .filter(p => p.id !== current.id && p.category === current.category)
+        .slice(0, 4);
+
+      // fallback: if fewer than 2 in same category, fill from any category
+      const fill = others.length < 2
+        ? allProducts().filter(p => p.id !== current.id && !others.find(o => o.id === p.id)).slice(0, 4 - others.length)
+        : [];
+
+      const related = [...others, ...fill].slice(0, 4);
+      if (!related.length) return;
+
+      const section = document.getElementById('related-section');
+      const grid    = document.getElementById('related-grid');
+      section.style.display = 'block';
+
+      grid.innerHTML = related.map(p => `
+        <div class="related-card" onclick="window.location.href='product.html?id=${p.id}'">
+          <div class="related-thumb" style="background:${p.thumb_color}">
+            ${miniPepperSVG(p)}
+          </div>
+          <div class="related-info">
+            <div class="related-name">${p.name}</div>
+            <div class="related-price">$${Number(p.price).toFixed(2)}</div>
+          </div>
+        </div>`).join('');
+    }
+
+    /* ══════════════════════════════════════════════
+       REVIEWS
+    ══════════════════════════════════════════════ */
+
+    /* SVG star — filled, empty, or half using CSS color */
+    function starSVG(filled) {
+      const col = filled ? 'var(--red)' : 'var(--border)';
+      return `<svg viewBox="0 0 24 24" fill="${col}" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+      </svg>`;
+    }
+
+    /* Render N filled stars + (5-N) empty, for display */
+    function starsHTML(avg) {
+      const rounded = Math.round(avg);
+      return Array.from({length:5}, (_,i) => `
+        <span class="star">${starSVG(i < rounded)}</span>
+      `).join('');
+    }
+
+    /* Interactive star picker — highlights on hover, saves on click */
+    function starPickerHTML(currentStars) {
+      return Array.from({length:5}, (_,i) => `
+        <button class="star-btn" data-star="${i+1}"
+          onmouseenter="hoverStars(${i+1})"
+          onmouseleave="resetStars(${currentStars})"
+          onclick="rateProduct(${i+1})">
+          ${starSVG(i < currentStars)}
+        </button>
+      `).join('');
+    }
+
+    window.hoverStars = function(n) {
+      document.querySelectorAll('.star-btn').forEach((btn, i) => {
+        btn.innerHTML = starSVG(i < n);
+      });
+    };
+
+    window.resetStars = function(current) {
+      document.querySelectorAll('.star-btn').forEach((btn, i) => {
+        btn.innerHTML = starSVG(i < current);
+      });
+    };
+
+    let _currentUserStars = 0;
+
+    window.rateProduct = async function(stars) {
+      const result = await Auth.submitReview(productId, stars);
+      if (!result.ok) return;
+      _currentUserStars = stars;
+      resetStars(stars);
+      const saved = document.getElementById('rating-saved');
+      if (saved) {
+        saved.classList.add('show');
+        setTimeout(() => saved.classList.remove('show'), 2500);
+      }
+      /* refresh summary */
+      const rating = await Auth.getProductRating(productId);
+      renderRatingSummary(rating);
+    };
+
+    function renderRatingSummary({ average, count }) {
+      document.getElementById('reviews-summary').innerHTML = count > 0 ? `
+        <div class="review-avg">${average}</div>
+        <div class="review-stars-display">${starsHTML(average)}</div>
+        <div class="review-count">${count} review${count !== 1 ? 's' : ''}</div>
+      ` : `
+        <div class="review-stars-display">${starsHTML(0)}</div>
+        <div class="review-count" style="color:var(--smoke)">No reviews yet — be the first</div>
+      `;
+    }
+
+    async function renderReviews(pid) {
+      /* Section is already visible in HTML — no display toggle needed */
+
+      const rating = await Auth.getProductRating(pid);
+      _currentUserStars = rating.userStars;
+
+      /* Summary — show even if 0 reviews so "be the first" prompt is visible */
+      renderRatingSummary(rating);
+
+      /* Star picker — always rendered, works with 0 reviews */
+      document.getElementById('your-rating-panel').innerHTML = `
+        <span class="your-rating-label">Your Rating</span>
+        <div class="star-picker">${starPickerHTML(rating.userStars)}</div>
+        <span class="rating-saved" id="rating-saved">✓ Saved</span>`;
+
+      document.getElementById('reviews-list').innerHTML = '';
+    }
+  </script>
+</body>
+</html>

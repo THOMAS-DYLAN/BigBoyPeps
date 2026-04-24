@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Order History — BigBoyPeps</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Permanent+Marker&family=Barlow:wght@300;400;500;600&family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/global.css" />
+  <link rel="stylesheet" href="css/shared.css" />
+  <style>
+    body { display: flex; flex-direction: column; min-height: 100vh; }
+
+    /* ── HEADER ──────────────────────────────────── */
+    .orders-header {
+      padding: 52px 0 36px; border-bottom: 1px solid var(--border);
+      position: relative; overflow: hidden;
+    }
+    .orders-graffiti {
+      position: absolute; font-family: var(--font-m);
+      color: var(--red); opacity: .04; pointer-events: none; user-select: none;
+    }
+    .orders-header-inner { position: relative; z-index: 1; }
+    .orders-eyebrow {
+      font-family: var(--font-c); font-size: .68rem; font-weight: 700;
+      letter-spacing: .28em; text-transform: uppercase; color: var(--red);
+      margin-bottom: 10px; display: flex; align-items: center; gap: 10px;
+    }
+    .orders-eyebrow::before { content: ''; width: 28px; height: 2px; background: var(--red); }
+    .orders-title {
+      font-family: var(--font-d); font-size: clamp(2.4rem, 5vw, 4.5rem);
+      line-height: .92; letter-spacing: .03em; color: var(--white);
+    }
+    .orders-title em { color: var(--red); font-style: normal; }
+
+    /* ── BODY ────────────────────────────────────── */
+    .orders-body { padding: 40px 0 80px; flex: 1; }
+
+    /* ── SUMMARY BAR ─────────────────────────────── */
+    .orders-summary {
+      display: flex; align-items: center; gap: 32px;
+      padding: 20px 0 28px; border-bottom: 1px solid var(--border); flex-wrap: wrap;
+    }
+    .summary-stat { }
+    .summary-stat-val {
+      font-family: var(--font-d); font-size: 2rem; letter-spacing: .04em; color: var(--white);
+    }
+    .summary-stat-label {
+      font-family: var(--font-c); font-size: .62rem; font-weight: 700;
+      letter-spacing: .18em; text-transform: uppercase; color: var(--smoke);
+      margin-top: 2px;
+    }
+    .summary-divider { width: 1px; height: 40px; background: var(--border); }
+
+    /* ── ORDER ROWS ──────────────────────────────── */
+    .orders-list { margin-top: 8px; }
+
+    .order-row {
+      display: flex; align-items: center; gap: 18px;
+      padding: 18px 0; border-bottom: 1px solid var(--border);
+      cursor: pointer; transition: background .18s;
+      text-decoration: none;
+    }
+    .order-row:last-child { border-bottom: none; }
+    .order-row:hover { background: var(--card); padding-left: 12px; padding-right: 12px; margin: 0 -12px; }
+
+    .order-thumb {
+      width: 56px; height: 56px; flex-shrink: 0;
+      border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden;
+    }
+
+    .order-info { flex: 1; min-width: 0; }
+    .order-name {
+      font-family: var(--font-c); font-size: .9rem; font-weight: 700;
+      letter-spacing: .04em; text-transform: uppercase; color: var(--white);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 4px;
+    }
+    .order-meta {
+      font-size: .73rem; color: var(--smoke);
+      display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+    }
+    .order-meta-item { display: flex; align-items: center; gap: 4px; }
+    .order-meta-label {
+      font-family: var(--font-c); font-size: .6rem; font-weight: 700;
+      letter-spacing: .12em; text-transform: uppercase; color: var(--smoke);
+    }
+    .order-meta-val { color: var(--ash); }
+
+    .order-right { text-align: right; flex-shrink: 0; }
+    .order-total {
+      font-family: var(--font-d); font-size: 1.2rem;
+      color: var(--white); letter-spacing: .04em; margin-bottom: 5px;
+    }
+    .order-status {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-family: var(--font-c); font-size: .6rem; font-weight: 700;
+      letter-spacing: .12em; text-transform: uppercase;
+      padding: 3px 9px; border-radius: 999px;
+    }
+    .order-status::before { content: ''; width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
+    .status-delivered  { background: rgba(34,100,34,.2); color: #5BC75B; }
+    .status-delivered::before  { background: #5BC75B; }
+    .status-shipped    { background: rgba(30,80,180,.2); color: #6E9EF5; }
+    .status-shipped::before    { background: #6E9EF5; }
+    .status-processing { background: rgba(200,140,0,.2); color: #E8B84B; }
+    .status-processing::before { background: #E8B84B; }
+
+    .order-arrow { color: var(--smoke); font-size: 1rem; transition: all .18s; flex-shrink: 0; }
+    .order-row:hover .order-arrow { transform: translateX(4px); color: var(--red); }
+
+    /* ── EMPTY STATE ─────────────────────────────── */
+    .empty-state {
+      text-align: center; padding: 80px 0;
+    }
+    .empty-icon { font-size: 3rem; opacity: .2; margin-bottom: 20px; }
+    .empty-title {
+      font-family: var(--font-d); font-size: 1.8rem; letter-spacing: .04em;
+      color: var(--white); margin-bottom: 10px;
+    }
+    .empty-sub { font-size: .85rem; color: var(--smoke); margin-bottom: 28px; }
+    .empty-cta {
+      display: inline-flex;
+      font-family: var(--font-c); font-size: .75rem; font-weight: 700;
+      letter-spacing: .14em; text-transform: uppercase;
+      background: var(--red); color: var(--white); padding: 12px 28px;
+      clip-path: polygon(0 0,calc(100% - 7px) 0,100% 7px,100% 100%,7px 100%,0 calc(100% - 7px));
+      transition: background .18s;
+    }
+    .empty-cta:hover { background: var(--red-hot); }
+
+    /* ── GROUP HEADERS (by month) ────────────────── */
+    .month-group { margin-top: 32px; }
+    .month-label {
+      font-family: var(--font-c); font-size: .65rem; font-weight: 700;
+      letter-spacing: .2em; text-transform: uppercase; color: var(--smoke);
+      padding-bottom: 12px; border-bottom: 1px solid var(--border);
+      margin-bottom: 4px;
+    }
+
+    @media (max-width: 600px) {
+      .order-row { gap: 12px; }
+      .order-thumb { width: 44px; height: 44px; }
+      .summary-divider { display: none; }
+      .nav-links { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div id="nav-mount"></div>
+  <div id="banner-mount"></div>
+
+  <div class="orders-header">
+    <div class="orders-graffiti" style="font-size:11rem;top:-30px;right:-20px;transform:rotate(-7deg)">ORDERS</div>
+    <div class="orders-header-inner container">
+      <div class="orders-eyebrow">Purchase History</div>
+      <div class="orders-title">Every <em>burn</em><br/>you've ordered.</div>
+    </div>
+  </div>
+
+  <div class="orders-body">
+    <div class="container">
+      <div class="orders-summary" id="orders-summary"></div>
+      <div class="orders-list"  id="orders-list">
+        <div style="padding:40px 0;text-align:center;font-family:var(--font-c);font-size:.72rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--smoke)">Loading orders…</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="footer-mount"></div>
+
+  <script type="module">
+    import './js/auth.js';
+    import './js/cart.js';
+    import { loadProducts, getProduct, miniPepperSVG } from './js/products.js';
+
+    await window.initPage('orders');
+    await loadProducts();
+
+    const orders = await Auth.getAllOrders();
+    const summaryEl = document.getElementById('orders-summary');
+    const listEl    = document.getElementById('orders-list');
+
+    if (!orders.length) {
+      summaryEl.style.display = 'none';
+      listEl.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-icon">🌶</div>
+          <div class="empty-title">No orders yet.</div>
+          <p class="empty-sub">Time to fix that.</p>
+          <a href="shop.html" class="empty-cta">Go to Shop</a>
+        </div>`;
+    } else {
+      /* ── Summary bar ── */
+      const totalSpent = orders.reduce((s, o) => s + Number(o.total), 0);
+      summaryEl.innerHTML = `
+        <div class="summary-stat">
+          <div class="summary-stat-val">${orders.length}</div>
+          <div class="summary-stat-label">Total Orders</div>
+        </div>
+        <div class="summary-divider"></div>
+        <div class="summary-stat">
+          <div class="summary-stat-val">$${totalSpent.toFixed(2)}</div>
+          <div class="summary-stat-label">Total Spent</div>
+        </div>
+        <div class="summary-divider"></div>
+        <div class="summary-stat">
+          <div class="summary-stat-val">${orders.reduce((s, o) => s + o.qty, 0)}</div>
+          <div class="summary-stat-label">Items Ordered</div>
+        </div>`;
+
+      /* ── Group by month ── */
+      const groups = {};
+      orders.forEach(o => {
+        const key = new Date(o.ordered_at).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+        if (!groups[key]) groups[key] = [];
+        groups[key].push(o);
+      });
+
+      listEl.innerHTML = Object.entries(groups).map(([month, rows]) => `
+        <div class="month-group">
+          <div class="month-label">${month}</div>
+          ${rows.map(o => {
+            const pid     = o.product_id;
+            const product = getProduct(pid);
+            const bg      = product?.thumb_color || '#1e1e1e';
+            const thumb   = product ? miniPepperSVG(product) : '';
+            const date    = new Date(o.ordered_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+            return `
+              <a class="order-row" href="product.html?id=${pid}">
+                <div class="order-thumb" style="background:${bg}">${thumb}</div>
+                <div class="order-info">
+                  <div class="order-name">${o.product_name}</div>
+                  <div class="order-meta">
+                    <span class="order-meta-item">
+                      <span class="order-meta-label">Date</span>
+                      <span class="order-meta-val">${date}</span>
+                    </span>
+                    <span class="order-meta-item">
+                      <span class="order-meta-label">Qty</span>
+                      <span class="order-meta-val">${o.qty}</span>
+                    </span>
+                    <span class="order-meta-item">
+                      <span class="order-meta-label">Unit</span>
+                      <span class="order-meta-val">$${Number(o.unit_price).toFixed(2)}</span>
+                    </span>
+                  </div>
+                </div>
+                <div class="order-right">
+                  <div class="order-total">$${Number(o.total).toFixed(2)}</div>
+                  <span class="order-status status-${o.status}">${o.status}</span>
+                </div>
+                <span class="order-arrow">›</span>
+              </a>`;
+          }).join('')}
+        </div>`).join('');
+    }
+  </script>
+</body>
+</html>

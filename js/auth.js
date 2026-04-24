@@ -1,10 +1,12 @@
-// ═══════════════════════════════════════════════════════
-// BigBoyPeps — Auth (Supabase)
-// ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
+// BigBoyPeps — Auth & User Data (Supabase)
+// ═══════════════════════════════════════════════════════════════
 
 import { supabase } from './supabase.js';
 
 window.Auth = {
+
+  // ── Session ──────────────────────────────────────────────────
 
   async getSession() {
     const { data } = await supabase.auth.getSession();
@@ -16,30 +18,33 @@ window.Auth = {
     return data.user || null;
   },
 
+  // ── Profile ───────────────────────────────────────────────────
+  // Returns the profiles row for the current user.
+  // Includes email mirrored from auth.users.
+
   async getProfile() {
     const user = await this.getUser();
     if (!user) return null;
-    const meta = user.user_metadata || {};
-    return {
-      id: user.id,
-      first_name: meta.first_name || '',
-      last_name: meta.last_name || '',
-      phone: meta.phone || '',
-      address: meta.address || '',
-      city: meta.city || '',
-      state: meta.state || '',
-      zip: meta.zip || '',
-      country: meta.country || 'United States',
-      email: user.email || '',
-      member_since: user.created_at || null,
-    };
+    const { data } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', user.id)
+      .single();
+    // Attach the live email from auth in case the mirror is stale
+    if (data) data.email = user.email;
+    return data || null;
   },
 
-  // Blocks until session is confirmed. Redirects if not logged in.
+  // ── Route guard ───────────────────────────────────────────────
+
   async requireLogin() {
     const session = await this.getSession();
     if (!session) window.location.replace('index.html');
   },
+
+  // ── Register ──────────────────────────────────────────────────
+  // Creates auth user → trigger fires → profiles row created automatically.
+  // member_since is set by the trigger and locked forever by a DB trigger.
 
   async register(firstName, lastName, email, password) {
     if (password.length < 6)
@@ -48,11 +53,26 @@ window.Auth = {
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
-      options: { data: { first_name: firstName, last_name: lastName } }
+      options: {
+        data: { first_name: firstName, last_name: lastName }
+      }
     });
+
     if (error) return { ok: false, err: error.message };
+
+    // If email confirmation is OFF the session is live immediately.
+    // Also update the email mirror in profiles (trigger may beat us here,
+    // but an upsert is safe thanks to on-conflict-do-nothing on the trigger).
+    if (data.user) {
+      await supabase.from('profiles')
+        .update({ email })
+        .eq('id', data.user.id);
+    }
+
     return { ok: true, user: data.user };
   },
+
+  // ── Login ─────────────────────────────────────────────────────
 
   async login(email, password) {
     const { error } = await supabase.auth.signInWithPassword({ email, password });
@@ -60,98 +80,189 @@ window.Auth = {
     return { ok: true };
   },
 
+  // ── Logout ───────────────────────────────────────────────────
+
   async logout() {
     await supabase.auth.signOut();
     window.location.href = 'index.html';
   },
 
+  // ── Update profile field ──────────────────────────────────────
+  // member_since is blocked here AND by a DB-level trigger.
+  // email changes go through Supabase Auth (which sends a confirmation).
+
   async updateField(key, value) {
-    if (key === 'member_since' || key === 'email') return; // immutable/locked fields
+    if (key === 'member_since' || key === 'created_at') return;
+
     const user = await this.getUser();
     if (!user) return;
-    const meta = user.user_metadata || {};
-    await supabase.auth.updateUser({
-      data: { ...meta, [key]: value }
-    });
+
+    if (key === 'email') {
+      // Route email changes through Auth so Supabase handles confirmation
+      const { error } = await supabase.auth.updateUser({ email: value });
+      if (error) return { ok: false, err: error.message };
+      // Also mirror to profiles
+      await supabase.from('profiles').update({ email: value }).eq('id', user.id);
+      return { ok: true };
+    }
+
+    const { error } = await supabase
+      .from('profiles')
+      .update({ [key]: value })
+      .eq('id', user.id);
+
+    return error ? { ok: false, err: error.message } : { ok: true };
   },
 
-  async saveCheckoutInfo(info) {
+  // ── Shipping Addresses ────────────────────────────────────────
+
+  async getAddresses() {
     const user = await this.getUser();
-    if (!user) return { ok: false, err: 'Not logged in' };
-    const meta = user.user_metadata || {};
-    const { error } = await supabase.auth.updateUser({
-      data: {
-        ...meta,
-        first_name: info.first_name || '',
-        last_name: info.last_name || '',
-        phone: info.phone || '',
-        address: info.address || '',
-        city: info.city || '',
-        state: info.state || '',
-        zip: info.zip || '',
-        country: info.country || 'United States',
-      }
-    });
-    if (error) return { ok: false, err: error.message };
-    return { ok: true };
+    if (!user) return [];
+    const { data } = await supabase
+      .from('shipping_addresses')
+      .select('*')
+      .eq('user_id', user.id)
+      .order('is_default', { ascending: false })
+      .order('created_at', { ascending: true });
+    return data || [];
   },
+
+  async getDefaultAddress() {
+    const user = await this.getUser();
+    if (!user) return null;
+    const { data } = await supabase
+      .from('shipping_addresses')
+      .select('*')
+      .eq('user_id', user.id)
+      .eq('is_default', true)
+      .single();
+    return data || null;
+  },
+
+  async saveAddress(address) {
+    const user = await this.getUser();
+    if (!user) return { ok: false, err: 'Not logged in.' };
+
+    // If this is being set as default, clear any existing default first
+    if (address.is_default) {
+      await supabase
+        .from('shipping_addresses')
+        .update({ is_default: false })
+        .eq('user_id', user.id);
+    }
+
+    const payload = { ...address, user_id: user.id };
+
+    if (address.id) {
+      // Update existing
+      const { error } = await supabase
+        .from('shipping_addresses')
+        .update(payload)
+        .eq('id', address.id)
+        .eq('user_id', user.id);
+      return error ? { ok: false, err: error.message } : { ok: true };
+    } else {
+      // Insert new
+      const { error } = await supabase
+        .from('shipping_addresses')
+        .insert(payload);
+      return error ? { ok: false, err: error.message } : { ok: true };
+    }
+  },
+
+  async deleteAddress(id) {
+    const user = await this.getUser();
+    if (!user) return;
+    await supabase
+      .from('shipping_addresses')
+      .delete()
+      .eq('id', id)
+      .eq('user_id', user.id);
+  },
+
+  // ── Payment Methods (Stripe refs only) ───────────────────────
+  // These are stored AFTER Stripe confirms the card.
+  // The frontend calls Stripe's JS SDK to tokenize the card,
+  // then passes the returned IDs here for storage.
+
+  async getPaymentMethods() {
+    const user = await this.getUser();
+    if (!user) return [];
+    const { data } = await supabase
+      .from('payment_methods')
+      .select('*')
+      .eq('user_id', user.id)
+      .order('is_default', { ascending: false })
+      .order('created_at', { ascending: true });
+    return data || [];
+  },
+
+  async getDefaultPaymentMethod() {
+    const user = await this.getUser();
+    if (!user) return null;
+    const { data } = await supabase
+      .from('payment_methods')
+      .select('*')
+      .eq('user_id', user.id)
+      .eq('is_default', true)
+      .single();
+    return data || null;
+  },
+
+  // Call this after Stripe confirms a card and returns stripe_customer_id + stripe_payment_method
+  async savePaymentMethod({ stripe_customer_id, stripe_payment_method, card_brand, card_last4, card_exp_month, card_exp_year, is_default = false }) {
+    const user = await this.getUser();
+    if (!user) return { ok: false, err: 'Not logged in.' };
+
+    if (is_default) {
+      await supabase
+        .from('payment_methods')
+        .update({ is_default: false })
+        .eq('user_id', user.id);
+    }
+
+    const { error } = await supabase.from('payment_methods').insert({
+      user_id: user.id,
+      stripe_customer_id,
+      stripe_payment_method,
+      card_brand,
+      card_last4,
+      card_exp_month,
+      card_exp_year,
+      is_default,
+    });
+
+    return error ? { ok: false, err: error.message } : { ok: true };
+  },
+
+  async deletePaymentMethod(id) {
+    const user = await this.getUser();
+    if (!user) return;
+    await supabase
+      .from('payment_methods')
+      .delete()
+      .eq('id', id)
+      .eq('user_id', user.id);
+  },
+
+  // ── Orders ────────────────────────────────────────────────────
 
   async pushOrder(order) {
-    return this.recordRecentPurchases([{
-      id: order.productId,
-      name: order.name,
-      qty: order.qty,
-      price: order.price,
-    }]);
-  },
-
-  async recordRecentPurchases(cartItems) {
     const user = await this.getUser();
-    if (!user || !Array.isArray(cartItems) || !cartItems.length) return { ok: true };
+    if (!user) return;
 
-    const unique = [];
-    const seen = new Set();
-    for (const item of cartItems) {
-      const pid = Number(item.id);
-      if (!Number.isFinite(pid) || seen.has(pid)) continue;
-      seen.add(pid);
-      unique.push(item);
-      if (unique.length === 5) break;
-    }
+    await supabase.from('orders').insert({
+      user_id:      user.id,
+      product_id:   order.productId,
+      product_name: order.name,
+      qty:          order.qty,
+      unit_price:   order.price,
+      total:        order.total,
+      status:       'processing',
+    });
 
-    if (!unique.length) return { ok: true };
-
-    const rows = unique.map(item => ({
-      user_id: user.id,
-      product_id: Number(item.id),
-      product_name: item.name,
-      qty: Number(item.qty || 1),
-      unit_price: Number(item.price || 0),
-      total: Number(item.price || 0) * Number(item.qty || 1),
-      status: 'processing',
-    }));
-
-    const snapshot = rows.map(r => ({
-      product_id: r.product_id,
-      product_name: r.product_name,
-      qty: r.qty,
-      unit_price: r.unit_price,
-      total: r.total,
-      status: r.status,
-      ordered_at: new Date().toISOString(),
-    }));
-
-    const { error } = await supabase.from('orders').insert(rows);
-    if (error) {
-      // Fallback: persist recent purchases in auth metadata.
-      const meta = user.user_metadata || {};
-      const { error: metaError } = await supabase.auth.updateUser({
-        data: { ...meta, recent_purchases: snapshot }
-      });
-      if (metaError) return { ok: false, err: `${error.message}; metadata fallback failed: ${metaError.message}` };
-      return { ok: true, fallback: 'auth_metadata' };
-    }
-    return { ok: true, fallback: null };
+    // All orders kept forever — dashboard limits via .limit(5) in getRecentOrders()
   },
 
   async getRecentOrders() {
@@ -162,24 +273,62 @@ window.Auth = {
       .select('*')
       .eq('user_id', user.id)
       .order('ordered_at', { ascending: false })
-      .limit(100);
-
-    // Keep most recent row per product, then max 5 unique products.
-    const uniqueByProduct = [];
-    const seen = new Set();
-    for (const row of data || []) {
-      const key = String(row.product_id ?? row.product_name);
-      if (seen.has(key)) continue;
-      seen.add(key);
-      uniqueByProduct.push(row);
-      if (uniqueByProduct.length === 5) break;
-    }
-    if (uniqueByProduct.length) return uniqueByProduct;
-
-    const metaRecent = user.user_metadata?.recent_purchases;
-    if (Array.isArray(metaRecent)) return metaRecent.slice(0, 5);
-    return [];
+      .limit(5);
+    return data || [];
   },
+
+  async getAllOrders() {
+    const user = await this.getUser();
+    if (!user) return [];
+    const { data } = await supabase
+      .from('orders')
+      .select('*')
+      .eq('user_id', user.id)
+      .order('ordered_at', { ascending: false });
+    return data || [];
+  },
+
+  // ── Reviews ───────────────────────────────────────────────────
+  // One review per user per product. Upsert on conflict so updating
+  // a rating replaces the existing row without adding a new one.
+
+  async submitReview(productId, stars) {
+    const user = await this.getUser();
+    if (!user) return { ok: false, err: 'Not logged in.' };
+    if (stars < 1 || stars > 5) return { ok: false, err: 'Stars must be 1–5.' };
+
+    const { error } = await supabase.from('reviews').upsert({
+      user_id:    user.id,
+      product_id: productId,
+      stars,
+      updated_at: new Date().toISOString(),
+    }, { onConflict: 'user_id,product_id' });
+
+    return error ? { ok: false, err: error.message } : { ok: true };
+  },
+
+  // Returns { average, count, userStars } for a product.
+  // userStars is the current user's rating (0 if not rated).
+  async getProductRating(productId) {
+    const user = await this.getUser();
+
+    const { data } = await supabase
+      .from('reviews')
+      .select('stars, user_id')
+      .eq('product_id', productId);
+
+    const rows = data || [];
+    const count   = rows.length;
+    const average = count > 0
+      ? Math.round((rows.reduce((s, r) => s + r.stars, 0) / count) * 10) / 10
+      : 0;
+    const userRow   = user ? rows.find(r => r.user_id === user.id) : null;
+    const userStars = userRow ? userRow.stars : 0;
+
+    return { average, count, userStars };
+  },
+
+  // ── Utility ───────────────────────────────────────────────────
 
   formatDate(iso) {
     if (!iso) return '—';

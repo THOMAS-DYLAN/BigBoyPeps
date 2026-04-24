@@ -1,40 +1,19 @@
 // ═══════════════════════════════════════════════════════
 // BigBoyPeps — Cart + Shared UI (Supabase version)
-// Cart stays in localStorage under a single shared key.
+// Cart itself stays in localStorage (per-user key).
 // Orders are written to Supabase on checkout.
 // ═══════════════════════════════════════════════════════
 
 import { supabase } from './supabase.js';
 
-// ── Cart (localStorage, single key) ─────────────────────
+// ── Cart (localStorage, keyed per user) ─────────────────
 window.Cart = {
-  _key: 'bbp_cart',
-  _userId: null,
-  _isDbBacked: false,
+  _key: 'bbp_cart_guest',
 
   async init() {
-    this._key = 'bbp_cart';
     const { data } = await supabase.auth.getSession();
-    this._userId = data.session?.user?.id || null;
-    this._isDbBacked = !!this._userId;
-
-    if (!this._isDbBacked) return;
-
-    const { data: rows, error } = await supabase
-      .from('cart_items')
-      .select('product_id, product_name, unit_price, qty')
-      .eq('user_id', this._userId)
-      .order('added_at', { ascending: true });
-
-    if (error) return;
-
-    const items = (rows || []).map(r => ({
-      id: r.product_id,
-      name: r.product_name,
-      price: Number(r.unit_price || 0),
-      qty: Number(r.qty || 1),
-    }));
-    this.save(items);
+    const uid = data.session?.user?.id;
+    this._key = uid ? `bbp_cart_${uid}` : 'bbp_cart_guest';
   },
 
   get()       { return JSON.parse(localStorage.getItem(this._key) || '[]'); },
@@ -47,28 +26,18 @@ window.Cart = {
     else items.push({ id: product.id, name: product.name, price: product.price, qty: 1 });
     this.save(items);
     this.updateBadge();
-    this.syncItem(product.id);
   },
 
-  remove(id)      {
-    this.save(this.get().filter(i => i.id !== id));
-    this.updateBadge();
-    this.deleteItem(id);
-  },
+  remove(id)      { this.save(this.get().filter(i => i.id !== id)); this.updateBadge(); },
 
   setQty(id, qty) {
     const items = this.get();
     const item  = items.find(i => i.id === id);
     if (item) { item.qty = Math.max(1, qty); this.save(items); }
     this.updateBadge();
-    this.syncItem(id);
   },
 
-  clear()  {
-    this.save([]);
-    this.updateBadge();
-    this.clearDb();
-  },
+  clear()  { this.save([]); this.updateBadge(); },
   total()  { return this.get().reduce((s,i) => s + i.price * i.qty, 0); },
   count()  { return this.get().reduce((s,i) => s + i.qty, 0); },
 
@@ -78,35 +47,6 @@ window.Cart = {
     const n = this.count();
     badge.textContent    = n;
     badge.style.display  = n > 0 ? 'flex' : 'none';
-  },
-
-  async syncItem(id) {
-    if (!this._isDbBacked || !this._userId) return;
-    const item = this.get().find(i => i.id === id);
-    if (!item) return;
-
-    await supabase.from('cart_items').upsert({
-      user_id: this._userId,
-      product_id: item.id,
-      product_name: item.name,
-      unit_price: item.price,
-      qty: item.qty,
-    });
-  },
-
-  async deleteItem(id) {
-    if (!this._isDbBacked || !this._userId) return;
-    await supabase.from('cart_items')
-      .delete()
-      .eq('user_id', this._userId)
-      .eq('product_id', id);
-  },
-
-  async clearDb() {
-    if (!this._isDbBacked || !this._userId) return;
-    await supabase.from('cart_items')
-      .delete()
-      .eq('user_id', this._userId);
   },
 };
 
@@ -128,7 +68,8 @@ window.buildNav = async function(activePage) {
 
   const centerLinks = loggedIn ? `
     <a href="dashboard.html" class="nav-link${activePage==='dashboard'?' active':''}">Dashboard</a>
-    <a href="shop.html"      class="nav-link${activePage==='shop'     ?' active':''}">Shop</a>` : '';
+    <a href="shop.html"      class="nav-link${activePage==='shop'     ?' active':''}">Shop</a>
+    <a href="orders.html"    class="nav-link${activePage==='orders'   ?' active':''}">Orders</a>` : '';
 
   const rightSide = loggedIn ? `
     <button onclick="Auth.logout()" class="nav-signout">Sign Out</button>
@@ -220,16 +161,6 @@ function renderCheckoutModal(items, profile) {
             <div class="field-err" id="err-last"></div>
           </div>
         </div>
-        <div class="form-row">
-          <div class="form-field">
-            <label>Email</label>
-            <input id="co-email" type="email" value="${profile.email||''}" disabled />
-          </div>
-          <div class="form-field">
-            <label>Phone</label>
-            <input id="co-phone" type="tel" placeholder="+1 555 000 0000" value="${profile.phone||''}" />
-          </div>
-        </div>
         <div class="form-field">
           <label>Street Address *</label>
           <input id="co-address" type="text"  placeholder="123 Main St" value="${profile.address||''}" oninput="validateCheckout()"/>
@@ -259,15 +190,9 @@ function renderCheckoutModal(items, profile) {
           <div class="form-field">
             <label>Country</label>
             <select id="co-country">
-              <option${(profile.country||'United States')==='United States'?' selected':''}>United States</option><option${profile.country==='Canada'?' selected':''}>Canada</option><option${profile.country==='Other'?' selected':''}>Other</option>
+              <option>United States</option><option>Canada</option><option>Other</option>
             </select>
           </div>
-        </div>
-        <div class="form-field" style="margin-top:8px">
-          <label style="display:flex;align-items:center;gap:8px;text-transform:none;letter-spacing:.06em;font-size:.74rem;color:var(--light)">
-            <input id="co-save-info" type="checkbox" style="width:auto;accent-color:var(--red)" />
-            Save my contact and shipping information for next time (excluding payment details)
-          </label>
         </div>
       </div>
 
@@ -391,26 +316,18 @@ window.placeOrder = async function() {
   if (btn) { btn.disabled = true; btn.textContent = 'Placing order…'; }
 
   const items = Cart.get();
-  const saveInfo = !!document.getElementById('co-save-info')?.checked;
-  if (saveInfo) {
-    const saveResult = await Auth.saveCheckoutInfo({
-      first_name: document.getElementById('co-first')?.value.trim() || '',
-      last_name: document.getElementById('co-last')?.value.trim() || '',
-      phone: document.getElementById('co-phone')?.value.trim() || '',
-      address: document.getElementById('co-address')?.value.trim() || '',
-      city: document.getElementById('co-city')?.value.trim() || '',
-      state: document.getElementById('co-state')?.value || '',
-      zip: document.getElementById('co-zip')?.value.trim() || '',
-      country: document.getElementById('co-country')?.value || 'United States',
-    });
-    if (!saveResult?.ok) {
-      console.warn('Could not save checkout info:', saveResult?.err || 'Unknown error');
-    }
-  }
+  const today = new Date().toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
 
-  const result = await Auth.recordRecentPurchases(items);
-  if (!result?.ok) {
-    console.warn('Could not save recent purchases:', result?.err || 'Unknown error');
+  for (const item of items) {
+    await Auth.pushOrder({
+      productId: item.id,
+      name:      item.name,
+      qty:       item.qty,
+      price:     item.price,
+      total:     item.price * item.qty,
+      date:      today,
+      status:    'processing',
+    });
   }
 
   document.getElementById('checkout-modal').innerHTML = `
@@ -428,5 +345,5 @@ window.placeOrder = async function() {
     </div>`;
 
   Cart.clear();
-  if (typeof renderCart === 'function') renderCart();
+  if (typeof window.renderCart === 'function') window.renderCart();
 };
