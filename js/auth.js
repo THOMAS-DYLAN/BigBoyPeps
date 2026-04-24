@@ -25,11 +25,15 @@ window.Auth = {
   async getProfile() {
     const user = await this.getUser();
     if (!user) return null;
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from('profiles')
       .select('*')
       .eq('id', user.id)
       .single();
+    if (error) {
+      console.error('Error fetching profile:', error);
+      return null;
+    }
     // Attach the live email from auth in case the mirror is stale
     if (data) data.email = user.email;
     return data || null;
@@ -250,9 +254,9 @@ window.Auth = {
 
   async pushOrder(order) {
     const user = await this.getUser();
-    if (!user) return;
+    if (!user) return { ok: false, err: 'Not logged in.' };
 
-    await supabase.from('orders').insert({
+    const { error } = await supabase.from('orders').insert({
       user_id:      user.id,
       product_id:   order.productId,
       product_name: order.name,
@@ -262,29 +266,42 @@ window.Auth = {
       status:       'processing',
     });
 
-    // All orders kept forever — dashboard limits via .limit(5) in getRecentOrders()
+    if (error) {
+      console.error('Error saving order:', error);
+      return { ok: false, err: error.message };
+    }
+
+    return { ok: true };
   },
 
   async getRecentOrders() {
     const user = await this.getUser();
     if (!user) return [];
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from('orders')
       .select('*')
       .eq('user_id', user.id)
       .order('ordered_at', { ascending: false })
       .limit(5);
+    if (error) {
+      console.error('Error fetching recent orders:', error);
+      return [];
+    }
     return data || [];
   },
 
   async getAllOrders() {
     const user = await this.getUser();
     if (!user) return [];
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from('orders')
       .select('*')
       .eq('user_id', user.id)
       .order('ordered_at', { ascending: false });
+    if (error) {
+      console.error('Error fetching all orders:', error);
+      return [];
+    }
     return data || [];
   },
 

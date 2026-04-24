@@ -318,8 +318,9 @@ window.placeOrder = async function() {
   const items = Cart.get();
   const today = new Date().toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
 
+  let hasError = false;
   for (const item of items) {
-    await Auth.pushOrder({
+    const result = await Auth.pushOrder({
       productId: item.id,
       name:      item.name,
       qty:       item.qty,
@@ -328,6 +329,28 @@ window.placeOrder = async function() {
       date:      today,
       status:    'processing',
     });
+    if (!result.ok) {
+      hasError = true;
+      console.error('Failed to place order for:', item.name, result.err);
+    }
+  }
+
+  if (hasError) {
+    document.getElementById('checkout-modal').innerHTML = `
+      <div class="modal-head">
+        <div class="modal-title">Error</div>
+        <button class="modal-close" onclick="closeCheckout()">&#x2715;</button>
+      </div>
+      <div class="order-success">
+        <div class="order-success-icon">⚠️</div>
+        <h2>Order failed</h2>
+        <p>There was an error saving your order. Please try again.</p>
+        <a href="javascript:location.reload()" style="display:inline-block;margin-top:24px;font-family:var(--font-c);font-size:.75rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;background:var(--red);color:var(--white);padding:12px 28px;clip-path:polygon(0 0,calc(100% - 7px) 0,100% 7px,100% 100%,7px 100%,0 calc(100% - 7px))">
+          Retry
+        </a>
+      </div>`;
+    if (btn) { btn.disabled = false; btn.textContent = 'Place Order'; }
+    return;
   }
 
   document.getElementById('checkout-modal').innerHTML = `
