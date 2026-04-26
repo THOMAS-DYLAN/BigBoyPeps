@@ -114,6 +114,17 @@
 
     @media (max-width: 700px) { .products-grid { grid-template-columns: 1fr 1fr; gap: 12px; } .nav-links { display: none; } }
     @media (max-width: 420px) { .products-grid { grid-template-columns: 1fr; } }
+
+    /* skeleton loading */
+    .skeleton-card { background: var(--card); border: 1px solid var(--border); }
+    .skeleton-thumb { height: 200px; background: var(--charcoal, #222); }
+    .skeleton-info  { padding: 18px 20px 20px; }
+    .skeleton-line  { border-radius: 2px; background: var(--charcoal, #222); }
+    .skeleton-pulse { animation: skeletonPulse 1.4s ease-in-out infinite; }
+    @keyframes skeletonPulse {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: .4; }
+    }
   </style>
 </head>
 <body>
@@ -143,7 +154,19 @@
 
   <div class="products-section">
     <div class="container">
-      <div class="products-grid" id="products-grid"></div>
+      <div class="products-grid" id="products-grid">
+        <!-- skeleton cards shown while products load -->
+        ${Array.from({length:6}).map(()=>`
+          <div class="skeleton-card">
+            <div class="skeleton-thumb skeleton-pulse"></div>
+            <div class="skeleton-info">
+              <div class="skeleton-line skeleton-pulse" style="width:40%;height:.55rem;margin-bottom:10px"></div>
+              <div class="skeleton-line skeleton-pulse" style="width:80%;height:.8rem;margin-bottom:8px"></div>
+              <div class="skeleton-line skeleton-pulse" style="width:95%;height:.7rem;margin-bottom:6px"></div>
+              <div class="skeleton-line skeleton-pulse" style="width:70%;height:.7rem"></div>
+            </div>
+          </div>`).join('')}
+      </div>
     </div>
   </div>
 
@@ -156,8 +179,11 @@
     import './js/cart.js';
     import { loadProducts, allProducts, getProduct, pepperSVG, heatPips } from './js/products.js';
 
-    await window.initPage('shop');
-    await loadProducts();
+    // Run auth check and product fetch in parallel
+    await Promise.all([
+      window.initPage('shop'),
+      loadProducts()
+    ]);
 
     function renderProducts(cat) {
       const all  = allProducts();

@@ -200,3 +200,15 @@ footer {
   padding: 7px 14px; transition: color .18s;
 }
 .nav-signout:hover { color: var(--red); }
+
+/* ── PAYMENT METHOD BUTTONS ───────────────────────────── */
+.pay-method-btn {
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  padding: 16px; width: 100%;
+  border: 1px solid var(--border); background: var(--card);
+  color: var(--smoke); font-family: var(--font-c); font-size: .75rem;
+  font-weight: 700; letter-spacing: .14em; text-transform: uppercase;
+  cursor: pointer; transition: all .18s;
+}
+.pay-method-btn:hover { border-color: var(--ash); color: var(--light); }
+.pay-method-btn.active { border-color: var(--red); color: var(--white); background: rgba(204,31,31,.08); }

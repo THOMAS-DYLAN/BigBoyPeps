@@ -203,8 +203,7 @@
     import './js/cart.js';
     import { loadProducts, getProduct, miniPepperSVG } from './js/products.js';
 
-    await window.initPage('cart');
-    await loadProducts();
+    await Promise.all([window.initPage('cart'), loadProducts()]);
 
     window.renderCart = function renderCart() {
       const items = Cart.get();

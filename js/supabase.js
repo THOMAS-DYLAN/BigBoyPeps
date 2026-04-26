@@ -10,5 +10,5 @@ import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 
 export const supabase = createClient(
   'https://utqviljholfvpfztfuvx.supabase.co',
-  'sb_publishable_QMnUkvFkxKjGY2G6qeL_GA_Kel0HQae'
+  'sk_test_51TQH7bK6Egh6nYfi2Pqeb6ikAFWHCqAnZBnGh0jswwuKM8QKqiO9Oo4sMjB9qzpfK1sbXnLDm79DrwfF2hOEUFrK00IZ8Dsql6'
 );

@@ -175,10 +175,11 @@
     import './js/cart.js';
     import { loadProducts, getProduct, miniPepperSVG } from './js/products.js';
 
-    await window.initPage('orders');
-    await loadProducts();
-
-    const orders = await Auth.getAllOrders();
+    const [, , orders] = await Promise.all([
+      window.initPage('orders'),
+      loadProducts(),
+      Auth.getAllOrders(),
+    ]);
     const summaryEl = document.getElementById('orders-summary');
     const listEl    = document.getElementById('orders-list');
 

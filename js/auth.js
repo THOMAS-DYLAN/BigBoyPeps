@@ -4,39 +4,51 @@
 
 import { supabase } from './supabase.js';
 
+// Module-level session cache — one fetch per page load
+let _session = null;
+let _sessionFetched = false;
+
+async function getSessionCached() {
+  if (_sessionFetched) return _session;
+  const { data } = await supabase.auth.getSession();
+  _session = data.session || null;
+  _sessionFetched = true;
+  supabase.auth.onAuthStateChange((_event, session) => { _session = session; });
+  return _session;
+}
+
 window.Auth = {
 
   // ── Session ──────────────────────────────────────────────────
 
   async getSession() {
-    const { data } = await supabase.auth.getSession();
-    return data.session || null;
+    return getSessionCached();
   },
 
   async getUser() {
-    const { data } = await supabase.auth.getUser();
-    return data.user || null;
+    const session = await getSessionCached();
+    return session?.user || null;
   },
 
   // ── Profile ───────────────────────────────────────────────────
-  // Returns the profiles row for the current user.
-  // Includes email mirrored from auth.users.
+  // All user info lives in Supabase Auth — no separate profiles table.
+  // member_since = user.created_at (set at signup, never changes).
 
   async getProfile() {
     const user = await this.getUser();
     if (!user) return null;
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', user.id)
-      .single();
-    if (error) {
-      console.error('Error fetching profile:', error);
-      return null;
-    }
-    // Attach the live email from auth in case the mirror is stale
-    if (data) data.email = user.email;
-    return data || null;
+    const meta = user.user_metadata || {};
+    return {
+      id:           user.id,
+      email:        user.email        || '',
+      first_name:   meta.first_name   || '',
+      last_name:    meta.last_name    || '',
+      phone:        meta.phone        || '',
+      address:      meta.address      || '',
+      city:         meta.city         || '',
+      state:        meta.state        || '',
+      member_since: user.created_at   || null,
+    };
   },
 
   // ── Route guard ───────────────────────────────────────────────
@@ -46,9 +58,9 @@ window.Auth = {
     if (!session) window.location.replace('index.html');
   },
 
-  // ── Register ──────────────────────────────────────────────────
-  // Creates auth user → trigger fires → profiles row created automatically.
-  // member_since is set by the trigger and locked forever by a DB trigger.
+  // ── Register ─────────────────────────────────────────────────
+  // All user info stored in Supabase Auth user_metadata.
+  // member_since = user.created_at, set by Supabase on signup, never changes.
 
   async register(firstName, lastName, email, password) {
     if (password.length < 6)
@@ -63,16 +75,6 @@ window.Auth = {
     });
 
     if (error) return { ok: false, err: error.message };
-
-    // If email confirmation is OFF the session is live immediately.
-    // Also update the email mirror in profiles (trigger may beat us here,
-    // but an upsert is safe thanks to on-conflict-do-nothing on the trigger).
-    if (data.user) {
-      await supabase.from('profiles')
-        .update({ email })
-        .eq('id', data.user.id);
-    }
-
     return { ok: true, user: data.user };
   },
 
@@ -97,25 +99,17 @@ window.Auth = {
 
   async updateField(key, value) {
     if (key === 'member_since' || key === 'created_at') return;
-
     const user = await this.getUser();
     if (!user) return;
 
     if (key === 'email') {
-      // Route email changes through Auth so Supabase handles confirmation
-      const { error } = await supabase.auth.updateUser({ email: value });
-      if (error) return { ok: false, err: error.message };
-      // Also mirror to profiles
-      await supabase.from('profiles').update({ email: value }).eq('id', user.id);
-      return { ok: true };
+      await supabase.auth.updateUser({ email: value });
+      return;
     }
 
-    const { error } = await supabase
-      .from('profiles')
-      .update({ [key]: value })
-      .eq('id', user.id);
-
-    return error ? { ok: false, err: error.message } : { ok: true };
+    // All other fields saved to user metadata
+    const meta = user.user_metadata || {};
+    await supabase.auth.updateUser({ data: { ...meta, [key]: value } });
   },
 
   // ── Shipping Addresses ────────────────────────────────────────
@@ -140,7 +134,7 @@ window.Auth = {
       .select('*')
       .eq('user_id', user.id)
       .eq('is_default', true)
-      .single();
+      .maybeSingle();  // returns null instead of error when no row exists
     return data || null;
   },
 
@@ -254,9 +248,9 @@ window.Auth = {
 
   async pushOrder(order) {
     const user = await this.getUser();
-    if (!user) return { ok: false, err: 'Not logged in.' };
+    if (!user) return;
 
-    const { error } = await supabase.from('orders').insert({
+    await supabase.from('orders').insert({
       user_id:      user.id,
       product_id:   order.productId,
       product_name: order.name,
@@ -266,42 +260,29 @@ window.Auth = {
       status:       'processing',
     });
 
-    if (error) {
-      console.error('Error saving order:', error);
-      return { ok: false, err: error.message };
-    }
-
-    return { ok: true };
+    // All orders kept forever — dashboard limits via .limit(5) in getRecentOrders()
   },
 
   async getRecentOrders() {
     const user = await this.getUser();
     if (!user) return [];
-    const { data, error } = await supabase
+    const { data } = await supabase
       .from('orders')
       .select('*')
       .eq('user_id', user.id)
       .order('ordered_at', { ascending: false })
       .limit(5);
-    if (error) {
-      console.error('Error fetching recent orders:', error);
-      return [];
-    }
     return data || [];
   },
 
   async getAllOrders() {
     const user = await this.getUser();
     if (!user) return [];
-    const { data, error } = await supabase
+    const { data } = await supabase
       .from('orders')
       .select('*')
       .eq('user_id', user.id)
       .order('ordered_at', { ascending: false });
-    if (error) {
-      console.error('Error fetching all orders:', error);
-      return [];
-    }
     return data || [];
   },
 

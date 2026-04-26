@@ -331,8 +331,7 @@
     import './js/cart.js';
     import { loadProducts, allProducts, getProduct, pepperSVG, miniPepperSVG, heatPips } from './js/products.js';
 
-    await window.initPage('shop'); // marks Shop as active in nav
-    await loadProducts();
+    await Promise.all([window.initPage('shop'), loadProducts()]);
 
     /* ── Read ?id= from URL ── */
     const params = new URLSearchParams(window.location.search);

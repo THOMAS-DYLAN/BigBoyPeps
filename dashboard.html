@@ -197,10 +197,10 @@
     import { loadProducts, getProduct, miniPepperSVG } from './js/products.js';
 
     /* ── Boot ── */
-    await window.initPage('dashboard');
-    await loadProducts();
-
-    const [profile, orders] = await Promise.all([
+    // Run everything in parallel — auth, products, profile, orders all at once
+    const [, , profile, orders] = await Promise.all([
+      window.initPage('dashboard'),
+      loadProducts(),
       Auth.getProfile(),
       Auth.getRecentOrders(),
     ]);
