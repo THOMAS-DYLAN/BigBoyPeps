@@ -3,7 +3,7 @@
 -- Run this entire file in: Supabase → SQL Editor → New Query → Run
 --
 -- WHAT THIS CREATES:
---   profiles          — core user info, email, name, phone, membership date
+--   users             — core user info, email, name, phone, membership date
 --   shipping_addresses — one or more saved addresses per user
 --   payment_methods   — Stripe token references only (no raw card data)
 --   products          — product catalog
@@ -26,16 +26,16 @@
 -- Drop triggers and functions first to avoid dependency errors
 drop trigger if exists on_auth_user_created on auth.users;
 drop function if exists handle_new_user();
-drop trigger if exists lock_member_since on profiles;
+drop trigger if exists lock_member_since on users;
 drop function if exists prevent_member_since_update();
 
 
--- ── 1. PROFILES ──────────────────────────────────────────────────
+-- ── 1. USERS ──────────────────────────────────────────────────
 -- One row per user. Linked to auth.users by UUID.
 -- Email lives in auth.users — we mirror it here for convenience.
 -- member_since is set ONCE by the trigger and locked forever after.
 
-create table if not exists profiles (
+create table if not exists users (
   -- identity
   id              uuid          primary key references auth.users(id) on delete cascade,
   email           text          not null default '',     -- mirrored from auth.users
@@ -62,9 +62,9 @@ begin
 end;
 $$;
 
-drop trigger if exists profiles_updated_at on profiles;
-create trigger profiles_updated_at
-  before update on profiles
+drop trigger if exists users_updated_at on users;
+create trigger users_updated_at
+  before update on users
   for each row execute procedure touch_updated_at();
 
 -- Hard-lock member_since at the DB level — no UPDATE can change it
@@ -79,7 +79,7 @@ end;
 $$;
 
 create trigger lock_member_since
-  before update on profiles
+  before update on users
   for each row execute procedure prevent_member_since_update();
 
 
@@ -197,21 +197,21 @@ create table if not exists orders (
 -- Every table is locked down. Users can only touch their own rows.
 -- ═══════════════════════════════════════════════════════════════
 
-alter table profiles          enable row level security;
+alter table users             enable row level security;
 alter table shipping_addresses enable row level security;
 alter table payment_methods   enable row level security;
 alter table products          enable row level security;
 alter table orders            enable row level security;
 
--- ── Profiles ──
-create policy "profiles: own row select"
-  on profiles for select using (auth.uid() = id);
+-- ── Users ──
+create policy "users: own row select"
+  on users for select using (auth.uid() = id);
 
-create policy "profiles: own row insert"
-  on profiles for insert with check (auth.uid() = id);
+create policy "users: own row insert"
+  on users for insert with check (auth.uid() = id);
 
-create policy "profiles: own row update"
-  on profiles for update using (auth.uid() = id);
+create policy "users: own row update"
+  on users for update using (auth.uid() = id);
   -- member_since immutability is enforced by the trigger above, not RLS
 
 -- ── Shipping Addresses ──
@@ -266,7 +266,7 @@ create policy "orders: own delete"
 create or replace function handle_new_user()
 returns trigger language plpgsql security definer as $$
 begin
-  insert into public.profiles (
+  insert into users (
     id,
     email,
     first_name,
@@ -392,7 +392,7 @@ select
   p.member_since,
   count(o.id) as total_orders
 from auth.users u
-left join profiles p on p.id = u.id
+left join users p on p.id = u.id
 left join orders o on o.user_id = u.id
 group by u.email, p.first_name, p.last_name, p.phone, p.member_since
 order by p.member_since desc;
@@ -408,7 +408,7 @@ select
   o.status
 from orders o
 join auth.users u on u.id = o.user_id
-join profiles p on p.id = o.user_id
+join users p on p.id = o.user_id
 order by o.ordered_at desc;
 
 -- View saved addresses for a user:

@@ -6,9 +6,9 @@
 // Never commit the real key to a public repo.
 // ═══════════════════════════════════════════════════════
 
-import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.3/+esm';
 
 export const supabase = createClient(
   'https://utqviljholfvpfztfuvx.supabase.co',
-  'sk_test_51TQH7bK6Egh6nYfi2Pqeb6ikAFWHCqAnZBnGh0jswwuKM8QKqiO9Oo4sMjB9qzpfK1sbXnLDm79DrwfF2hOEUFrK00IZ8Dsql6'
+  'sb_publishable_QMnUkvFkxKjGY2G6qeL_GA_Kel0HQae'
 );

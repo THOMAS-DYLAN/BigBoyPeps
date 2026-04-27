@@ -328,13 +328,37 @@
       document.getElementById('wrap-'+key).classList.remove('open');
     };
     window.saveField  = async key => {
-      const val = document.getElementById('input-'+key).value.trim();
-      // addr_ prefixed fields are saved as a batch via saveAddress(), not individually
-      if (key.startsWith('addr_')) return;
+      const val = document.getElementById('input-'+key)?.value.trim() || '';
+
+      if (key.startsWith('addr_')) {
+        // Save this single address field by fetching the current address,
+        // updating just this field, and upserting back
+        const fieldName = key.replace('addr_', '');
+        const current   = await Auth.getDefaultAddress() || {};
+        const result    = await Auth.saveAddress({
+          id:           current.id || null,
+          label:        current.label        || 'Default',
+          first_name:   current.first_name   || '',
+          last_name:    current.last_name    || '',
+          street_line1: current.street_line1 || '',
+          street_line2: current.street_line2 || '',
+          city:         current.city         || '',
+          state:        current.state        || '',
+          zip:          current.zip          || '',
+          country:      current.country      || 'United States',
+          is_default:   true,
+          [fieldName]:  val,  // override just this field
+        });
+        if (!result.ok) { alert('Failed to save: ' + result.err); return; }
+        const el = document.getElementById('val-'+key);
+        if (el) { el.textContent = val || 'Not set'; el.className = 'info-val' + (val ? '' : ' empty'); }
+        cancelEdit(key);
+        return;
+      }
+
       await Auth.updateField(key, val);
       const el = document.getElementById('val-'+key);
-      el.textContent = val || 'Not set';
-      el.className   = 'info-val' + (val ? '' : ' empty');
+      if (el) { el.textContent = val || 'Not set'; el.className = 'info-val' + (val ? '' : ' empty'); }
       cancelEdit(key);
       if (key === 'first_name' || key === 'last_name') {
         const p = await Auth.getProfile();

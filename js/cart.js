@@ -164,7 +164,7 @@ const STATES = ['AL','AK','AZ','AR','CA','CO','CT','DE','FL','GA','HI','ID','IL'
 
 // ── Stripe publishable key ────────────────────────────────
 // Replace with your pk_test_... or pk_live_... from Stripe → Developers → API Keys
-const STRIPE_PK = 'pk_test_51TQH7bK6Egh6nYfi5WymWgeGxTBiETK7RHnBK5TSHX8b6pYzrZibmRvrIgGuRYDHmL1TGzLOPn7XYKZqdXZbpthP00M522YWsd';
+const STRIPE_PK = 'pk_test_YOUR_PUBLISHABLE_KEY_HERE';
 
 // ── Checkout state ────────────────────────────────────────
 let _stripe      = null;
@@ -308,13 +308,10 @@ function renderCheckoutModal(items, profile, addr) {
 
         <!-- PAYPAL SECTION -->
         <div id="paypal-section" style="display:none;margin-top:20px">
-          <div style="padding:24px;border:1px solid var(--border);background:var(--card);text-align:center">
-            <div style="font-family:var(--font-c);font-size:.68rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--smoke);margin-bottom:10px">PayPal</div>
-            <p style="font-size:.78rem;color:var(--smoke);font-style:italic;margin-bottom:16px">PayPal connects when your business account is set up.</p>
-            <button onclick="simulatePayPal()" style="background:#0070ba;color:#fff;padding:13px 32px;font-family:var(--font-c);font-size:.78rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;border:none;cursor:pointer;width:100%;max-width:280px">
-              Continue with PayPal
-            </button>
-          </div>
+          <div id="paypal-button-container"></div>
+          <p style="font-size:.68rem;color:var(--smoke);text-align:center;margin-top:10px;font-style:italic">
+            You'll be redirected to PayPal to complete payment securely.
+          </p>
         </div>
       </div>
 
@@ -338,6 +335,10 @@ window.selectPayMethod = async function(method) {
   if (method === 'card') {
     await mountStripe();
     validateShipping();
+  }
+
+  if (method === 'paypal') {
+    await mountPayPal();
   }
 };
 
@@ -417,13 +418,24 @@ window.placeOrder = async function() {
   const btn = document.getElementById('place-btn');
   if (btn) { btn.disabled = true; btn.textContent = 'Processing…'; }
 
+  // Capture shipping values NOW before modal gets replaced
+  const shipping = {
+    first_name:   document.getElementById('co-first')?.value.trim()   || '',
+    last_name:    document.getElementById('co-last')?.value.trim()    || '',
+    street_line1: document.getElementById('co-address')?.value.trim() || '',
+    city:         document.getElementById('co-city')?.value.trim()    || '',
+    state:        document.getElementById('co-state')?.value          || '',
+    zip:          document.getElementById('co-zip')?.value.trim()     || '',
+    country:      document.getElementById('co-country')?.value        || 'United States',
+    saveAddr:     document.getElementById('co-save-addr')?.checked    ?? true,
+  };
+
   try {
     const items    = Cart.get();
     const subtotal = items.reduce((s,i) => s + i.price * i.qty, 0);
     const total    = subtotal + (subtotal >= 50 ? 0 : 6.99);
     const { data: { session } } = await supabase.auth.getSession();
 
-    // Call Edge Function to create PaymentIntent
     const res = await fetch(
       'https://utqviljholfvpfztfuvx.supabase.co/functions/v1/create-payment-intent',
       {
@@ -438,9 +450,8 @@ window.placeOrder = async function() {
     const { clientSecret, error: fnErr } = await res.json();
     if (fnErr) throw new Error(fnErr);
 
-    // Confirm payment with Stripe
-    const first = document.getElementById('co-first')?.value.trim() || '';
-    const last  = document.getElementById('co-last')?.value.trim()  || '';
+    const first = shipping.first_name;
+    const last  = shipping.last_name;
     const { error: stripeErr } = await _stripe.confirmCardPayment(clientSecret, {
       payment_method: {
         card: _cardElement,
@@ -449,7 +460,7 @@ window.placeOrder = async function() {
     });
     if (stripeErr) throw new Error(stripeErr.message);
 
-    await finishOrder();
+    await finishOrder(shipping);
 
   } catch(err) {
     const errEl = document.getElementById('err-stripe');
@@ -458,30 +469,94 @@ window.placeOrder = async function() {
   }
 };
 
-// PayPal simulate (replace with real PayPal SDK when ready)
-window.simulatePayPal = async function() {
-  if (!shippingValid()) {
-    alert('Please fill in your shipping address first.');
-    return;
+// ── PayPal Client ID ──────────────────────────────────────
+// Sandbox — swap for live Client ID when going live
+const PAYPAL_CLIENT_ID = 'ASbLEV3KD9dxYbbEGDI';
+
+async function mountPayPal() {
+  const container = document.getElementById('paypal-button-container');
+  if (!container) return;
+  container.innerHTML = '';
+
+  if (!window.paypal) {
+    await new Promise((resolve, reject) => {
+      const script = document.createElement('script');
+      script.src = `https://www.paypal.com/sdk/js?client-id=${PAYPAL_CLIENT_ID}&currency=USD`;
+      script.onload = resolve; script.onerror = reject;
+      document.head.appendChild(script);
+    });
   }
-  await finishOrder();
-};
+
+  const items    = Cart.get();
+  const subtotal = items.reduce((s,i) => s + i.price * i.qty, 0);
+  const shipping = subtotal >= 50 ? 0 : 6.99;
+  const total    = (subtotal + shipping).toFixed(2);
+
+  window.paypal.Buttons({
+    style: { layout:'vertical', color:'blue', shape:'rect', label:'pay', height:48 },
+
+    onClick(data, actions) {
+      if (!shippingValid()) {
+        SHIP_RULES.forEach(r => {
+          const el = document.getElementById(r.id);
+          const errEl = document.getElementById(r.err);
+          if (el && errEl && !r.test(el.value.trim())) errEl.textContent = r.msg;
+        });
+        return actions.reject();
+      }
+      return actions.resolve();
+    },
+
+    createOrder(data, actions) {
+      return actions.order.create({
+        purchase_units: [{
+          amount: {
+            value: total,
+            currency_code: 'USD',
+            breakdown: {
+              item_total: { value: subtotal.toFixed(2), currency_code: 'USD' },
+              shipping:   { value: shipping.toFixed(2), currency_code: 'USD' },
+            }
+          },
+          items: items.map(i => ({
+            name:        i.name,
+            unit_amount: { value: Number(i.price).toFixed(2), currency_code: 'USD' },
+            quantity:    String(i.qty),
+          })),
+        }],
+      });
+    },
+
+    async onApprove(data, actions) {
+      await actions.order.capture();
+      await finishOrder();
+    },
+
+    onError(err) {
+      console.error('PayPal error:', err);
+      const c = document.getElementById('paypal-button-container');
+      if (c) c.innerHTML += '<p style="color:#FF3030;font-size:.72rem;text-align:center;margin-top:8px;font-family:var(--font-c);letter-spacing:.06em">Payment failed — please try again.</p>';
+    },
+
+    onCancel() {},
+  }).render('#paypal-button-container');
+}
 
 // ── Save shipping + orders + show success ─────────────────
-async function finishOrder() {
+async function finishOrder(shipping = {}) {
   const items = Cart.get();
 
-  // Save shipping address if checked
-  if (document.getElementById('co-save-addr')?.checked) {
+  // Save shipping address if checkbox was checked
+  if (shipping.saveAddr && shipping.street_line1) {
     await Auth.saveAddress({
       label:        'Default',
-      first_name:   document.getElementById('co-first')?.value.trim()   || '',
-      last_name:    document.getElementById('co-last')?.value.trim()    || '',
-      street_line1: document.getElementById('co-address')?.value.trim() || '',
-      city:         document.getElementById('co-city')?.value.trim()    || '',
-      state:        document.getElementById('co-state')?.value          || '',
-      zip:          document.getElementById('co-zip')?.value.trim()     || '',
-      country:      document.getElementById('co-country')?.value        || 'United States',
+      first_name:   shipping.first_name,
+      last_name:    shipping.last_name,
+      street_line1: shipping.street_line1,
+      city:         shipping.city,
+      state:        shipping.state,
+      zip:          shipping.zip,
+      country:      shipping.country || 'United States',
       is_default:   true,
     });
   }

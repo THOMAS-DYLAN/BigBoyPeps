@@ -185,6 +185,12 @@
     import './js/auth.js';
     import './js/cart.js';
 
+    /* ── Check if age already verified ── */
+    if (localStorage.getItem('ageVerified') === 'true') {
+      document.getElementById('age-gate').style.display = 'none';
+      document.getElementById('auth-page').classList.add('active');
+    }
+
     /* ── If already logged in, skip straight to dashboard ── */
     const { data } = await supabase.auth.getSession();
     if (data.session) window.location.replace('dashboard.html');
@@ -203,6 +209,7 @@
 
     /* expose to onclick handlers */
     window.enterSite = () => {
+      localStorage.setItem('ageVerified', 'true');
       document.getElementById('age-gate').style.display = 'none';
       document.getElementById('auth-page').classList.add('active');
     };

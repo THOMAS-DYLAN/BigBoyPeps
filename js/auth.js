@@ -134,15 +134,16 @@ window.Auth = {
       .select('*')
       .eq('user_id', user.id)
       .eq('is_default', true)
-      .maybeSingle();  // returns null instead of error when no row exists
-    return data || null;
+      .maybeSingle();
+    if (!data) return null;
+    // Normalize to street_line1 so the checkout form pre-fills correctly
+    return { ...data, street_line1: data.address };
   },
 
   async saveAddress(address) {
     const user = await this.getUser();
     if (!user) return { ok: false, err: 'Not logged in.' };
 
-    // If this is being set as default, clear any existing default first
     if (address.is_default) {
       await supabase
         .from('shipping_addresses')
@@ -150,10 +151,20 @@ window.Auth = {
         .eq('user_id', user.id);
     }
 
-    const payload = { ...address, user_id: user.id };
+    // Map to actual DB columns
+    const payload = {
+      user_id:    user.id,
+      first_name: address.first_name   || '',
+      last_name:  address.last_name    || '',
+      address:    address.street_line1 || address.address || '',
+      city:       address.city         || '',
+      state:      address.state        || '',
+      zip:        address.zip          || '',
+      country:    address.country      || 'United States',
+      is_default: address.is_default   || false,
+    };
 
     if (address.id) {
-      // Update existing
       const { error } = await supabase
         .from('shipping_addresses')
         .update(payload)
@@ -161,7 +172,6 @@ window.Auth = {
         .eq('user_id', user.id);
       return error ? { ok: false, err: error.message } : { ok: true };
     } else {
-      // Insert new
       const { error } = await supabase
         .from('shipping_addresses')
         .insert(payload);

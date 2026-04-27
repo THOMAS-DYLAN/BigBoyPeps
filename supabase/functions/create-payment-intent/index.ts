@@ -1,12 +1,5 @@
 // ═══════════════════════════════════════════════════════════════
 // BigBoyPeps — Stripe PaymentIntent Edge Function
-// Supabase → Edge Functions → create-payment-intent/index.ts
-//
-// SETUP:
-// 1. Add your Stripe secret key to Supabase secrets:
-//    supabase secrets set STRIPE_SECRET_KEY=sk_test_...
-// 2. Deploy this function:
-//    supabase functions deploy create-payment-intent --project-ref utqviljholfvpfztfuvx
 // ═══════════════════════════════════════════════════════════════
 
 import Stripe from 'https://esm.sh/stripe@14?target=deno';
@@ -16,17 +9,27 @@ const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY') ?? '', {
   httpClient: Stripe.createFetchHttpClient(),
 });
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin':  '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
-};
-
 Deno.serve(async (req) => {
-  // Handle CORS preflight
+  // Handle CORS preflight — must return 200 with headers
   if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders });
+    return new Response('ok', {
+      status: 200,
+      headers: {
+        'Access-Control-Allow-Origin':  '*',
+        'Access-Control-Allow-Methods': 'POST, OPTIONS',
+        'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+        'Access-Control-Max-Age':       '86400',
+      },
+    });
   }
+
+  // All responses include CORS headers
+  const headers = {
+    'Content-Type': 'application/json',
+    'Access-Control-Allow-Origin':  '*',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  };
 
   try {
     const { amount, currency = 'usd', metadata = {} } = await req.json();
@@ -34,13 +37,12 @@ Deno.serve(async (req) => {
     if (!amount || amount <= 0) {
       return new Response(
         JSON.stringify({ error: 'Invalid amount' }),
-        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        { status: 400, headers }
       );
     }
 
-    // Create PaymentIntent — amount must be in cents
     const paymentIntent = await stripe.paymentIntents.create({
-      amount:   Math.round(amount * 100), // convert dollars to cents
+      amount:   Math.round(amount * 100),
       currency,
       metadata,
       automatic_payment_methods: { enabled: true },
@@ -48,13 +50,13 @@ Deno.serve(async (req) => {
 
     return new Response(
       JSON.stringify({ clientSecret: paymentIntent.client_secret }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      { status: 200, headers }
     );
 
   } catch (error) {
     return new Response(
       JSON.stringify({ error: error.message }),
-      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      { status: 500, headers }
     );
   }
 });
