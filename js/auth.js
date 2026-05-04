@@ -242,43 +242,23 @@ window.Auth = {
   // One review per user per product. Upsert on conflict so updating
   // a rating replaces the existing row without adding a new one.
 
-  async submitReview(productId, stars, comment = '', username = '') {
+  async submitReview(productId, stars) {
     const user = await this.getUser();
     if (!user) return { ok: false, err: 'Not logged in.' };
-    if (stars < 1 || stars > 5) return { ok: false, err: 'Stars must be 1-5.' };
+    if (stars < 1 || stars > 5) return { ok: false, err: 'Stars must be 1–5.' };
 
     const { error } = await supabase.from('reviews').upsert({
       user_id:    user.id,
       product_id: productId,
       stars,
-      comment:    comment.trim(),
-      username:   username.trim(),
       updated_at: new Date().toISOString(),
     }, { onConflict: 'user_id,product_id' });
 
     return error ? { ok: false, err: error.message } : { ok: true };
   },
 
-  async getReviews(productId) {
-    const user = await this.getUser();
-    const { data } = await supabase
-      .from('reviews')
-      .select('id, user_id, stars, comment, username, updated_at')
-      .eq('product_id', productId)
-      .not('comment', 'is', null)
-      .neq('comment', '');
-    return { rows: data || [], currentUserId: user?.id || null };
-  },
-
-  async deleteReview(productId) {
-    const user = await this.getUser();
-    if (!user) return { ok: false };
-    const { error } = await supabase.from('reviews')
-      .delete().eq('user_id', user.id).eq('product_id', productId);
-    return error ? { ok: false, err: error.message } : { ok: true };
-  },
-
   // Returns { average, count, userStars } for a product.
+  // userStars is the current user's rating (0 if not rated).
   async getProductRating(productId) {
     const user = await this.getUser();
 

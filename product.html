@@ -336,18 +336,28 @@
       <div class="your-rating-panel" id="your-rating-panel"></div>
 
       <!-- WRITE / EDIT REVIEW -->
-      <!-- STAR RATING SECTION ONLY -->
-<div class="container" id="reviews-section">
-  <div class="reviews-area">
-
-    <div class="reviews-header-row">
-      <div class="reviews-summary" id="reviews-summary"></div>
-    </div>
-
-    <div class="your-rating-panel" id="your-rating-panel"></div>
-
-  </div>
-</div>
+      <div id="review-form-wrap" style="margin-top:16px;display:none;background:var(--off);border:1px solid var(--border);padding:20px">
+        <div style="font-family:var(--font-c);font-size:.63rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--smoke);margin-bottom:12px">Write a Review</div>
+        <!-- Star picker inside form -->
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+          <span style="font-family:var(--font-c);font-size:.6rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--smoke)">Your Rating</span>
+          <div id="form-star-picker" style="display:flex;gap:4px">
+            ${[1,2,3,4,5].map(n => `<button style="background:none;padding:0;cursor:pointer;display:inline-flex;transition:transform .12s" onmouseenter="hoverFormStars(n)" onmouseleave="resetFormStars()" onclick="pickFormStar($n});event.preventDefault()"><svg viewBox="0 0 24 24" fill="var(--border)" width="22" height="22" id="fstar-${n}"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></button>`).join('')}
+          </div>
+          <span id="form-star-label" style="font-family:var(--font-c);font-size:.6rem;color:var(--smoke)"></span>
+        </div>
+        <input id="review-username" type="text" placeholder="Display name (e.g. ResearcherJane)" maxlength="40"
+          style="width:100%;padding:10px 14px;background:var(--card);border:1px solid var(--border);color:var(--light);font-size:.87rem;outline:none;box-sizing:border-box;margin-bottom:8px;transition:border-color .2s"
+          onfocus="this.style.borderColor='var(--red)'" onblur="this.style.borderColor='var(--border)'"/>
+        <textarea id="review-comment" placeholder="Share your experience with this compound..." maxlength="500" rows="3"
+          style="width:100%;padding:10px 14px;background:var(--card);border:1px solid var(--border);color:var(--light);font-size:.87rem;outline:none;box-sizing:border-box;resize:vertical;font-family:inherit;transition:border-color .2s"
+          onfocus="this.style.borderColor='var(--red)'" onblur="this.style.borderColor='var(--border)'"></textarea>
+        <div style="display:flex;gap:10px;margin-top:10px;align-items:center">
+          <button onclick="submitReviewWithComment()" style="font-family:var(--font-c);font-size:.68rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;background:var(--red);color:#fff;padding:9px 20px;border:none;cursor:pointer;transition:background .18s" onmouseover="this.style.background='var(--red-hot)'" onmouseout="this.style.background='var(--red)'">Post Review</button>
+          <button onclick="document.getElementById('review-form-wrap').style.display='none'" style="font-family:var(--font-c);font-size:.65rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;background:none;color:var(--smoke);padding:9px 14px;border:1px solid var(--border);cursor:pointer">Cancel</button>
+          <span id="review-err" style="font-size:.72rem;color:#FF3030"></span>
+        </div>
+      </div>
 
       <!-- REVIEWS LIST -->
       <div style="display:flex;align-items:center;justify-content:space-between;margin-top:28px;margin-bottom:12px" id="reviews-list-header" style="display:none">

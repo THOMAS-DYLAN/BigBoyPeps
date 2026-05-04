@@ -272,11 +272,6 @@ function renderCheckoutModal(items, profile, addr) {
     + '<div class="modal-section-title">Payment Method</div>'
     + '<div id="paypal-button-container"></div>'
     + '<div id="cashapp-container" style="margin-top:10px"></div>'
-    + '<div style="margin-top:10px">'
-    + '<button onclick="testOrder()" style="width:100%;padding:14px;background:#333;border:2px dashed #666;color:#999;font-family:var(--font-c);font-size:.7rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;cursor:pointer;transition:all .18s" onmouseover="this.style.borderColor=\'#999\'" onmouseout="this.style.borderColor=\'#666\'">'
-    + '🧪 TEST — Simulate Payment (remove before launch)'
-    + '</button>'
-    + '</div>'
     + '</div>'
 
     + '<p class="modal-disclaimer">All products are sold for research purposes only and not intended for human consumption.</p>'

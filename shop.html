@@ -151,7 +151,6 @@
     <div class="filters-bar" id="filters">
       <span class="filters-label">Filter</span>
       <button class="filter-btn active" data-cat="All">All</button>
-      <button class="filter-btn" data-cat="In Stock">In Stock</button>
       <button class="filter-btn" data-cat="GLP Peptides">GLP Peptides</button>
       <button class="filter-btn" data-cat="GH Peptides">GH Peptides</button>
       <button class="filter-btn" data-cat="Peptides">Peptides</button>
@@ -202,58 +201,46 @@
       return 'transparent';
     }
 
-    function buildCard(p) {
-      var badge = p.badge ? '<span class="product-badge' + (p.badge.includes('\uD83D\uDD25') ? ' badge-hot' : '') + '">' + p.badge + '</span>' : '';
-      return (p.inventory <= 0
-          ? '<div class="product-card out-of-stock">'
-          : '<div class="product-card" onclick="goToProduct(' + p.id + ')" style="cursor:pointer">')
-        + '<div class="product-thumb" style="background:' + thumbBg(p) + '">'
-        + '<div class="thumb-glow"></div>'
-        + badge
-        + thumbHTML(p)
-        + (p.inventory <= 0 ? '<div class="out-of-stock-banner">Out of Stock</div>' : '')
-        + '</div>'
-        + '<div class="product-info">'
-        + '<div class="product-cat">' + p.category + '</div>'
-        + '<div class="product-name">' + p.name + '</div>'
-        + '<div class="product-research">For research purposes only · Not for human consumption</div>'
-        + '<div class="product-desc">' + p.description + '</div>'
-        + (p.inventory <= 0
-          ? ''
-          : p.inventory <= 10
-          ? '<div class="low-stock-label">Low Stock — ' + p.inventory + ' left</div>'
-          : '<div class="in-stock-label">In Stock</div>')
-        + '<div class="product-footer">'
-        + '<div class="product-price">$' + Number(p.price).toFixed(2) + '</div>'
-        + (p.inventory <= 0
-          ? '<button class="add-btn" disabled style="background:var(--border);cursor:not-allowed;transform:none" title="Out of stock">✕</button>'
-          : '<button class="add-btn" onclick="event.stopPropagation();addToCart(' + p.id + ')" title="Add to cart">+</button>')
-        + '</div>'
-        + '</div>'
-        + '</div>';
-    }
-
-    function sortProducts(list) {
-      // In-stock sorted by ID asc, then OOS sorted by ID asc at the bottom
-      var inStock = list.filter(function(p) { return p.inventory > 0; }).sort(function(a,b) { return a.id - b.id; });
-      var oos     = list.filter(function(p) { return p.inventory <= 0; }).sort(function(a,b) { return a.id - b.id; });
-      return inStock.concat(oos);
-    }
-
     function renderProducts(cat) {
       var all  = allProducts();
-      var list;
-      if (cat === 'In Stock') {
-        list = all.filter(function(p) { return p.inventory > 0; }).sort(function(a,b) { return a.id - b.id; });
-      } else {
-        list = cat === 'All' ? sortProducts(all) : sortProducts(all.filter(function(p) { return p.category === cat; }));
-      }
+      var list = cat === 'All' ? all : all.filter(function(p) { return p.category === cat; });
       var grid = document.getElementById('products-grid');
+
       if (!list.length) {
         grid.innerHTML = '<div style="grid-column:1/-1;padding:48px 0;text-align:center"><p style="font-family:var(--font-c);font-size:.75rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--smoke)">' + (all.length === 0 ? 'No products loaded — check browser console (F12) for errors' : 'No products in this category') + '</p></div>';
         return;
       }
-      grid.innerHTML = list.map(buildCard).join('');
+
+      grid.innerHTML = list.map(function(p) {
+        var badge = p.badge ? '<span class="product-badge' + (p.badge.includes('\uD83D\uDD25') ? ' badge-hot' : '') + '">' + p.badge + '</span>' : '';
+        return (p.inventory <= 0
+            ? '<div class="product-card out-of-stock">'
+            : '<div class="product-card" onclick="goToProduct(' + p.id + ')" style="cursor:pointer">')
+          + '<div class="product-thumb" style="background:' + thumbBg(p) + '">'
+          + '<div class="thumb-glow"></div>'
+          + badge
+          + thumbHTML(p)
+          + (p.inventory <= 0 ? '<div class="out-of-stock-banner">Out of Stock</div>' : '')
+          + '</div>'
+          + '<div class="product-info">'
+          + '<div class="product-cat">' + p.category + '</div>'
+          + '<div class="product-name">' + p.name + '</div>'
+          + '<div class="product-research">For research purposes only · Not for human consumption</div>'
+          + '<div class="product-desc">' + p.description + '</div>'
+          + (p.inventory <= 0
+            ? ''
+            : p.inventory <= 10
+            ? '<div class="low-stock-label">Low Stock — ' + p.inventory + ' left</div>'
+            : '<div class="in-stock-label">In Stock</div>')
+          + '<div class="product-footer">'
+          + '<div class="product-price">$' + Number(p.price).toFixed(2) + '</div>'
+          + (p.inventory <= 0
+            ? '<button class="add-btn" disabled style="background:var(--border);cursor:not-allowed;transform:none" title="Out of stock">✕</button>'
+            : '<button class="add-btn" onclick="event.stopPropagation();addToCart(' + p.id + ')" title="Add to cart">+</button>')
+          + '</div>'
+          + '</div>'
+          + '</div>';
+      }).join('');
     }
 
     window.goToProduct = function(id) {
