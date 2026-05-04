@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BigBoyPeps — Enter</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Permanent+Marker&family=Barlow:wght@300;400;500;600&family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/global.css" />
+  <style>
+    /* ── AGE GATE ──────────────────────────────────────── */
+    #age-gate {
+      position: fixed; inset: 0; z-index: 100;
+      background: var(--black);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .gate-scratches { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+    .scratch { position: absolute; background: var(--red); opacity: .07; border-radius: 1px; }
+    .gate-inner {
+      position: relative; z-index: 1;
+      text-align: center; max-width: 440px; padding: 0 32px;
+      animation: fadeUp .55s ease both;
+    }
+    .gate-brand { font-family: var(--font-d); font-size: 3.8rem; line-height: 1; letter-spacing: .08em; color: var(--white); margin-bottom: 4px; }
+    .gate-brand span { color: var(--red); }
+    .gate-sub { font-family: var(--font-c); font-size: .66rem; font-weight: 700; letter-spacing: .28em; text-transform: uppercase; color: var(--smoke); margin-bottom: 44px; }
+    .gate-rule { width: 48px; height: 2px; background: var(--red); margin: 0 auto 32px; }
+    .gate-prompt { font-size: .88rem; color: var(--ash); line-height: 1.85; margin-bottom: 38px; }
+    .gate-prompt strong { color: var(--light); font-weight: 600; }
+    .gate-btns { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+    .btn-yes { padding: 13px 34px; font-family: var(--font-c); font-size: .78rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; background: var(--red); color: var(--white); clip-path: polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,8px 100%,0 calc(100% - 8px)); transition: background .2s, transform .2s; }
+    .btn-yes:hover { background: var(--red-hot); transform: translateY(-2px); }
+    .btn-no { padding: 13px 34px; font-family: var(--font-c); font-size: .78rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: var(--smoke); border: 1px solid var(--border); transition: border-color .2s, color .2s; }
+    .btn-no:hover { border-color: var(--smoke); color: var(--ash); }
+
+    #denied { display: none; position: fixed; inset: 0; z-index: 200; background: var(--black); flex-direction: column; align-items: center; justify-content: center; gap: 14px; }
+    #denied p { font-family: var(--font-c); font-size: .75rem; font-weight: 700; letter-spacing: .22em; text-transform: uppercase; color: var(--smoke); }
+
+    /* ── AUTH PAGE ─────────────────────────────────────── */
+    #auth-page { display: none; min-height: 100vh; grid-template-columns: 1fr 1fr; }
+    #auth-page.active { display: grid; }
+
+    .auth-visual {
+      background: var(--off); border-right: 1px solid var(--border);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: 56px 48px; position: relative; overflow: hidden;
+    }
+    .auth-visual-bg { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+    .auth-graffiti { position: absolute; font-family: var(--font-m); color: var(--red); opacity: .06; user-select: none; pointer-events: none; white-space: nowrap; }
+    .auth-visual-content { position: relative; z-index: 1; text-align: center; }
+    .auth-visual-name { font-family: var(--font-d); font-size: 2.6rem; letter-spacing: .1em; color: var(--white); line-height: 1; }
+    .auth-visual-name span { color: var(--red); }
+    .auth-visual-tagline { font-family: var(--font-m); font-size: .95rem; color: var(--smoke); margin-top: 12px; }
+    .auth-visual-divider { width: 100%; height: 1px; background: var(--border); margin: 28px 0; }
+    .auth-visual-pills { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+    .pill { font-family: var(--font-c); font-size: .62rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; padding: 5px 12px; border: 1px solid var(--border); color: var(--smoke); }
+
+    .auth-form-side { display: flex; flex-direction: column; justify-content: center; padding: 56px 48px; background: var(--off); border-left: 1px solid var(--border); }
+    .auth-tabs { display: flex; border-bottom: 1px solid var(--border); margin-bottom: 32px; }
+    .auth-tab { padding: 10px 0; margin-right: 24px; font-family: var(--font-c); font-size: .73rem; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; color: var(--smoke); border-bottom: 2px solid transparent; transition: all .18s; }
+    .auth-tab.active { color: var(--white); border-bottom-color: var(--red); }
+    .auth-tab:hover:not(.active) { color: var(--ash); }
+    .auth-form { display: none; }
+    .auth-form.active { display: block; animation: fadeIn .2s ease; }
+    .auth-title { font-family: var(--font-d); font-size: 2rem; letter-spacing: .04em; color: var(--white); margin-bottom: 5px; }
+    .auth-desc { font-size: .81rem; color: var(--smoke); margin-bottom: 28px; line-height: 1.6; }
+
+    .field { margin-bottom: 16px; }
+    .field label { display: block; font-family: var(--font-c); font-size: .66rem; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; color: var(--ash); margin-bottom: 7px; }
+    .field input { width: 100%; padding: 11px 14px; background: var(--card); color: var(--light); border: 1px solid var(--border); font-size: .88rem; outline: none; transition: border-color .18s, box-shadow .18s; }
+    .field input:focus { border-color: var(--red); box-shadow: 0 0 0 3px rgba(204,31,31,.12); }
+    .field input::placeholder { color: #3a3a3a; }
+    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+    .auth-submit { width: 100%; padding: 13px; font-family: var(--font-c); font-size: .8rem; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; background: var(--red); color: var(--white); clip-path: polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,8px 100%,0 calc(100% - 8px)); transition: background .2s, transform .2s; margin-top: 4px; }
+    .auth-submit:hover { background: var(--red-hot); transform: translateY(-1px); }
+    .auth-error { font-family: var(--font-c); font-size: .73rem; font-weight: 600; letter-spacing: .06em; color: var(--red-hot); margin-top: 10px; min-height: 18px; }
+    .auth-switch { font-size: .78rem; color: var(--smoke); margin-top: 18px; text-align: center; }
+    .auth-switch button { color: var(--red); font-size: .78rem; text-decoration: underline; text-underline-offset: 3px; }
+    .auth-switch button:hover { color: var(--red-hot); }
+
+    @media (max-width: 860px) { #auth-page { grid-template-columns: 1fr; } .auth-visual { display: none; } .auth-form-side { border-left: none; } }
+    @media (max-width: 480px) { .gate-btns { flex-direction: column; align-items: center; } .field-row { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+
+  <!-- ── AGE GATE ─────────────────────────────────────── -->
+  <div id="age-gate">
+    <div class="gate-scratches" id="scratches"></div>
+    <div class="gate-inner">
+      <div style="margin:0 auto 16px;text-align:center">
+        <img src="img/logo.png" alt="BigBoyPeps" style="height:120px;width:120px;object-fit:contain" />
+      </div>
+      <div class="gate-sub">Premium Research Peptides</div>
+      <div class="gate-rule"></div>
+      <p class="gate-prompt">Our products are <strong>research compounds</strong> intended for licensed researchers and adults only.<br/>You must be <strong>18 or older</strong> to enter.</p>
+      <div class="gate-btns">
+        <button class="btn-yes" onclick="enterSite()">I'm 18 or older</button>
+        <button class="btn-no"  onclick="denySite()">Under 18</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── DENIED ───────────────────────────────────────── -->
+  <div id="denied">
+    <svg width="36" height="36" viewBox="0 0 52 52" fill="none"><path d="M26 7C18 7 11 15 11 26C11 38 17 48 26 48C35 48 41 38 41 26C41 15 34 7 26 7Z" fill="#2a2a2a"/></svg>
+    <p>Access Restricted — Come Back When You're 18</p>
+  </div>
+
+  <!-- ── AUTH PAGE ─────────────────────────────────────── -->
+  <div id="auth-page">
+    <div class="auth-visual">
+      <div class="auth-visual-bg">
+
+      </div>
+      <div class="auth-visual-content">
+        <div style="margin:0 auto 24px"><img src="img/logo.png" alt="BigBoyPeps" style="height:90px;object-fit:contain" /></div>
+        <div class="auth-visual-name">BigBoy<span>Peps</span></div>
+        <div class="auth-visual-tagline">Research-grade peptides for serious investigators.</div>
+        <div class="auth-visual-divider"></div>
+        <div class="auth-visual-pills">
+          <span class="pill">Research Grade</span>
+          <span class="pill">Lab Certified</span>
+          <span class="pill">Not For Consumption</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="auth-form-side">
+      <div class="auth-tabs">
+        <button class="auth-tab active" onclick="switchTab('login')">Sign In</button>
+        <button class="auth-tab"        onclick="switchTab('register')">Register</button>
+      </div>
+
+      <!-- LOGIN -->
+      <div class="auth-form active" id="form-login">
+        <div class="auth-title">Welcome back.</div>
+        <p class="auth-desc">Sign in to access your account and shop.</p>
+        <div class="field"><label>Email</label><input type="email" id="login-email" placeholder="you@example.com" /></div>
+        <div class="field"><label>Password</label><input type="password" id="login-pass" placeholder="••••••••" /></div>
+        <button class="auth-submit" onclick="doLogin()">Sign In</button>
+        <div class="auth-error" id="login-err"></div>
+        <p class="auth-switch">No account? <button onclick="switchTab('register')">Register here</button></p>
+      </div>
+
+      <!-- REGISTER -->
+      <div class="auth-form" id="form-register">
+        <div class="auth-title">Create your account.</div>
+        <p class="auth-desc">Create your account. Your membership date is set permanently on sign-up.</p>
+        <div class="field-row">
+          <div class="field"><label>First Name</label><input type="text" id="reg-first" placeholder="Jane" /></div>
+          <div class="field"><label>Last Name</label><input type="text" id="reg-last" placeholder="Smith" /></div>
+        </div>
+        <div class="field"><label>Email</label><input type="email" id="reg-email" placeholder="you@example.com" /></div>
+        <div class="field"><label>Password</label><input type="password" id="reg-pass" placeholder="Min. 6 characters" /></div>
+        <button class="auth-submit" onclick="doRegister()">Create Account</button>
+        <div class="auth-error" id="reg-err"></div>
+        <p class="auth-switch">Already have an account? <button onclick="switchTab('login')">Sign in</button></p>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { supabase } from './js/supabase.js';
+    import './js/auth.js';
+    import './js/cart.js';
+
+    /* ── Check if age already verified ── */
+    if (localStorage.getItem('ageVerified') === 'true') {
+      document.getElementById('age-gate').style.display = 'none';
+      document.getElementById('auth-page').classList.add('active');
+    }
+
+    /* ── If already logged in, skip straight to dashboard ── */
+    const { data } = await supabase.auth.getSession();
+    if (data.session) window.location.replace('dashboard.html');
+
+    /* ── Scratch lines ── */
+    const wrap = document.getElementById('scratches');
+    for (let i = 0; i < 18; i++) {
+      const el = document.createElement('div');
+      el.className = 'scratch';
+      const h = Math.random() > .5;
+      el.style.cssText = h
+        ? `width:${60+Math.random()*180}px;height:${1+Math.random()*2}px;top:${Math.random()*100}%;left:${Math.random()*100}%;transform:rotate(${-15+Math.random()*30}deg)`
+        : `width:${1+Math.random()*2}px;height:${40+Math.random()*130}px;top:${Math.random()*100}%;left:${Math.random()*100}%;transform:rotate(${-8+Math.random()*16}deg)`;
+      wrap.appendChild(el);
+    }
+
+    /* expose to onclick handlers */
+    window.enterSite = () => {
+      localStorage.setItem('ageVerified', 'true');
+      document.getElementById('age-gate').style.display = 'none';
+      document.getElementById('auth-page').classList.add('active');
+    };
+    window.denySite = () => {
+      document.getElementById('age-gate').style.display = 'none';
+      document.getElementById('denied').style.display = 'flex';
+    };
+    window.switchTab = (tab) => {
+      document.querySelectorAll('.auth-tab').forEach((t,i) => t.classList.toggle('active', i===(tab==='login'?0:1)));
+      document.querySelectorAll('.auth-form').forEach((f,i) => f.classList.toggle('active', i===(tab==='login'?0:1)));
+    };
+    window.doLogin = async () => {
+      const email = document.getElementById('login-email').value.trim();
+      const pass  = document.getElementById('login-pass').value;
+      const err   = document.getElementById('login-err');
+      err.textContent = '';
+      if (!email || !pass) { err.textContent = 'Please fill in both fields.'; return; }
+      const result = await Auth.login(email, pass);
+      if (!result.ok) { err.textContent = result.err; return; }
+      window.location.href = 'dashboard.html';
+    };
+    window.doRegister = async () => {
+      const first = document.getElementById('reg-first').value.trim();
+      const last  = document.getElementById('reg-last').value.trim();
+      const email = document.getElementById('reg-email').value.trim();
+      const pass  = document.getElementById('reg-pass').value;
+      const err   = document.getElementById('reg-err');
+      err.textContent = '';
+      if (!first || !last || !email || !pass) { err.textContent = 'All fields are required.'; return; }
+      const result = await Auth.register(first, last, email, pass);
+      if (!result.ok) { err.textContent = result.err; return; }
+      window.location.href = 'dashboard.html';
+    };
+  </script>
+</body>
+</html>

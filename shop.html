@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Shop — BigBoyPeps</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Permanent+Marker&family=Barlow:wght@300;400;500;600&family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/global.css" />
+  <link rel="stylesheet" href="css/shared.css" />
+  <style>
+    body { display: flex; flex-direction: column; min-height: 100vh; }
+
+    .shop-header {
+      padding: 64px 0 48px; border-bottom: 1px solid var(--border);
+      position: relative; overflow: hidden;
+    }
+    .product-thumb {
+      height: 220px; display: flex; align-items: center; justify-content: center;
+      position: relative; overflow: hidden; border-bottom: 1px solid var(--border);
+      background: transparent;
+    }
+    .product-thumb::after { display: none; }
+
+    .shop-header { padding: 64px 0 48px; border-bottom: 1px solid var(--border); }
+    .shop-header-inner { position: relative; z-index: 1; }
+    .shop-eyebrow {
+      font-family: var(--font-c); font-size: .68rem; font-weight: 700;
+      letter-spacing: .28em; text-transform: uppercase; color: var(--red);
+      margin-bottom: 12px; display: flex; align-items: center; gap: 10px;
+    }
+    .shop-eyebrow::before { content: ''; width: 28px; height: 2px; background: var(--red); }
+    .shop-title {
+      font-family: var(--font-d); font-size: clamp(3rem,7vw,6rem);
+      line-height: .92; letter-spacing: .03em; color: var(--white); margin-bottom: 16px;
+    }
+    .shop-title em { color: var(--red); font-style: normal; }
+    .shop-desc { font-size: .9rem; color: var(--smoke); max-width: 480px; line-height: 1.75; }
+
+    .filters-bar {
+      display: flex; align-items: center; gap: 8px;
+      padding: 28px 0; flex-wrap: wrap; border-bottom: 1px solid var(--border);
+    }
+    .filters-label {
+      font-family: var(--font-c); font-size: .68rem; font-weight: 700;
+      letter-spacing: .2em; text-transform: uppercase; color: var(--smoke); margin-right: 8px;
+    }
+    .filter-btn {
+      padding: 7px 18px; font-family: var(--font-c); font-size: .7rem; font-weight: 700;
+      letter-spacing: .14em; text-transform: uppercase;
+      color: var(--smoke); border: 1px solid var(--border); background: transparent; transition: all .18s;
+    }
+    .filter-btn:hover  { border-color: var(--ash); color: var(--light); }
+    .filter-btn.active { background: var(--red); color: var(--white); border-color: var(--red); }
+
+    .products-section { padding: 48px 0 80px; flex: 1; }
+    .products-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(256px, 1fr)); gap: 20px;
+    }
+
+    .product-card {
+      background: var(--card); border: 1px solid var(--border);
+      transition: border-color .22s, transform .22s, box-shadow .22s;
+      display: flex; flex-direction: column;
+    }
+    .product-card:hover {
+      border-color: var(--red); transform: translateY(-4px); box-shadow: 0 12px 36px rgba(0,0,0,.5);
+    }
+
+    .thumb-glow { position: absolute; inset: 0; background: rgba(204,31,31,.06); opacity: 0; transition: opacity .22s; z-index: 1; }
+    .product-card:hover .thumb-glow { opacity: 1; }
+    .product-badge {
+      position: absolute; top: 12px; left: 12px; z-index: 2;
+      font-family: var(--font-c); font-size: .6rem; font-weight: 700;
+      letter-spacing: .18em; text-transform: uppercase;
+      padding: 4px 10px; border: 1px solid var(--border); background: rgba(12,12,12,.8); color: var(--smoke);
+    }
+    .product-badge.badge-hot { background: rgba(204,31,31,.15); color: var(--red); border-color: rgba(204,31,31,.3); }
+
+    .product-info { padding: 18px 20px 20px; display: flex; flex-direction: column; flex: 1; }
+    .product-cat {
+      font-family: var(--font-c); font-size: .62rem; font-weight: 700;
+      letter-spacing: .2em; text-transform: uppercase; color: var(--red); margin-bottom: 5px;
+    }
+    .product-name {
+      font-family: var(--font-c); font-size: 1.05rem; font-weight: 700;
+      letter-spacing: .04em; text-transform: uppercase; color: var(--white); margin-bottom: 4px; line-height: 1.25;
+    }
+    .product-research { font-size: .67rem; color: var(--smoke); font-style: italic; margin-bottom: 9px; }
+    .product-desc { font-size: .8rem; color: var(--smoke); line-height: 1.6; margin-bottom: 18px; flex: 1; }
+    .product-footer { display: flex; align-items: center; justify-content: space-between; }
+    .product-price { font-family: var(--font-d); font-size: 1.5rem; letter-spacing: .04em; color: var(--white); }
+    .add-btn {
+      width: 34px; height: 34px; background: var(--red); color: var(--white);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem; transition: background .18s, transform .18s;
+    }
+    .add-btn:hover { background: var(--red-hot); transform: scale(1.08); }
+
+    .add-flash {
+      position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(16px);
+      background: var(--off); border: 1px solid var(--border); border-left: 3px solid var(--red);
+      font-family: var(--font-c); font-size: .78rem; font-weight: 700; letter-spacing: .08em;
+      color: var(--light); padding: 12px 24px;
+      opacity: 0; transition: all .26s; pointer-events: none; white-space: nowrap; z-index: 100;
+    }
+    .add-flash.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+
+    .product-card.out-of-stock { opacity: .45; cursor: not-allowed; }
+    .product-card.out-of-stock .add-btn { display: none; }
+    .product-card.out-of-stock:hover { transform: none; box-shadow: none; border-color: var(--border); }
+    .out-of-stock-banner {
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(204,31,31,.92); color: #fff; z-index: 10;
+      font-family: var(--font-c); font-size: .72rem; font-weight: 700;
+      letter-spacing: .2em; text-transform: uppercase;
+      padding: 8px 20px; white-space: nowrap; pointer-events: none;
+    }
+    .low-stock-label { font-family:var(--font-c);font-size:.6rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#E8B84B;margin-bottom:8px; }
+    .in-stock-label  { font-family:var(--font-c);font-size:.6rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#5BC75B;margin-bottom:8px; }
+    @media (max-width: 700px) { .products-grid { grid-template-columns: 1fr 1fr; gap: 12px; } .nav-links { display: none; } }
+    @media (max-width: 420px) { .products-grid { grid-template-columns: 1fr; } }
+
+    /* skeleton loading */
+    .skeleton-card { background: var(--card); border: 1px solid var(--border); }
+    .skeleton-thumb { height: 200px; background: var(--charcoal, #222); }
+    .skeleton-info  { padding: 18px 20px 20px; }
+    .skeleton-line  { border-radius: 2px; background: var(--charcoal, #222); }
+    .skeleton-pulse { animation: skeletonPulse 1.4s ease-in-out infinite; }
+    @keyframes skeletonPulse {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: .4; }
+    }
+  </style>
+</head>
+<body>
+  <div id="nav-mount"></div>
+  <div id="banner-mount"></div>
+
+  <div class="shop-header">
+    <div class="shop-header-inner container">
+      <div class="shop-eyebrow">All Products</div>
+      <div class="shop-title">The Research <em>Catalog</em></div>
+      <p class="shop-desc">Premium research peptides and compounds. For research purposes only — not for human consumption.</p>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="filters-bar" id="filters">
+      <span class="filters-label">Filter</span>
+      <button class="filter-btn active" data-cat="All">All</button>
+      <button class="filter-btn" data-cat="In Stock">In Stock</button>
+      <button class="filter-btn" data-cat="GLP Peptides">GLP Peptides</button>
+      <button class="filter-btn" data-cat="GH Peptides">GH Peptides</button>
+      <button class="filter-btn" data-cat="Peptides">Peptides</button>
+      <button class="filter-btn" data-cat="Bundles">Bundles</button>
+    </div>
+  </div>
+
+  <div class="products-section">
+    <div class="container">
+      <div class="products-grid" id="products-grid">
+        <!-- skeleton cards shown while products load -->
+        ${Array.from({length:6}).map(()=>`
+          <div class="skeleton-card">
+            <div class="skeleton-thumb skeleton-pulse"></div>
+            <div class="skeleton-info">
+              <div class="skeleton-line skeleton-pulse" style="width:40%;height:.55rem;margin-bottom:10px"></div>
+              <div class="skeleton-line skeleton-pulse" style="width:80%;height:.8rem;margin-bottom:8px"></div>
+              <div class="skeleton-line skeleton-pulse" style="width:95%;height:.7rem;margin-bottom:6px"></div>
+              <div class="skeleton-line skeleton-pulse" style="width:70%;height:.7rem"></div>
+            </div>
+          </div>`).join('')}
+      </div>
+    </div>
+  </div>
+
+  <div id="footer-mount"></div>
+  <div class="add-flash" id="add-flash"></div>
+
+<script type="module">
+    import { supabase } from './js/supabase.js';
+    import './js/auth.js?v=14';
+    import './js/cart.js?v=14';
+    import { loadProducts, allProducts, getProduct, pepperSVG, heatPips } from './js/products.js?v=10';
+
+    await Promise.all([
+      window.initPage('shop'),
+      loadProducts()
+    ]);
+
+    function thumbHTML(p) {
+      if (p.images) {
+        return '<img src="pdct img/' + p.images + '" alt="' + p.name + '" style="width:auto;height:160px;object-fit:contain;object-position:center;position:relative;z-index:1;display:block;margin:auto" />';
+      }
+      return pepperSVG(p);
+    }
+
+    function thumbBg(p) {
+      return 'transparent';
+    }
+
+    function buildCard(p) {
+      var badge = p.badge ? '<span class="product-badge' + (p.badge.includes('\uD83D\uDD25') ? ' badge-hot' : '') + '">' + p.badge + '</span>' : '';
+      return (p.inventory <= 0
+          ? '<div class="product-card out-of-stock">'
+          : '<div class="product-card" onclick="goToProduct(' + p.id + ')" style="cursor:pointer">')
+        + '<div class="product-thumb" style="background:' + thumbBg(p) + '">'
+        + '<div class="thumb-glow"></div>'
+        + badge
+        + thumbHTML(p)
+        + (p.inventory <= 0 ? '<div class="out-of-stock-banner">Out of Stock</div>' : '')
+        + '</div>'
+        + '<div class="product-info">'
+        + '<div class="product-cat">' + p.category + '</div>'
+        + '<div class="product-name">' + p.name + '</div>'
+        + '<div class="product-research">For research purposes only · Not for human consumption</div>'
+        + '<div class="product-desc">' + p.description + '</div>'
+        + (p.inventory <= 0
+          ? ''
+          : p.inventory <= 10
+          ? '<div class="low-stock-label">Low Stock — ' + p.inventory + ' left</div>'
+          : '<div class="in-stock-label">In Stock</div>')
+        + '<div class="product-footer">'
+        + '<div class="product-price">$' + Number(p.price).toFixed(2) + '</div>'
+        + (p.inventory <= 0
+          ? '<button class="add-btn" disabled style="background:var(--border);cursor:not-allowed;transform:none" title="Out of stock">✕</button>'
+          : '<button class="add-btn" onclick="event.stopPropagation();addToCart(' + p.id + ')" title="Add to cart">+</button>')
+        + '</div>'
+        + '</div>'
+        + '</div>';
+    }
+
+    function sortProducts(list) {
+      // In-stock sorted by ID asc, then OOS sorted by ID asc at the bottom
+      var inStock = list.filter(function(p) { return p.inventory > 0; }).sort(function(a,b) { return a.id - b.id; });
+      var oos     = list.filter(function(p) { return p.inventory <= 0; }).sort(function(a,b) { return a.id - b.id; });
+      return inStock.concat(oos);
+    }
+
+    function renderProducts(cat) {
+      var all  = allProducts();
+      var list;
+      if (cat === 'In Stock') {
+        list = all.filter(function(p) { return p.inventory > 0; }).sort(function(a,b) { return a.id - b.id; });
+      } else {
+        list = cat === 'All' ? sortProducts(all) : sortProducts(all.filter(function(p) { return p.category === cat; }));
+      }
+      var grid = document.getElementById('products-grid');
+      if (!list.length) {
+        grid.innerHTML = '<div style="grid-column:1/-1;padding:48px 0;text-align:center"><p style="font-family:var(--font-c);font-size:.75rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--smoke)">' + (all.length === 0 ? 'No products loaded — check browser console (F12) for errors' : 'No products in this category') + '</p></div>';
+        return;
+      }
+      grid.innerHTML = list.map(buildCard).join('');
+    }
+
+    window.goToProduct = function(id) {
+      window.location.href = 'product.html?id=' + id;
+    };
+
+    window.addToCart = function(id) {
+      var p = getProduct(id);
+      if (!p) return;
+      var result = Cart.add(p);
+      var f = document.getElementById('add-flash');
+      if (!result.ok) {
+        f.textContent = result.err === 'out_of_stock'
+          ? p.name + ' is out of stock'
+          : 'Only ' + result.available + ' left in stock';
+        f.style.borderLeftColor = '#FF3030';
+      } else {
+        f.textContent = p.name + ' added to cart';
+        f.style.borderLeftColor = 'var(--red)';
+      }
+      f.classList.add('show');
+      clearTimeout(f._t);
+      f._t = setTimeout(function() { f.classList.remove('show'); }, 2200);
+    };
+
+    document.getElementById('filters').addEventListener('click', function(e) {
+      var btn = e.target.closest('.filter-btn');
+      if (!btn) return;
+      document.querySelectorAll('.filter-btn').forEach(function(b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+      renderProducts(btn.dataset.cat);
+    });
+
+    renderProducts('All');
+  </script>
+
+</body>
+</html>

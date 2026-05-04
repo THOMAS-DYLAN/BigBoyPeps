@@ -1,0 +1,56 @@
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Permanent+Marker&family=Barlow:wght@300;400;500;600&family=Barlow+Condensed:wght@600;700&display=swap');
+
+:root {
+  --red:     #CC1F1F;
+  --red-hot: #FF3030;
+  --black:   #0C0C0C;
+  --off:     #161616;
+  --card:    #1E1E1E;
+  --border:  #2A2A2A;
+  --smoke:   #666;
+  --ash:     #999;
+  --light:   #EEEBE6;
+  --white:   #FFF;
+  --font-d: 'Bebas Neue', sans-serif;
+  --font-m: 'Permanent Marker', cursive;
+  --font-b: 'Barlow', sans-serif;
+  --font-c: 'Barlow Condensed', sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font-b);
+  background: var(--black);
+  color: var(--light);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+button { cursor: pointer; font-family: var(--font-b); border: none; background: none; }
+input  { font-family: var(--font-b); }
+a      { color: inherit; text-decoration: none; }
+img    { max-width: 100%; height: auto; display: block; }
+
+/* Mobile-first container */
+.container {
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+@media (min-width: 480px)  { .container { padding: 0 20px; } }
+@media (min-width: 768px)  { .container { padding: 0 28px; } }
+@media (min-width: 1024px) { .container { padding: 0 32px; max-width: 1200px; } }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes skeletonPulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: .4; }
+}
