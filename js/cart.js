@@ -440,6 +440,9 @@ async function finishOrder(shipping) {
       shipping_carrier: shipping.shipping_carrier,
       shipping_price:   shipping.shipping_price,
     });
+
+    // Decrement inventory by qty purchased
+    await Auth.decrementInventory(items[i].id, items[i].qty);
   }
 
   // ── Send order notification to Brandon via Web3Forms ──────
