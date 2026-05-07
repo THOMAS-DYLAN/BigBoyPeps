@@ -226,7 +226,7 @@
         + '<div class="product-footer">'
         + '<div class="product-price">$' + Number(p.price).toFixed(2) + '</div>'
         + (p.inventory <= 0
-          ? '<button class="add-btn" disabled style="background:var(--border);cursor:not-allowed;transform:none" title="Out of stock">✕</button>'
+          ? '<button class="add-btn" onclick="event.stopPropagation();joinWaitlistShop(' + p.id + ',\'' + p.name + '\')" style="background:transparent;border:1px solid rgba(204,31,31,.5);color:var(--red);font-size:.55rem;cursor:pointer" title="Notify me when in stock">🔔</button>'
           : '<button class="add-btn" onclick="event.stopPropagation();addToCart(' + p.id + ')" title="Add to cart">+</button>')
         + '</div>'
         + '</div>'
@@ -255,6 +255,24 @@
       }
       grid.innerHTML = list.map(buildCard).join('');
     }
+
+    window.joinWaitlistShop = async function(id, name) {
+      const result = await Auth.joinWaitlist(id, name);
+      const f = document.getElementById('add-flash');
+      if (result.ok) {
+        f.textContent = '🔔 Added to waitlist — we\'ll email you when ' + name + ' is back';
+        f.style.borderLeftColor = '#5BC75B';
+      } else if (result.err === 'already_on_waitlist') {
+        f.textContent = 'You\'re already on the waitlist for ' + name;
+        f.style.borderLeftColor = 'var(--smoke)';
+      } else {
+        f.textContent = 'Could not join waitlist — please try again';
+        f.style.borderLeftColor = '#FF3030';
+      }
+      f.classList.add('show');
+      clearTimeout(f._t);
+      f._t = setTimeout(function() { f.classList.remove('show'); }, 3000);
+    };
 
     window.goToProduct = function(id) {
       window.location.href = 'product.html?id=' + id;

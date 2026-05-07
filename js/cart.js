@@ -18,11 +18,15 @@ window.Cart = {
   save(items) { localStorage.setItem(this._key, JSON.stringify(items)); },
 
   add(product) {
-    if (product.inventory <= 0) return { ok: false, err: 'out_of_stock' };
-    const items    = this.get();
-    const existing = items.find(i => i.id === product.id);
+    const cached  = window.ProductCache?.[product.id];
+    const liveInv = cached?.inventory ?? product.inventory ?? 0;
+    if (liveInv <= 0) return { ok: false, err: 'out_of_stock' };
+
+    const items      = this.get();
+    const existing   = items.find(i => i.id === product.id);
     const currentQty = existing ? existing.qty : 0;
-    if (currentQty + 1 > product.inventory) return { ok: false, err: 'insufficient_stock', available: product.inventory };
+    if (currentQty + 1 > liveInv) return { ok: false, err: 'insufficient_stock', available: liveInv };
+
     if (existing) existing.qty += 1;
     else items.push({ id: product.id, name: product.name, price: product.price, qty: 1 });
     this.save(items);
@@ -30,7 +34,10 @@ window.Cart = {
     return { ok: true };
   },
 
-  remove(id)      { this.save(this.get().filter(i => i.id !== id)); this.updateBadge(); },
+  remove(id) {
+    this.save(this.get().filter(i => i.id !== id));
+    this.updateBadge();
+  },
 
   setQty(id, qty) {
     const items = this.get();
@@ -39,7 +46,7 @@ window.Cart = {
     this.updateBadge();
   },
 
-  clear()  { this.save([]); this.updateBadge(); },
+  clear() { this.save([]); this.updateBadge(); },
   total()  { return this.get().reduce((s,i) => s + i.price * i.qty, 0); },
   count()  { return this.get().reduce((s,i) => s + i.qty, 0); },
 
@@ -397,19 +404,6 @@ window.payCashApp = async function() {
 
   window.open('https://cash.app/' + CASHAPP_USERNAME + '/' + total, '_blank');
   await finishOrder(shippingData);
-};
-
-// ── TEST PAYMENT (remove before launch) ──────────────────
-window.testOrder = async function() {
-  if (!shippingValid()) {
-    SHIP_RULES.forEach(function(r) {
-      var el    = document.getElementById(r.id);
-      var errEl = document.getElementById(r.err);
-      if (el && errEl && !r.test(el.value.trim())) errEl.textContent = r.msg;
-    });
-    return;
-  }
-  await finishOrder(captureShipping());
 };
 
 // ── Finish order ──────────────────────────────────────────

@@ -163,18 +163,19 @@
 
   <script type="module">
     import { supabase } from './js/supabase.js';
-    import './js/auth.js';
-    import './js/cart.js';
+    import './js/auth.js?v=14';
+    import './js/cart.js?v=14';
 
-    /* ── Check if age already verified ── */
-    if (localStorage.getItem('ageVerified') === 'true') {
+    /* ── If already logged in, skip everything ── */
+    const { data } = await supabase.auth.getSession();
+    if (data.session) {
+      window.location.replace('dashboard.html');
+    } else if (localStorage.getItem('ageVerified') === 'true') {
+      /* Age already confirmed this browser session — show auth directly */
       document.getElementById('age-gate').style.display = 'none';
       document.getElementById('auth-page').classList.add('active');
     }
-
-    /* ── If already logged in, skip straight to dashboard ── */
-    const { data } = await supabase.auth.getSession();
-    if (data.session) window.location.replace('dashboard.html');
+    /* Otherwise age gate stays visible (default) */
 
     /* ── Scratch lines ── */
     const wrap = document.getElementById('scratches');
@@ -202,16 +203,44 @@
       document.querySelectorAll('.auth-tab').forEach((t,i) => t.classList.toggle('active', i===(tab==='login'?0:1)));
       document.querySelectorAll('.auth-form').forEach((f,i) => f.classList.toggle('active', i===(tab==='login'?0:1)));
     };
+    // Known disposable/fake email domains to block
+    const BLOCKED_DOMAINS = [
+      'none.com','noemail.com','nomail.com','fake.com','test.com',
+      'example.com','mailinator.com','guerrillamail.com','tempmail.com',
+      'throwaway.com','trashmail.com','yopmail.com','sharklasers.com',
+      'dispostable.com','maildrop.cc','fakeinbox.com','spamgourmet.com',
+      'getairmail.com','filzmail.com','discard.email','spamspot.com',
+    ];
+
+    function isValidEmail(email) {
+      // Basic format check
+      const fmt = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email);
+      if (!fmt) return { ok: false, msg: 'Please enter a valid email address.' };
+      // Block obviously fake domains
+      const domain = email.split('@')[1].toLowerCase();
+      if (BLOCKED_DOMAINS.includes(domain)) return { ok: false, msg: 'Please use a real email address.' };
+      // Block emails with "noemail", "none", "test", "fake" in them
+      const local = email.split('@')[0].toLowerCase();
+      if (['none','noemail','nomail','fake','test','nope','notreal'].some(w => local.includes(w))) {
+        return { ok: false, msg: 'Please use a real email address.' };
+      }
+      return { ok: true };
+    }
+
+
     window.doLogin = async () => {
       const email = document.getElementById('login-email').value.trim();
       const pass  = document.getElementById('login-pass').value;
       const err   = document.getElementById('login-err');
       err.textContent = '';
       if (!email || !pass) { err.textContent = 'Please fill in both fields.'; return; }
+      const emailCheck = isValidEmail(email);
+      if (!emailCheck.ok) { err.textContent = emailCheck.msg; return; }
       const result = await Auth.login(email, pass);
       if (!result.ok) { err.textContent = result.err; return; }
       window.location.href = 'dashboard.html';
     };
+
     window.doRegister = async () => {
       const first = document.getElementById('reg-first').value.trim();
       const last  = document.getElementById('reg-last').value.trim();
@@ -219,10 +248,58 @@
       const pass  = document.getElementById('reg-pass').value;
       const err   = document.getElementById('reg-err');
       err.textContent = '';
+
       if (!first || !last || !email || !pass) { err.textContent = 'All fields are required.'; return; }
+
+      const emailCheck = isValidEmail(email);
+      if (!emailCheck.ok) { err.textContent = emailCheck.msg; return; }
+
+      if (pass.length < 8) { err.textContent = 'Password must be at least 8 characters.'; return; }
+
       const result = await Auth.register(first, last, email, pass);
       if (!result.ok) { err.textContent = result.err; return; }
-      window.location.href = 'dashboard.html';
+
+      // Notify Brandon of new registration via Web3Forms
+      try {
+        const timestamp = new Date().toLocaleString('en-US', { timeZone: 'America/Chicago', dateStyle: 'full', timeStyle: 'short' });
+        const emailPayload = {
+          access_key: '8eec27a9-6e50-4206-a71a-a2c6f0c4c8bb',
+          subject:    'New Registration — BigBoyPeps',
+          from_name:  'BigBoyPeps Store',
+          name:       first + ' ' + last,
+          email:      'Brandon.burnell@hotmail.com',
+          message:
+            '=== NEW RESEARCHER REGISTERED ===\n\n' +
+            'First Name: ' + first + '\n' +
+            'Last Name:  ' + last + '\n' +
+            'Email:      ' + email + '\n' +
+            'Registered: ' + timestamp,
+        };
+        console.log('%c📧 REGISTRATION EMAIL PAYLOAD', 'color:#5BC75B;font-weight:bold;font-size:14px');
+        console.log('%cTo: Brandon.burnell@hotmail.com', 'color:#E8B84B');
+        console.log('%cMessage:\n' + emailPayload.message, 'color:#EEEBE6');
+        const response = await fetch('https://api.web3forms.com/submit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+          body: JSON.stringify(emailPayload),
+        });
+        const responseData = await response.json();
+        console.log('%c📬 Web3Forms Response:', 'color:#5BC75B;font-weight:bold', responseData);
+      } catch(e) { console.error('Registration notify failed:', e); }
+
+      // Show confirmation message instead of redirecting
+      document.getElementById('form-register').innerHTML = `
+        <div style="text-align:center;padding:32px 0">
+          <div style="font-size:2.5rem;margin-bottom:16px">📬</div>
+          <div style="font-family:var(--font-d);font-size:1.8rem;color:var(--white);margin-bottom:12px">Check Your Email</div>
+          <p style="color:var(--smoke);font-size:.88rem;line-height:1.8;max-width:320px;margin:0 auto">
+            We sent a confirmation link to<br/>
+            <strong style="color:var(--light)">${email}</strong><br/><br/>
+            Click the link to activate your account.<br/>
+            Check your spam folder if you don't see it.
+          </p>
+        </div>
+      `;
     };
   </script>
 </body>
