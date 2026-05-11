@@ -135,7 +135,7 @@ const CASHAPP_USERNAME  = '$BigBoyPeps';
 
 // ── Shipping options ──────────────────────────────────────────
 const SHIPPING_OPTIONS = [
-  { id: 'usps', label: 'USPS Standard Shipping', carrier: 'USPS', days: '5–7 business days', price: 30.00 },
+  { id: 'usps', label: 'USPS Standard Shipping', carrier: 'USPS', days: '5–7 business days', price: 15.00 },
   { id: 'ups2', label: 'UPS 2-Day Air',           carrier: 'UPS',  days: '2 business days',  price: 40.00 },
 ];
 
@@ -426,7 +426,7 @@ async function finishOrder(shipping) {
   }
 
   var subtotal = items.reduce(function(s,i) { return s + i.price * i.qty; }, 0);
-  var shipPrice = shipping.shipping_price || 30;
+  var shipPrice = shipping.shipping_price || 15 ;
   var orderTotal = subtotal + shipPrice;
 
   for (var i = 0; i < items.length; i++) {
