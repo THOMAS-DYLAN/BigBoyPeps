@@ -32,7 +32,7 @@ export async function loadProducts() {
   if (_loaded) return;
   const { data, error } = await supabase
     .from('products')
-    .select('id, name, category, price, potency, description, badge, thumb_color, shape_key, active, images, inventory')
+    .select('id, name, category, price, potency, description, badge, thumb_color, shape_key, active, images, inventory, lab_report')
     .eq('active', true)
     .order('id');
 

@@ -299,6 +299,58 @@
       letter-spacing: .22em; text-transform: uppercase;
       padding: 10px 28px;
     }
+    /* ── LAB REPORT ──────────────────────────────── */
+    .lab-report-section {
+      padding: 40px 0 48px;
+      border-top: 1px solid var(--border);
+      display: flex; gap: 40px; align-items: flex-start;
+    }
+    .lab-report-meta { flex: 1; min-width: 0; padding-top: 4px; }
+    .lab-report-eyebrow {
+      font-family: var(--font-c); font-size: .65rem; font-weight: 700;
+      letter-spacing: .24em; text-transform: uppercase; color: var(--red);
+      margin-bottom: 10px; display: flex; align-items: center; gap: 8px;
+    }
+    .lab-report-eyebrow::before { content: ''; width: 20px; height: 2px; background: var(--red); }
+    .lab-report-title {
+      font-family: var(--font-d); font-size: 1.4rem; letter-spacing: .04em;
+      color: var(--white); margin-bottom: 8px;
+    }
+    .lab-report-subtitle {
+      font-size: .78rem; color: var(--smoke); line-height: 1.65;
+      margin-bottom: 16px; max-width: 320px;
+    }
+    .lab-report-verify {
+      font-family: var(--font-c); font-size: .62rem; font-weight: 700;
+      letter-spacing: .12em; text-transform: uppercase; color: var(--smoke);
+    }
+    .lab-report-verify a {
+      color: var(--red); text-decoration: underline; text-underline-offset: 3px;
+      transition: opacity .18s;
+    }
+    .lab-report-verify a:hover { opacity: .75; }
+    .lab-report-doc {
+      flex-shrink: 0; width: 220px;
+      border: 1px solid var(--border);
+      box-shadow: 0 8px 32px rgba(0,0,0,.45);
+      overflow: hidden; position: relative;
+      transition: box-shadow .22s, transform .22s;
+    }
+    .lab-report-doc:hover {
+      box-shadow: 0 12px 48px rgba(0,0,0,.65);
+      transform: translateY(-2px);
+    }
+    .lab-report-doc img { width: 100%; height: auto; display: block; }
+    .lab-report-doc-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to bottom, transparent 70%, rgba(0,0,0,.4) 100%);
+      pointer-events: none;
+    }
+    @media (max-width: 600px) {
+      .lab-report-section { flex-direction: column-reverse; gap: 20px; }
+      .lab-report-doc { width: 180px; }
+    }
+
     @media (max-width: 860px) {
       .product-layout { grid-template-columns: 1fr; gap: 36px; }
       .product-visual { position: static; }
@@ -329,6 +381,9 @@
     </div>
   </div>
 
+  <!-- LAB REPORT SECTION — only rendered if product has lab_report -->
+  <div class="container" id="lab-report-mount" style="display:none"></div>
+
   <!-- RATING SECTION — stars only, no text comments -->
   <div class="container" id="reviews-section">
     <div class="reviews-area">
@@ -343,8 +398,33 @@
         <!-- Star picker inside form -->
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
           <span style="font-family:var(--font-c);font-size:.6rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--smoke)">Your Rating</span>
-          <div id="form-star-picker" style="display:flex;gap:4px">
-            ${[1,2,3,4,5].map(function(n) { return '<button style="background:none;padding:0;cursor:pointer;display:inline-flex;transition:transform .12s" onmouseenter="hoverFormStars(' + n + ')" onmouseleave="resetFormStars()" onclick="pickFormStar(' + n + ');event.preventDefault()"><svg viewBox="0 0 24 24" fill="var(--border)" width="22" height="22" id="fstar-' + n + '"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></button>'; }).join('')}
+          <div id="form-star-picker" style="display:flex;gap:4px"></div>
+          <script>
+              (function() {
+                var container = document.getElementById('form-star-picker');
+                for (var n = 1; n <= 5; n++) {
+                  var btn = document.createElement('button');
+                  btn.style.cssText = 'background:none;padding:0;cursor:pointer;display:inline-flex;transition:transform .12s';
+                  btn.setAttribute('onmouseenter', 'hoverFormStars(' + n + ')');
+                  btn.setAttribute('onmouseleave', 'resetFormStars()');
+                  btn.setAttribute('onclick', 'pickFormStar(' + n + ');event.preventDefault()');
+                
+                  var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+                  svg.setAttribute('viewBox', '0 0 24 24');
+                  svg.setAttribute('fill', 'var(--border)');
+                  svg.setAttribute('width', '22');
+                  svg.setAttribute('height', '22');
+                  svg.setAttribute('id', 'fstar-' + n);
+                
+                  var path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                  path.setAttribute('d', 'M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z');
+                
+                  svg.appendChild(path);
+                  btn.appendChild(svg);
+                  container.appendChild(btn);
+                }
+              })();
+            </script>
           </div>
           <span id="form-star-label" style="font-family:var(--font-c);font-size:.6rem;color:var(--smoke)"></span>
         </div>
@@ -406,6 +486,7 @@
       } else {
         const rating = await Auth.getProductRating(productId);
         renderProduct(p, rating);
+        renderLabReport(p);
         renderRelated(p);
         renderReviews(productId, rating);
       }
@@ -587,6 +668,31 @@
         toast._t = setTimeout(() => toast.classList.remove('show'), 2400);
       }
     };
+
+    /* ── Lab Report ── */
+    function renderLabReport(p) {
+      const mount = document.getElementById('lab-report-mount');
+      if (!mount) return;
+      if (!p.lab_report) return; // null, undefined, or empty string → do nothing
+
+      const safeName = p.name.replace(/"/g, '&quot;');
+      mount.style.display = 'block';
+      mount.innerHTML = `
+        <div class="lab-report-section">
+          <div class="lab-report-meta">
+            <div class="lab-report-eyebrow">Third-Party Verified</div>
+            <div class="lab-report-title">Lab Report</div>
+            <p class="lab-report-subtitle">Independently tested by Janoshik Analytical. Results shown as received.</p>
+            <div class="lab-report-verify">
+              Verify at <a href="https://www.janoshik.com/verify/" target="_blank" rel="noopener noreferrer">janoshik.com/verify</a>
+            </div>
+          </div>
+          <div class="lab-report-doc">
+            <img src="report img/${p.lab_report}" alt="Third-party lab report for ${safeName}" loading="lazy" />
+            <div class="lab-report-doc-overlay"></div>
+          </div>
+        </div>`;
+    }
 
     /* ── Related products ── */
     function renderRelated(current) {
