@@ -60,6 +60,7 @@ window.Auth = {
 
   // ── Auth Flow ────────────────────────────────────────────────
   async requireLogin() {
+    if (window.__BBP_RECOVERY_MODE__) return; // on reset.html — never redirect
     const session = await this.getSession();
     if (!session) window.location.replace('index.html');
   },

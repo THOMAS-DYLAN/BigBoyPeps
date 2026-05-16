@@ -131,6 +131,7 @@
       <div class="auth-tabs">
         <button class="auth-tab active" onclick="switchTab('login')">Sign In</button>
         <button class="auth-tab"        onclick="switchTab('register')">Register</button>
+        <button class="auth-tab"        onclick="switchTab('reset')">Reset Password</button>
       </div>
 
       <!-- LOGIN -->
@@ -141,7 +142,7 @@
         <div class="field"><label>Password</label><input type="password" id="login-pass" placeholder="••••••••" /></div>
         <button class="auth-submit" onclick="doLogin()">Sign In</button>
         <div class="auth-error" id="login-err"></div>
-        <p class="auth-switch">No account? <button onclick="switchTab('register')">Register here</button></p>
+        <p class="auth-switch">No account? <button onclick="switchTab('register')">Register here</button> &nbsp;·&nbsp; <button onclick="switchTab('reset')">Forgot password?</button></p>
       </div>
 
       <!-- REGISTER -->
@@ -158,13 +159,62 @@
         <div class="auth-error" id="reg-err"></div>
         <p class="auth-switch">Already have an account? <button onclick="switchTab('login')">Sign in</button></p>
       </div>
+
+      <!-- RESET PASSWORD -->
+      <div class="auth-form" id="form-reset">
+        <div class="auth-title">Reset your password.</div>
+        <p class="auth-desc">Enter your email and we'll send you a link to set a new password.</p>
+        <div class="field"><label>Email</label><input type="email" id="reset-email" placeholder="you@example.com" /></div>
+        <button class="auth-submit" onclick="doReset()">Send Reset Link</button>
+        <div class="auth-error" id="reset-err"></div>
+        <div class="auth-success" id="reset-ok" style="display:none;margin-top:12px;font-family:var(--font-c);font-size:.72rem;font-weight:700;letter-spacing:.1em;color:#5BC75B;">Reset link sent — check your email.</div>
+        <p class="auth-switch">Remember it? <button onclick="switchTab('login')">Sign in</button></p>
+      </div>
     </div>
   </div>
+
+  <!-- Redirect recovery links BEFORE any module/auth code runs -->
+  <script>
+    if (window.location.hash.includes('type=recovery')) {
+      window.location.replace('reset.html' + window.location.hash);
+    }
+  </script>
 
   <script type="module">
     import { supabase } from './js/supabase.js';
     import './js/auth.js?v=14';
     import './js/cart.js?v=14';
+
+    /* expose to onclick handlers — defined FIRST before any await */
+    window.enterSite = () => {
+      localStorage.setItem('ageVerified', 'true');
+      document.getElementById('age-gate').style.display = 'none';
+      document.getElementById('auth-page').classList.add('active');
+    };
+    window.denySite = () => {
+      document.getElementById('age-gate').style.display = 'none';
+      document.getElementById('denied').style.display = 'flex';
+    };
+    window.switchTab = (tab) => {
+      document.querySelectorAll('.auth-tab').forEach((t,i) => t.classList.toggle('active', i===(tab==='login'?0:tab==='register'?1:2)));
+      document.querySelectorAll('.auth-form').forEach((f,i) => f.classList.toggle('active', i===(tab==='login'?0:tab==='register'?1:2)));
+    };
+
+    window.doReset = async () => {
+      const email = document.getElementById('reset-email').value.trim();
+      const err   = document.getElementById('reset-err');
+      const ok    = document.getElementById('reset-ok');
+      err.textContent = '';
+      ok.style.display = 'none';
+      if (!email) { err.textContent = 'Please enter your email.'; return; }
+      const emailCheck = isValidEmail(email);
+      if (!emailCheck.ok) { err.textContent = emailCheck.msg; return; }
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: 'https://bigboypeps.com/reset.html',
+      });
+      if (error) { err.textContent = error.message; return; }
+      ok.style.display = 'block';
+    };
 
     /* ── If already logged in, skip everything ── */
     const { data } = await supabase.auth.getSession();
@@ -189,20 +239,6 @@
       wrap.appendChild(el);
     }
 
-    /* expose to onclick handlers */
-    window.enterSite = () => {
-      localStorage.setItem('ageVerified', 'true');
-      document.getElementById('age-gate').style.display = 'none';
-      document.getElementById('auth-page').classList.add('active');
-    };
-    window.denySite = () => {
-      document.getElementById('age-gate').style.display = 'none';
-      document.getElementById('denied').style.display = 'flex';
-    };
-    window.switchTab = (tab) => {
-      document.querySelectorAll('.auth-tab').forEach((t,i) => t.classList.toggle('active', i===(tab==='login'?0:1)));
-      document.querySelectorAll('.auth-form').forEach((f,i) => f.classList.toggle('active', i===(tab==='login'?0:1)));
-    };
     // Known disposable/fake email domains to block
     const BLOCKED_DOMAINS = [
       'none.com','noemail.com','nomail.com','fake.com','test.com',
@@ -257,6 +293,7 @@
       if (pass.length < 8) { err.textContent = 'Password must be at least 8 characters.'; return; }
 
       const result = await Auth.register(first, last, email, pass);
+      if (result.ok) {window.location = "/dashboard.html";}
       if (!result.ok) { err.textContent = result.err; return; }
 
       // Notify Brandon of new registration via Web3Forms
@@ -285,7 +322,9 @@
         });
         const responseData = await response.json();
         console.log('%c📬 Web3Forms Response:', 'color:#5BC75B;font-weight:bold', responseData);
-      } catch(e) { console.error('Registration notify failed:', e); }
+      } catch(e) { console.error('Registration notify failed:', e); 
+      }
+
     };
   </script>
 </body>

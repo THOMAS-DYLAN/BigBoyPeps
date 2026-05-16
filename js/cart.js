@@ -279,6 +279,9 @@ function renderCheckoutModal(items, profile, addr) {
     + '<div class="modal-section-title">Payment Method</div>'
     + '<div id="paypal-button-container"></div>'
     + '<div id="cashapp-container" style="margin-top:10px"></div>'
+    + '<div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border)">'
+    + '<button onclick="testPay()" style="width:100%;padding:12px;font-family:var(--font-c);font-size:.68rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;background:transparent;border:1px solid var(--border);color:var(--smoke);cursor:pointer;transition:all .18s" onmouseover="this.style.borderColor=\'var(--ash)\';this.style.color=\'var(--light)\'" onmouseout="this.style.borderColor=\'var(--border)\';this.style.color=\'var(--smoke)\'">🧪 Test Payment (no charge)</button>'
+    + '</div>'
     + '</div>'
 
     + '<p class="modal-disclaimer">All products are sold for research purposes only and not intended for human consumption.</p>'
@@ -406,6 +409,75 @@ window.payCashApp = async function() {
   await finishOrder(shippingData);
 };
 
+// ── Order notification (shared by finishOrder + test button) ──
+async function sendOrderNotification(items, shipping, profile) {
+  var subtotal   = items.reduce(function(s,i) { return s + i.price * i.qty; }, 0);
+  var shipPrice  = shipping.shipping_price || 15;
+  var orderTotal = subtotal + shipPrice;
+  var itemList   = items.map(function(i) {
+    return i.qty + 'x ' + i.name + ' @ $' + Number(i.price).toFixed(2);
+  }).join('\n');
+
+  await fetch('https://api.web3forms.com/submit', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+    body: JSON.stringify({
+      access_key:  '8eec27a9-6e50-4206-a71a-a2c6f0c4c8bb',
+      subject:     'New Order — BigBoyPeps',
+      from_name:   'BigBoyPeps Store',
+      name:        (shipping.first_name || '') + ' ' + (shipping.last_name || ''),
+      email:       profile?.email || 'unknown',
+      message:
+        '=== NEW ORDER ===\n\n' +
+        'CUSTOMER\n' +
+        'Name: '  + (shipping.first_name || '') + ' ' + (shipping.last_name || '') + '\n' +
+        'Email: ' + (profile?.email || 'unknown') + '\n\n' +
+        'SHIPPING ADDRESS\n' +
+        (shipping.street_line1 || '') + '\n' +
+        (shipping.city || '') + ', ' + (shipping.state || '') + ' ' + (shipping.zip || '') + '\n' +
+        (shipping.country || 'United States') + '\n\n' +
+        'SHIPPING METHOD\n' +
+        (shipping.shipping_method || 'USPS Standard') + '\n' +
+        'Shipping Cost: $' + Number(shipPrice).toFixed(2) + '\n\n' +
+        'ITEMS ORDERED\n' + itemList + '\n\n' +
+        'Subtotal: $' + subtotal.toFixed(2) + '\n' +
+        'Shipping: $' + Number(shipPrice).toFixed(2) + '\n' +
+        'TOTAL: $'    + orderTotal.toFixed(2),
+    }),
+  });
+}
+
+// ── Test payment — validates shipping, sends email, shows success, no charge ──
+window.testPay = async function() {
+  if (!shippingValid()) {
+    SHIP_RULES.forEach(function(r) {
+      var el    = document.getElementById(r.id);
+      var errEl = document.getElementById(r.err);
+      if (el && errEl && !r.test(el.value.trim())) errEl.textContent = r.msg;
+    });
+    return;
+  }
+
+  var shippingData = captureShipping();
+  var items        = Cart.get();
+
+  try {
+    var profile = await Auth.getProfile();
+    await sendOrderNotification(items, shippingData, profile);
+  } catch(e) {
+    console.error('Test pay notification failed:', e);
+  }
+
+  document.getElementById('checkout-modal').innerHTML =
+    '<div class="modal-head"><div class="modal-title">Order Placed</div><button class="modal-close" onclick="closeCheckout()">&#x2715;</button></div>'
+    + '<div class="order-success">'
+    + '<div class="order-success-icon">✓</div>'
+    + '<h2>Order Confirmed.</h2>'
+    + '<p>Your order is confirmed and on its way.<br/>Handle with appropriate care and caution.</p>'
+    + '<a href="dashboard.html" style="display:inline-block;margin-top:24px;font-family:var(--font-c);font-size:.75rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;background:var(--red);color:var(--white);padding:12px 28px;clip-path:polygon(0 0,calc(100% - 7px) 0,100% 7px,100% 100%,7px 100%,0 calc(100% - 7px))">Back to Dashboard</a>'
+    + '</div>';
+};
+
 // ── Finish order ──────────────────────────────────────────
 async function finishOrder(shipping) {
   if (!shipping) shipping = {};
@@ -430,7 +502,6 @@ async function finishOrder(shipping) {
   var orderTotal = subtotal + shipPrice;
 
   // ── Save orders + decrement inventory ─────────────────────
-  // Wrapped in try/catch so a DB failure never blocks the email
   try {
     for (var i = 0; i < items.length; i++) {
       await Auth.createOrder({
@@ -449,41 +520,10 @@ async function finishOrder(shipping) {
     console.error('Order save failed:', e);
   }
 
-  // ── Send order notification to Brandon via Web3Forms ──────
-  // Fires independently — a DB failure above will NOT stop this
+  // ── Send notification via shared function ──────────────────
   try {
-    var profile  = await Auth.getProfile();
-    var itemList = items.map(function(i) {
-      return i.qty + 'x ' + i.name + ' @ $' + Number(i.price).toFixed(2);
-    }).join('\n');
-
-    await fetch('https://api.web3forms.com/submit', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-      body: JSON.stringify({
-        access_key:  '8eec27a9-6e50-4206-a71a-a2c6f0c4c8bb',
-        subject:     'New Order — BigBoyPeps',
-        from_name:   'BigBoyPeps Store',
-        name:        (shipping.first_name || '') + ' ' + (shipping.last_name || ''),
-        email:       profile?.email || 'unknown',
-        message:
-          '=== NEW ORDER ===\n\n' +
-          'CUSTOMER\n' +
-          'Name: '  + (shipping.first_name || '') + ' ' + (shipping.last_name || '') + '\n' +
-          'Email: ' + (profile?.email || 'unknown') + '\n\n' +
-          'SHIPPING ADDRESS\n' +
-          (shipping.street_line1 || '') + '\n' +
-          (shipping.city || '') + ', ' + (shipping.state || '') + ' ' + (shipping.zip || '') + '\n' +
-          (shipping.country || 'United States') + '\n\n' +
-          'SHIPPING METHOD\n' +
-          (shipping.shipping_method || 'USPS Standard') + '\n' +
-          'Shipping Cost: $' + Number(shipPrice).toFixed(2) + '\n\n' +
-          'ITEMS ORDERED\n' + itemList + '\n\n' +
-          'Subtotal: $' + subtotal.toFixed(2) + '\n' +
-          'Shipping: $' + Number(shipPrice).toFixed(2) + '\n' +
-          'TOTAL: $'    + orderTotal.toFixed(2),
-      }),
-    });
+    var profile = await Auth.getProfile();
+    await sendOrderNotification(items, shipping, profile);
   } catch(e) {
     console.error('Order notification failed:', e);
   }
