@@ -343,6 +343,48 @@ window.Auth = {
     };
   },
 
+  // ── Waitlist ─────────────────────────────────────────────────
+  async joinWaitlist(productId, productName) {
+    const user = await this.getUser();
+    if (!user) return { ok: false, err: 'not_logged_in' };
+
+    // Check if already on waitlist
+    const { data: existing } = await supabase
+      .from('waitlist')
+      .select('id')
+      .eq('user_id', user.id)
+      .eq('product_id', productId)
+      .maybeSingle();
+
+    if (existing) return { ok: false, err: 'already_on_waitlist' };
+
+    // Insert waitlist row
+    const { error } = await supabase.from('waitlist').insert({
+      user_id:    user.id,
+      product_id: productId,
+      email:      user.email,
+      name:       (user.user_metadata?.first_name || '') + ' ' + (user.user_metadata?.last_name || ''),
+      notified:   false,
+    });
+
+    if (error) return { ok: false, err: error.message };
+
+    // Notify Brandon via Web3Forms
+    fetch('https://api.web3forms.com/submit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        access_key: '8eec27a9-6e50-4206-a71a-a2c6f0c4c8bb',
+        subject:    'BBP Waitlist — ' + productName,
+        from_name:  'BigBoyPeps',
+        to:         'Brandon.burnell@hotmail.com',
+        message:    'New waitlist signup:\nProduct: ' + productName + '\nEmail: ' + user.email,
+      })
+    }).catch(() => {}); // fire-and-forget
+
+    return { ok: true };
+  },
+
   // ── Utility ──────────────────────────────────────────────────
   formatDate(iso) {
     if (!iso) return '—';

@@ -425,29 +425,34 @@ async function finishOrder(shipping) {
     });
   }
 
-  var subtotal = items.reduce(function(s,i) { return s + i.price * i.qty; }, 0);
-  var shipPrice = shipping.shipping_price || 15 ;
+  var subtotal   = items.reduce(function(s,i) { return s + i.price * i.qty; }, 0);
+  var shipPrice  = shipping.shipping_price || 15;
   var orderTotal = subtotal + shipPrice;
 
-  for (var i = 0; i < items.length; i++) {
-    await Auth.pushOrder({
-      productId:        items[i].id,
-      name:             items[i].name,
-      qty:              items[i].qty,
-      price:            items[i].price,
-      total:            items[i].price * items[i].qty,
-      shipping_method:  shipping.shipping_method,
-      shipping_carrier: shipping.shipping_carrier,
-      shipping_price:   shipping.shipping_price,
-    });
-
-    // Decrement inventory by qty purchased
-    await Auth.decrementInventory(items[i].id, items[i].qty);
+  // ── Save orders + decrement inventory ─────────────────────
+  // Wrapped in try/catch so a DB failure never blocks the email
+  try {
+    for (var i = 0; i < items.length; i++) {
+      await Auth.createOrder({
+        productId:        items[i].id,
+        name:             items[i].name,
+        qty:              items[i].qty,
+        price:            items[i].price,
+        total:            items[i].price * items[i].qty,
+        shipping_method:  shipping.shipping_method,
+        shipping_carrier: shipping.shipping_carrier,
+        shipping_price:   shipping.shipping_price,
+      });
+      await Auth.decrementInventory(items[i].id, items[i].qty);
+    }
+  } catch(e) {
+    console.error('Order save failed:', e);
   }
 
   // ── Send order notification to Brandon via Web3Forms ──────
+  // Fires independently — a DB failure above will NOT stop this
   try {
-    var profile = await Auth.getProfile();
+    var profile  = await Auth.getProfile();
     var itemList = items.map(function(i) {
       return i.qty + 'x ' + i.name + ' @ $' + Number(i.price).toFixed(2);
     }).join('\n');
@@ -464,7 +469,7 @@ async function finishOrder(shipping) {
         message:
           '=== NEW ORDER ===\n\n' +
           'CUSTOMER\n' +
-          'Name: ' + (shipping.first_name || '') + ' ' + (shipping.last_name || '') + '\n' +
+          'Name: '  + (shipping.first_name || '') + ' ' + (shipping.last_name || '') + '\n' +
           'Email: ' + (profile?.email || 'unknown') + '\n\n' +
           'SHIPPING ADDRESS\n' +
           (shipping.street_line1 || '') + '\n' +
@@ -476,7 +481,7 @@ async function finishOrder(shipping) {
           'ITEMS ORDERED\n' + itemList + '\n\n' +
           'Subtotal: $' + subtotal.toFixed(2) + '\n' +
           'Shipping: $' + Number(shipPrice).toFixed(2) + '\n' +
-          'TOTAL: $' + orderTotal.toFixed(2),
+          'TOTAL: $'    + orderTotal.toFixed(2),
       }),
     });
   } catch(e) {

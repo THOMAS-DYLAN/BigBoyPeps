@@ -17,37 +17,58 @@
 import { supabase } from './supabase.js';
 
 // ── Cache ─────────────────────────────────────────────────────
-const PRODUCTS_VERSION = '13';
+const PRODUCTS_VERSION = '14';
 let _loaded = false;
 
 if (window.ProductCache?._version !== PRODUCTS_VERSION) {
   window.ProductCache = { _version: PRODUCTS_VERSION };
   _loaded = false;
 } else {
-  // Cache is valid — mark as already loaded if it has products
   _loaded = Object.keys(window.ProductCache).filter(k => k !== '_version').length > 0;
 }
 
+// Two-phase parallel fetch:
+// Phase 1 — lightweight fields the shop grid needs to paint cards (small payload)
+// Phase 2 — heavier fields only needed on the product page (description, lab_report)
+// Both fire simultaneously via Promise.all so there's no extra round-trip cost.
 export async function loadProducts() {
   if (_loaded) return;
-  const { data, error } = await supabase
+
+  const phase1 = supabase
     .from('products')
-    .select('id, name, category, price, potency, description, badge, thumb_color, shape_key, active, images, inventory, lab_report')
+    .select('id, name, category, price, potency, badge, thumb_color, shape_key, images, inventory, active')
     .eq('active', true)
     .order('id');
 
-  if (error) {
-    console.error('loadProducts failed:', error.message, error);
-    // Don't set _loaded — allows retry on next call
+  const phase2 = supabase
+    .from('products')
+    .select('id, description, lab_report')
+    .eq('active', true);
+
+  // Both requests fire at the same time
+  const [r1, r2] = await Promise.all([phase1, phase2]);
+
+  if (r1.error) {
+    console.error('loadProducts phase1 failed:', r1.error.message);
     return;
   }
-
-  if (!data || data.length === 0) {
-    console.warn('loadProducts: query succeeded but returned 0 rows. Check RLS and that products exist.');
+  if (!r1.data || r1.data.length === 0) {
+    console.warn('loadProducts: 0 rows returned. Check RLS.');
   }
 
-  (data || []).forEach(p => { window.ProductCache[p.id] = p; });
+  // Populate cache from phase1
+  (r1.data || []).forEach(p => { window.ProductCache[p.id] = p; });
   _loaded = true;
+
+  // Merge phase2 fields (description + lab_report) into cache
+  if (!r2.error && r2.data) {
+    r2.data.forEach(p => {
+      if (window.ProductCache[p.id]) {
+        window.ProductCache[p.id].description = p.description;
+        window.ProductCache[p.id].lab_report  = p.lab_report;
+      }
+    });
+  }
 }
 
 export function getProduct(id) {
