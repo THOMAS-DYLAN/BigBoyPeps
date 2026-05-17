@@ -201,17 +201,23 @@
     };
 
     window.doReset = async () => {
-      const email = document.getElementById('reset-email').value.trim();
+      const email = document.getElementById('reset-email').value.trim().toLowerCase();
       const err   = document.getElementById('reset-err');
       const ok    = document.getElementById('reset-ok');
+      const btn   = document.querySelector('#form-reset .auth-submit');
       err.textContent = '';
       ok.style.display = 'none';
+
       if (!email) { err.textContent = 'Please enter your email.'; return; }
-      const emailCheck = isValidEmail(email);
-      if (!emailCheck.ok) { err.textContent = emailCheck.msg; return; }
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) { err.textContent = 'Please enter a valid email address.'; return; }
+
+      if (btn) { btn.disabled = true; btn.textContent = 'Sending…'; }
+
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
         redirectTo: 'https://bigboypeps.com/reset.html',
       });
+
+      if (btn) { btn.disabled = false; btn.textContent = 'Send Reset Link'; }
       if (error) { err.textContent = error.message; return; }
       ok.style.display = 'block';
     };
