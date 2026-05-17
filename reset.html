@@ -118,38 +118,41 @@
   </div>
 
   <!-- Block any auth redirect before module runs -->
-  <script>window.__BBP_RECOVERY_MODE__ = true;</script>
+  <script>
+    window.__BBP_RECOVERY_MODE__ = true;
+    // Capture hash NOW before Supabase clears it during client init
+    window.__BBP_RECOVERY_HASH__ = window.location.hash;
+  </script>
 
   <script type="module">
     import { supabase } from './js/supabase.js';
 
     const formEl    = document.getElementById('reset-form');
     const invalidEl = document.getElementById('invalid-link');
-
-    // Start hidden — show the right state once we know what we have
     formEl.style.display    = 'none';
     invalidEl.style.display = 'none';
 
-    // Supabase v2 automatically exchanges the hash token on init.
-    // Listen for PASSWORD_RECOVERY — it fires when a valid reset link is used.
-    // If it doesn't fire within 4s the link is expired or invalid.
-    let recovered = false;
+    // Use the hash we captured synchronously before Supabase cleared it
+    const hash         = window.__BBP_RECOVERY_HASH__ || '';
+    const params       = new URLSearchParams(hash.substring(1));
+    const type         = params.get('type');
+    const accessToken  = params.get('access_token');
+    const refreshToken = params.get('refresh_token') || '';
 
-    const timeout = setTimeout(() => {
-      if (!recovered) {
-        formEl.style.display    = 'none';
+    if (type === 'recovery' && accessToken) {
+      // Establish the recovery session so updateUser works
+      const { error } = await supabase.auth.setSession({
+        access_token:  accessToken,
+        refresh_token: refreshToken,
+      });
+      if (error) {
         invalidEl.style.display = 'block';
+      } else {
+        formEl.style.display = 'block';
       }
-    }, 4000);
-
-    supabase.auth.onAuthStateChange((event, session) => {
-      if (event === 'PASSWORD_RECOVERY') {
-        recovered = true;
-        clearTimeout(timeout);
-        formEl.style.display    = 'block';
-        invalidEl.style.display = 'none';
-      }
-    });
+    } else {
+      invalidEl.style.display = 'block';
+    }
 
     window.doSetPassword = async () => {
       const pass    = document.getElementById('new-pass').value;
