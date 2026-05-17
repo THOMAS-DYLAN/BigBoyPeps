@@ -132,15 +132,27 @@
     formEl.style.display    = 'none';
     invalidEl.style.display = 'none';
 
-    // Use the hash we captured synchronously before Supabase cleared it
-    const hash         = window.__BBP_RECOVERY_HASH__ || '';
-    const params       = new URLSearchParams(hash.substring(1));
-    const type         = params.get('type');
-    const accessToken  = params.get('access_token');
-    const refreshToken = params.get('refresh_token') || '';
+    // ── Try PKCE flow first (?code= query param) ──────────────
+    const urlParams = new URLSearchParams(window.location.search);
+    const code      = urlParams.get('code');
 
-    if (type === 'recovery' && accessToken) {
-      // Establish the recovery session so updateUser works
+    // ── Fall back to implicit flow (#access_token= hash) ──────
+    const hash         = window.__BBP_RECOVERY_HASH__ || '';
+    const hashParams   = new URLSearchParams(hash.substring(1));
+    const type         = hashParams.get('type');
+    const accessToken  = hashParams.get('access_token');
+    const refreshToken = hashParams.get('refresh_token') || '';
+
+    if (code) {
+      // PKCE — exchange code for session
+      const { error } = await supabase.auth.exchangeCodeForSession(code);
+      if (error) {
+        invalidEl.style.display = 'block';
+      } else {
+        formEl.style.display = 'block';
+      }
+    } else if (type === 'recovery' && accessToken) {
+      // Implicit — set session directly from hash tokens
       const { error } = await supabase.auth.setSession({
         access_token:  accessToken,
         refresh_token: refreshToken,
