@@ -4,6 +4,38 @@
 
 import { supabase } from './supabase.js';
 
+// ── Discount Codes ───────────────────────────────────────
+const DISCOUNT_CODES = {
+  'DEZI10': { pct: 10, label: 'Dezi10' },
+};
+
+let _appliedDiscount = null; // { code, pct, label } or null
+
+window.applyDiscount = function(code) {
+  const key    = (code || '').trim().toUpperCase();
+  const match  = DISCOUNT_CODES[key];
+  const errEl  = document.getElementById('discount-err');
+  const okEl   = document.getElementById('discount-ok');
+  if (errEl) errEl.textContent = '';
+  if (okEl)  okEl.textContent  = '';
+
+  if (!key)   { if (errEl) errEl.textContent = 'Enter a code first.'; return; }
+  if (!match) { if (errEl) errEl.textContent = 'Invalid discount code.'; return; }
+
+  _appliedDiscount = { code: match.label, pct: match.pct };
+  if (okEl) okEl.textContent = match.pct + '% discount applied!';
+  if (typeof window.renderCart === 'function') window.renderCart();
+};
+
+window.removeDiscount = function() {
+  _appliedDiscount = null;
+  const okEl = document.getElementById('discount-ok');
+  if (okEl) okEl.textContent = '';
+  if (typeof window.renderCart === 'function') window.renderCart();
+};
+
+window.getDiscount = function() { return _appliedDiscount; };
+
 // ── Cart (localStorage, keyed per user) ─────────────────
 window.Cart = {
   _key: 'bbp_cart_guest',
@@ -146,11 +178,13 @@ function getSelectedShipping() {
 }
 
 window.updateShippingTotal = function() {
-  const items    = Cart.get();
-  const subtotal = items.reduce((s,i) => s + i.price * i.qty, 0);
-  const ship     = getSelectedShipping();
-  const el       = document.getElementById('modal-total-val');
-  if (el) el.textContent = '$' + (subtotal + ship.price).toFixed(2);
+  const items       = Cart.get();
+  const subtotal    = items.reduce((s,i) => s + i.price * i.qty, 0);
+  const discount    = _appliedDiscount;
+  const discountAmt = discount ? Math.round(subtotal * discount.pct) / 100 : 0;
+  const ship        = getSelectedShipping();
+  const el          = document.getElementById('modal-total-val');
+  if (el) el.textContent = '$' + (subtotal - discountAmt + ship.price).toFixed(2);
 };
 
 // ── Checkout state ────────────────────────────────────────
@@ -222,9 +256,12 @@ function captureShipping() {
 
 // ── Render checkout modal ─────────────────────────────────
 function renderCheckoutModal(items, profile, addr) {
-  const subtotal   = items.reduce((s,i) => s + i.price * i.qty, 0);
+  const subtotal    = items.reduce((s,i) => s + i.price * i.qty, 0);
+  const discount    = _appliedDiscount;
+  const discountAmt = discount ? Math.round(subtotal * discount.pct) / 100 : 0;
+  const discounted  = subtotal - discountAmt;
   const defaultShip = SHIPPING_OPTIONS[0];
-  const orderTotal = subtotal + defaultShip.price;
+  const orderTotal  = discounted + defaultShip.price;
 
   var stateOptions = STATES.map(function(s) {
     return '<option' + ((addr.state || profile.state) === s ? ' selected' : '') + '>' + s + '</option>';
@@ -265,6 +302,7 @@ function renderCheckoutModal(items, profile, addr) {
     + '<div class="modal-section-title">Order Summary</div>'
     + orderRows
     + '<div class="modal-order-row" style="color:var(--smoke);border-top:1px solid var(--border);margin-top:4px;padding-top:10px"><span>Subtotal</span><span>$' + subtotal.toFixed(2) + '</span></div>'
+    + (discount ? '<div class="modal-order-row" style="color:#5BC75B;padding-top:4px"><span>' + discount.code + ' (' + discount.pct + '% off)</span><span>-$' + discountAmt.toFixed(2) + '</span></div>' : '')
     + '<div class="modal-order-row" style="color:var(--smoke);padding-top:6px">'
     + '<span style="font-family:var(--font-c);font-size:.63rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase">Shipping</span>'
     + '<select id="co-shipping-method" onchange="updateShippingTotal()" style="background:var(--card);color:var(--light);border:1px solid var(--border);padding:6px 10px;font-size:.8rem;outline:none;cursor:pointer;max-width:220px">'
@@ -279,9 +317,6 @@ function renderCheckoutModal(items, profile, addr) {
     + '<div class="modal-section-title">Payment Method</div>'
     + '<div id="paypal-button-container"></div>'
     + '<div id="cashapp-container" style="margin-top:10px"></div>'
-    + '<div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border)">'
-    + '<button onclick="testPay()" style="width:100%;padding:12px;font-family:var(--font-c);font-size:.68rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;background:transparent;border:1px solid var(--border);color:var(--smoke);cursor:pointer;transition:all .18s" onmouseover="this.style.borderColor=\'var(--ash)\';this.style.color=\'var(--light)\'" onmouseout="this.style.borderColor=\'var(--border)\';this.style.color=\'var(--smoke)\'">🧪 Test Payment (no charge)</button>'
-    + '</div>'
     + '</div>'
 
     + '<p class="modal-disclaimer">All products are sold for research purposes only and not intended for human consumption.</p>'
@@ -411,9 +446,12 @@ window.payCashApp = async function() {
 
 // ── Order notification (shared by finishOrder + test button) ──
 async function sendOrderNotification(items, shipping, profile) {
+  var discount   = _appliedDiscount;
   var subtotal   = items.reduce(function(s,i) { return s + i.price * i.qty; }, 0);
+  var discountAmt = discount ? Math.round(subtotal * discount.pct) / 100 : 0;
+  var discounted = subtotal - discountAmt;
   var shipPrice  = shipping.shipping_price || 15;
-  var orderTotal = subtotal + shipPrice;
+  var orderTotal = discounted + shipPrice;
   var itemList   = items.map(function(i) {
     return i.qty + 'x ' + i.name + ' @ $' + Number(i.price).toFixed(2);
   }).join('\n');
@@ -441,41 +479,41 @@ async function sendOrderNotification(items, shipping, profile) {
         'Shipping Cost: $' + Number(shipPrice).toFixed(2) + '\n\n' +
         'ITEMS ORDERED\n' + itemList + '\n\n' +
         'Subtotal: $' + subtotal.toFixed(2) + '\n' +
+        (discount ? 'Discount (' + discount.code + ' ' + discount.pct + '%): -$' + discountAmt.toFixed(2) + '\n' : '') +
         'Shipping: $' + Number(shipPrice).toFixed(2) + '\n' +
         'TOTAL: $'    + orderTotal.toFixed(2),
     }),
   });
 }
 
-// ── Test payment — validates shipping, sends email, shows success, no charge ──
-window.testPay = async function() {
-  if (!shippingValid()) {
-    SHIP_RULES.forEach(function(r) {
-      var el    = document.getElementById(r.id);
-      var errEl = document.getElementById(r.err);
-      if (el && errEl && !r.test(el.value.trim())) errEl.textContent = r.msg;
-    });
-    return;
-  }
+// ── Test checkout — email + success screen, no payment/inventory/DB ──
+window.testCheckout = async function() {
+  var items = Cart.get();
+  if (!items.length) return;
 
-  var shippingData = captureShipping();
-  var items        = Cart.get();
+  // Open the modal overlay so the success screen has somewhere to render
+  var overlay = document.getElementById('checkout-overlay');
+  if (overlay) { overlay.classList.add('open'); document.body.style.overflow = 'hidden'; }
 
   try {
     var profile = await Auth.getProfile();
-    await sendOrderNotification(items, shippingData, profile);
+    await sendOrderNotification(items, {}, profile);
   } catch(e) {
-    console.error('Test pay notification failed:', e);
+    console.error('Test checkout notification failed:', e);
   }
 
-  document.getElementById('checkout-modal').innerHTML =
-    '<div class="modal-head"><div class="modal-title">Order Placed</div><button class="modal-close" onclick="closeCheckout()">&#x2715;</button></div>'
-    + '<div class="order-success">'
-    + '<div class="order-success-icon">✓</div>'
-    + '<h2>Order Confirmed.</h2>'
-    + '<p>Your order is confirmed and on its way.<br/>Handle with appropriate care and caution.</p>'
-    + '<a href="dashboard.html" style="display:inline-block;margin-top:24px;font-family:var(--font-c);font-size:.75rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;background:var(--red);color:var(--white);padding:12px 28px;clip-path:polygon(0 0,calc(100% - 7px) 0,100% 7px,100% 100%,7px 100%,0 calc(100% - 7px))">Back to Dashboard</a>'
-    + '</div>';
+  // Show the same order confirmed screen as a real order
+  var modal = document.getElementById('checkout-modal');
+  if (modal) {
+    modal.innerHTML =
+      '<div class="modal-head"><div class="modal-title">Order Placed</div><button class="modal-close" onclick="closeCheckout()">&#x2715;</button></div>'
+      + '<div class="order-success">'
+      + '<div class="order-success-icon">✓</div>'
+      + '<h2>Order Confirmed.</h2>'
+      + '<p>Your order is confirmed and on its way.<br/>Handle with appropriate care and caution.</p>'
+      + '<a href="dashboard.html" style="display:inline-block;margin-top:24px;font-family:var(--font-c);font-size:.75rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;background:var(--red);color:var(--white);padding:12px 28px;clip-path:polygon(0 0,calc(100% - 7px) 0,100% 7px,100% 100%,7px 100%,0 calc(100% - 7px))">Back to Dashboard</a>'
+      + '</div>';
+  }
 };
 
 // ── Finish order ──────────────────────────────────────────
@@ -497,9 +535,11 @@ async function finishOrder(shipping) {
     });
   }
 
-  var subtotal   = items.reduce(function(s,i) { return s + i.price * i.qty; }, 0);
-  var shipPrice  = shipping.shipping_price || 15;
-  var orderTotal = subtotal + shipPrice;
+  var subtotal    = items.reduce(function(s,i) { return s + i.price * i.qty; }, 0);
+  var discount    = _appliedDiscount;
+  var discountAmt = discount ? Math.round(subtotal * discount.pct) / 100 : 0;
+  var shipPrice   = shipping.shipping_price || 15;
+  var orderTotal  = subtotal - discountAmt + shipPrice;
 
   // ── Save orders + decrement inventory ─────────────────────
   try {
