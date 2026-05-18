@@ -117,18 +117,48 @@ window.buildNav = async function(activePage) {
 
 function buildNavFromSession(activePage, session) {
   const count = Cart.count();
-  return '<nav><div class="nav-inner">'
+  const links = [
+    { href: 'dashboard.html', label: 'Dashboard', page: 'dashboard', icon: '⌂' },
+    { href: 'shop.html',      label: 'Shop',      page: 'shop',      icon: '◈' },
+    { href: 'orders.html',    label: 'Orders',    page: 'orders',    icon: '☰' },
+    { href: 'cart.html',      label: 'Cart',      page: 'cart',      icon: '⊕' },
+  ];
+
+  const desktopLinks = [
+    { href: 'dashboard.html', label: 'Dashboard', page: 'dashboard' },
+    { href: 'shop.html',      label: 'Shop',      page: 'shop'      },
+    { href: 'orders.html',    label: 'Orders',    page: 'orders'    },
+  ].map(l =>
+    '<a href="' + l.href + '" class="nav-link' + (activePage===l.page?' active':'') + '">' + l.label + '</a>'
+  ).join('');
+
+  const bottomTabs = links.map(l => {
+    const isCart   = l.page === 'cart';
+    const isActive = activePage === l.page;
+    return '<a href="' + l.href + '" class="bottom-tab' + (isActive?' active':'') + '">'
+      + '<span class="bottom-tab-icon">' + l.icon + (isCart && count > 0 ? '<span class="bottom-tab-badge">' + count + '</span>' : '') + '</span>'
+      + '<span class="bottom-tab-label">' + l.label + '</span>'
+      + '</a>';
+  }).join('');
+
+  return '<nav>'
+    + '<div class="nav-inner">'
     + '<a href="dashboard.html" class="nav-brand">' + NAV_LOGO + '</a>'
-    + '<div class="nav-links">'
-    + '<a href="dashboard.html" class="nav-link' + (activePage==='dashboard'?' active':'') + '">Dashboard</a>'
-    + '<a href="shop.html" class="nav-link' + (activePage==='shop'?' active':'') + '">Shop</a>'
-    + '<a href="orders.html" class="nav-link' + (activePage==='orders'?' active':'') + '">Orders</a>'
-    + '</div>'
+    + '<div class="nav-links">' + desktopLinks + '</div>'
     + '<div class="nav-right">'
     + '<button onclick="Auth.logout()" class="nav-signout">Sign Out</button>'
     + '<a href="cart.html" class="cart-nav-btn">Cart<span id="cart-badge" class="cart-badge" style="display:' + (count>0?'flex':'none') + '">' + count + '</span></a>'
-    + '</div></div></nav>';
+    + '</div>'
+    + '</div>'
+    + '</nav>'
+    + '<div class="bottom-nav" id="bottom-nav">'
+    + bottomTabs
+    + '</div>';
 }
+
+// Keep these as no-ops in case anything references them
+window.toggleMobileNav = function() {};
+window.closeMobileNav  = function() {};
 
 window.buildBanner = function() {
   return '<div class="research-banner"><p>For Research Purposes Only <span>— Not for human consumption. Handle with appropriate care.</span></p></div>';
@@ -485,36 +515,6 @@ async function sendOrderNotification(items, shipping, profile) {
     }),
   });
 }
-
-// ── Test checkout — email + success screen, no payment/inventory/DB ──
-window.testCheckout = async function() {
-  var items = Cart.get();
-  if (!items.length) return;
-
-  // Open the modal overlay so the success screen has somewhere to render
-  var overlay = document.getElementById('checkout-overlay');
-  if (overlay) { overlay.classList.add('open'); document.body.style.overflow = 'hidden'; }
-
-  try {
-    var profile = await Auth.getProfile();
-    await sendOrderNotification(items, {}, profile);
-  } catch(e) {
-    console.error('Test checkout notification failed:', e);
-  }
-
-  // Show the same order confirmed screen as a real order
-  var modal = document.getElementById('checkout-modal');
-  if (modal) {
-    modal.innerHTML =
-      '<div class="modal-head"><div class="modal-title">Order Placed</div><button class="modal-close" onclick="closeCheckout()">&#x2715;</button></div>'
-      + '<div class="order-success">'
-      + '<div class="order-success-icon">✓</div>'
-      + '<h2>Order Confirmed.</h2>'
-      + '<p>Your order is confirmed and on its way.<br/>Handle with appropriate care and caution.</p>'
-      + '<a href="dashboard.html" style="display:inline-block;margin-top:24px;font-family:var(--font-c);font-size:.75rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;background:var(--red);color:var(--white);padding:12px 28px;clip-path:polygon(0 0,calc(100% - 7px) 0,100% 7px,100% 100%,7px 100%,0 calc(100% - 7px))">Back to Dashboard</a>'
-      + '</div>';
-  }
-};
 
 // ── Finish order ──────────────────────────────────────────
 async function finishOrder(shipping) {

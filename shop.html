@@ -107,9 +107,9 @@
     .add-flash.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
 
-    .product-card.out-of-stock { opacity: .45; cursor: not-allowed; }
+    .product-card.out-of-stock { opacity: .45; cursor: pointer; }
     .product-card.out-of-stock .add-btn { display: none; }
-    .product-card.out-of-stock:hover { transform: none; box-shadow: none; border-color: var(--border); }
+    .product-card.out-of-stock:hover { transform: translateY(-4px); box-shadow: 0 12px 36px rgba(0,0,0,.5); border-color: var(--border); }
     .out-of-stock-banner {
       position: absolute; top: 50%; left: 50%;
       transform: translate(-50%, -50%);
@@ -183,8 +183,8 @@
 <script type="module">
     import { supabase } from './js/supabase.js';
     import './js/auth.js?v=14';
-    import './js/cart.js?v=14';
-    import { loadProducts, allProducts, getProduct, pepperSVG, heatPips } from './js/products.js?v=10';
+    import './js/cart.js?v=17';
+    import { loadProducts, allProducts, getProduct, pepperSVG, heatPips } from './js/products.js?v=14';
 
     await Promise.all([
       window.initPage('shop'),
@@ -205,7 +205,7 @@
     function buildCard(p) {
       var badge = p.badge ? '<span class="product-badge' + (p.badge.includes('\uD83D\uDD25') ? ' badge-hot' : '') + '">' + p.badge + '</span>' : '';
       return (p.inventory <= 0
-          ? '<div class="product-card out-of-stock">'
+          ? '<div class="product-card out-of-stock" onclick="goToProduct(' + p.id + ')" style="cursor:pointer">'
           : '<div class="product-card" onclick="goToProduct(' + p.id + ')" style="cursor:pointer">')
         + '<div class="product-thumb" style="background:' + thumbBg(p) + '">'
         + '<div class="thumb-glow"></div>'
