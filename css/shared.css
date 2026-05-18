@@ -85,7 +85,59 @@ nav {
 }
 @media (min-width: 480px) { .cart-badge { width: 17px; height: 17px; } }
 
-/* ── RESEARCH BANNER ─────────────────────────────────── */
+/* ── NAV HAMBURGER (removed — using bottom tab bar) ─── */
+@media (min-width: 768px) { .nav-hamburger { display: none; } }
+
+/* ── BOTTOM TAB BAR (mobile only) ───────────────────── */
+.bottom-nav {
+  display: none; /* hidden on desktop */
+}
+@media (max-width: 767px) {
+  .bottom-nav {
+    display: flex;
+    position: fixed; bottom: 0; left: 0; right: 0;
+    height: 60px; z-index: 200;
+    background: rgba(18,18,18,.97);
+    backdrop-filter: blur(12px);
+    border-top: 1px solid var(--border);
+  }
+
+  .bottom-tab {
+    flex: 1; display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 3px; padding: 6px 4px 4px;
+    color: var(--smoke); text-decoration: none;
+    transition: color .18s; position: relative;
+  }
+  .bottom-tab.active { color: var(--red); }
+  .bottom-tab:active { opacity: .7; }
+
+  .bottom-tab-icon {
+    font-size: 1.15rem; line-height: 1;
+    position: relative; display: inline-block;
+  }
+  .bottom-tab-label {
+    font-family: var(--font-c); font-size: .52rem; font-weight: 700;
+    letter-spacing: .1em; text-transform: uppercase;
+  }
+  .bottom-tab-badge {
+    position: absolute; top: -5px; right: -8px;
+    background: var(--red); color: var(--white);
+    font-size: .48rem; font-weight: 700;
+    width: 14px; height: 14px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  /* Add bottom padding to all pages so content isn't hidden behind tab bar */
+  body { padding-bottom: 60px; }
+
+  /* Hide desktop nav elements on mobile */
+  .nav-links   { display: none !important; }
+  .nav-signout { display: none !important; }
+  .cart-nav-btn { display: none !important; }
+}
+
+
 .research-banner {
   background: rgba(204,31,31,.07);
   border-bottom: 1px solid rgba(204,31,31,.18);
@@ -313,4 +365,115 @@ footer {
 
   /* Form inputs readable size */
   .form-field input, .form-field select { font-size: 16px; } /* prevents iOS zoom */
+}
+
+/* ══════════════════════════════════════════════════════════
+   PAGE-LEVEL MOBILE FIXES
+══════════════════════════════════════════════════════════ */
+
+/* ── SHOP PAGE ───────────────────────────────────────── */
+@media (max-width: 767px) {
+  /* Reduce oversized header padding */
+  .shop-header { padding: 28px 0 24px !important; }
+
+  /* Scrollable filter bar */
+  .filters-bar {
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+    padding: 16px 0 !important;
+    gap: 6px !important;
+    scrollbar-width: none;
+  }
+  .filters-bar::-webkit-scrollbar { display: none; }
+  .filters-label { display: none !important; }
+  .filter-btn { flex-shrink: 0; padding: 8px 14px !important; font-size: .68rem !important; }
+
+  /* 2-col product grid */
+  .products-grid { grid-template-columns: 1fr 1fr !important; gap: 10px !important; }
+  .products-section { padding: 20px 0 60px !important; }
+
+  /* Product card touches */
+  .product-thumb { height: 160px !important; }
+  .product-info  { padding: 12px 14px 14px !important; }
+  .product-name  { font-size: .88rem !important; }
+  .product-desc  { display: none !important; } /* hide on mobile to keep cards tight */
+  .product-price { font-size: 1.2rem !important; }
+  .add-btn { width: 30px !important; height: 30px !important; font-size: 1.1rem !important; }
+
+  /* Add-to-cart flash — keep above bottom nav space */
+  .add-flash { bottom: 16px !important; font-size: .7rem !important; padding: 10px 18px !important; }
+}
+
+/* ── CART PAGE ───────────────────────────────────────── */
+@media (max-width: 767px) {
+  .cart-header { padding: 28px 0 20px !important; }
+  .cart-body   { padding: 24px 0 60px !important; }
+  .cart-layout { grid-template-columns: 1fr !important; gap: 0 !important; }
+
+  /* Summary goes on top on mobile — more intuitive */
+  .cart-items-col { order: 2; }
+  .summary-panel  { order: 1; position: static !important; margin-bottom: 20px; padding: 20px !important; }
+
+  .cart-item { grid-template-columns: 52px 1fr auto !important; gap: 10px !important; padding: 14px 0 !important; }
+  .cart-item-thumb { width: 52px !important; height: 52px !important; }
+  .cart-item-name  { font-size: .78rem !important; }
+  .cart-item-price { font-size: 1rem !important; }
+  .qty-btn { width: 32px !important; height: 32px !important; } /* bigger touch target */
+}
+
+/* ── ORDERS PAGE ─────────────────────────────────────── */
+@media (max-width: 767px) {
+  .orders-header { padding: 28px 0 20px !important; }
+  .orders-body   { padding: 24px 0 60px !important; }
+  .orders-summary { gap: 20px !important; padding: 16px 0 20px !important; }
+  .summary-stat-val { font-size: 1.6rem !important; }
+
+  .order-row { gap: 10px !important; padding: 14px 0 !important; }
+  .order-thumb { width: 44px !important; height: 44px !important; flex-shrink: 0; }
+  .order-name { font-size: .78rem !important; }
+  .order-total { font-size: 1rem !important; }
+  .order-arrow { display: none; }
+}
+
+/* ── PRODUCT PAGE ────────────────────────────────────── */
+@media (max-width: 767px) {
+  /* Product layout stacks */
+  .product-layout,
+  [class*="product-layout"] { 
+    grid-template-columns: 1fr !important;
+    gap: 0 !important;
+  }
+  /* Visual panel (image) comes first */
+  .product-visual { order: 1; position: static !important; }
+  .product-info-col { order: 2; }
+
+  /* Lab report section stacks */
+  .lab-report-section { flex-direction: column-reverse !important; gap: 16px !important; }
+  .lab-report-doc { width: 200px !important; }
+
+  /* Reviews */
+  .reviews-grid { grid-template-columns: 1fr !important; }
+}
+
+/* ── DASHBOARD PAGE ──────────────────────────────────── */
+@media (max-width: 767px) {
+  .dashboard-header { padding: 28px 0 20px !important; }
+  .dashboard-grid,
+  .dash-grid { grid-template-columns: 1fr !important; gap: 16px !important; }
+}
+
+/* ── GLOBAL MOBILE TWEAKS ────────────────────────────── */
+@media (max-width: 767px) {
+  /* Prevent iOS zoom on inputs */
+  input, select, textarea { font-size: 16px !important; }
+
+  /* Page headers — universal size reduction */
+  [class*="-title"] { word-break: break-word; }
+
+  /* Clamp all Bebas display text so it doesn't overflow */
+  .shop-title,
+  .cart-page-title,
+  .orders-title,
+  .dashboard-title { font-size: clamp(2rem, 8vw, 3.5rem) !important; }
 }
