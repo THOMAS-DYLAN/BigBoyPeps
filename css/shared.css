@@ -85,57 +85,110 @@ nav {
 }
 @media (min-width: 480px) { .cart-badge { width: 17px; height: 17px; } }
 
-/* ── NAV HAMBURGER (removed — using bottom tab bar) ─── */
-@media (min-width: 768px) { .nav-hamburger { display: none; } }
+/* ── NAV ICONS — hidden on desktop, shown on mobile ─── */
+.nav-icon  { display: none; }
+.nav-label { /* label always visible on desktop */ }
 
-/* ── BOTTOM TAB BAR (mobile only) ───────────────────── */
-.bottom-nav {
-  display: none; /* hidden on desktop */
-}
+/* ── MOBILE NAV — full-width tab bar at top ─────────── */
 @media (max-width: 767px) {
-  .bottom-nav {
-    display: flex;
-    position: fixed; bottom: 0; left: 0; right: 0;
-    height: 60px; z-index: 200;
-    background: rgba(18,18,18,.97);
-    backdrop-filter: blur(12px);
-    border-top: 1px solid var(--border);
+  nav { height: 56px; }
+
+  .nav-inner {
+    display: flex !important;
+    flex-direction: row !important;
+    padding: 0 !important;
+    gap: 0 !important;
+    height: 56px;
+    /* display:contents on children lets them participate directly in this flex */
   }
 
-  .bottom-tab {
-    flex: 1; display: flex; flex-direction: column;
-    align-items: center; justify-content: center;
-    gap: 3px; padding: 6px 4px 4px;
-    color: var(--smoke); text-decoration: none;
-    transition: color .18s; position: relative;
-  }
-  .bottom-tab.active { color: var(--red); }
-  .bottom-tab:active { opacity: .7; }
+  /* Hide logo on mobile — tabs fill the full width */
+  .nav-brand   { display: none !important; }
 
-  .bottom-tab-icon {
-    font-size: 1.15rem; line-height: 1;
-    position: relative; display: inline-block;
-  }
-  .bottom-tab-label {
-    font-family: var(--font-c); font-size: .52rem; font-weight: 700;
-    letter-spacing: .1em; text-transform: uppercase;
-  }
-  .bottom-tab-badge {
-    position: absolute; top: -5px; right: -8px;
-    background: var(--red); color: var(--white);
-    font-size: .48rem; font-weight: 700;
-    width: 14px; height: 14px; border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-  }
+  /* Make nav-links and nav-right transparent containers */
+  .nav-links { display: contents !important; }
+  .nav-right  { display: contents !important; }
 
-  /* Add bottom padding to all pages so content isn't hidden behind tab bar */
-  body { padding-bottom: 60px; }
-
-  /* Hide desktop nav elements on mobile */
-  .nav-links   { display: none !important; }
+  /* Hide sign out — accessed via dashboard */
   .nav-signout { display: none !important; }
-  .cart-nav-btn { display: none !important; }
+
+  /* Each tab — equal width, stacked icon + label */
+  .nav-link, .cart-nav-btn {
+    flex: 1 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 3px !important;
+    padding: 6px 4px !important;
+    height: 56px;
+    color: var(--smoke) !important;
+    background: transparent !important;
+    clip-path: none !important;
+    border-right: 1px solid var(--border);
+    position: relative;
+    letter-spacing: .08em !important;
+    font-size: .5rem !important;
+    transition: color .18s;
+  }
+  .nav-link:last-child, .cart-nav-btn { border-right: none; }
+  .nav-link.active  { color: var(--red) !important; background: rgba(204,31,31,.05) !important; }
+  .nav-link:hover   { color: var(--light) !important; }
+  .cart-nav-btn:hover { color: var(--light) !important; }
+
+  /* Show icon on mobile */
+  .nav-icon {
+    display: block !important;
+    font-size: 1.1rem;
+    line-height: 1;
+  }
+
+  /* Cart badge — repositioned for tab layout */
+  .cart-badge {
+    position: absolute !important;
+    top: 6px !important; right: calc(50% - 18px) !important;
+    width: 14px !important; height: 14px !important;
+    font-size: .46rem !important;
+  }
+
+  /* Remove bottom body padding (no bottom bar) */
+  body { padding-bottom: 0 !important; }
 }
+
+/* ── MOBILE SIGN OUT TAB ─────────────────────────────── */
+/* Hidden on desktop — appears as 5th tab on mobile only */
+.nav-signout-tab { display: none; }
+
+@media (max-width: 767px) {
+  .nav-signout-tab {
+    flex: 0.75 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 3px !important;
+    padding: 6px 4px !important;
+    height: 56px;
+    color: #555 !important;
+    background: transparent !important;
+    border: none !important;
+    border-left: 1px solid var(--border) !important;
+    cursor: pointer;
+    font-size: .5rem !important;
+    font-family: var(--font-c) !important;
+    letter-spacing: .08em !important;
+    text-transform: uppercase !important;
+    font-weight: 700 !important;
+    transition: color .18s, background .18s;
+  }
+  .nav-signout-tab:hover,
+  .nav-signout-tab:active { color: var(--red) !important; background: rgba(204,31,31,.06) !important; }
+  .nav-signout-tab .nav-icon { font-size: 1rem !important; }
+}
+
+/* Kill any bottom-nav remnants */
+.bottom-nav, .bottom-tab, .bottom-tab-icon,
+.bottom-tab-label, .bottom-tab-badge { display: none !important; }
 
 
 .research-banner {

@@ -18,6 +18,8 @@ import { supabase } from './supabase.js';
 
 // ── Cache ─────────────────────────────────────────────────────
 const PRODUCTS_VERSION = '14';
+const LS_KEY = 'bbp_products_v14';
+const LS_TTL = 5 * 60 * 1000; // 5 minutes — background refresh keeps it fresh
 let _loaded = false;
 
 if (window.ProductCache?._version !== PRODUCTS_VERSION) {
@@ -27,13 +29,27 @@ if (window.ProductCache?._version !== PRODUCTS_VERSION) {
   _loaded = Object.keys(window.ProductCache).filter(k => k !== '_version').length > 0;
 }
 
-// Two-phase parallel fetch:
-// Phase 1 — lightweight fields the shop grid needs to paint cards (small payload)
-// Phase 2 — heavier fields only needed on the product page (description, lab_report)
-// Both fire simultaneously via Promise.all so there's no extra round-trip cost.
-export async function loadProducts() {
-  if (_loaded) return;
+function _saveToLS(r1data, r2data) {
+  try {
+    localStorage.setItem(LS_KEY, JSON.stringify({ r1: r1data, r2: r2data, ts: Date.now() }));
+  } catch(_) {}
+}
 
+function _populateCache(r1data, r2data) {
+  window.ProductCache = { _version: PRODUCTS_VERSION };
+  (r1data || []).forEach(p => { window.ProductCache[p.id] = p; });
+  if (r2data) {
+    r2data.forEach(p => {
+      if (window.ProductCache[p.id]) {
+        window.ProductCache[p.id].description = p.description;
+        window.ProductCache[p.id].lab_report  = p.lab_report;
+      }
+    });
+  }
+  _loaded = true;
+}
+
+async function _fetchFromSupabase() {
   const phase1 = supabase
     .from('products')
     .select('id, name, category, price, potency, badge, thumb_color, shape_key, images, inventory, active')
@@ -45,30 +61,41 @@ export async function loadProducts() {
     .select('id, description, lab_report')
     .eq('active', true);
 
-  // Both requests fire at the same time
   const [r1, r2] = await Promise.all([phase1, phase2]);
 
-  if (r1.error) {
-    console.error('loadProducts phase1 failed:', r1.error.message);
-    return;
-  }
-  if (!r1.data || r1.data.length === 0) {
-    console.warn('loadProducts: 0 rows returned. Check RLS.');
-  }
+  if (r1.error) { console.error('loadProducts failed:', r1.error.message); return null; }
+  if (!r1.data || r1.data.length === 0) { console.warn('loadProducts: 0 rows. Check RLS.'); }
+  return { r1: r1.data || [], r2: r2.error ? [] : (r2.data || []) };
+}
 
-  // Populate cache from phase1
-  (r1.data || []).forEach(p => { window.ProductCache[p.id] = p; });
-  _loaded = true;
+// Two-phase parallel fetch with localStorage caching.
+// On cache hit → instant render, background refresh keeps data fresh.
+// On cache miss → fetch from Supabase, save to localStorage.
+export async function loadProducts() {
+  if (_loaded) return;
 
-  // Merge phase2 fields (description + lab_report) into cache
-  if (!r2.error && r2.data) {
-    r2.data.forEach(p => {
-      if (window.ProductCache[p.id]) {
-        window.ProductCache[p.id].description = p.description;
-        window.ProductCache[p.id].lab_report  = p.lab_report;
+  try {
+    const raw = localStorage.getItem(LS_KEY);
+    if (raw) {
+      const { r1, r2, ts } = JSON.parse(raw);
+      if (r1?.length && Date.now() - ts < LS_TTL) {
+        _populateCache(r1, r2);
+        // Background refresh — silent, doesn't block render
+        _fetchFromSupabase().then(fresh => {
+          if (!fresh) return;
+          _populateCache(fresh.r1, fresh.r2);
+          _saveToLS(fresh.r1, fresh.r2);
+        }).catch(() => {});
+        return;
       }
-    });
-  }
+    }
+  } catch(_) {}
+
+  // No cache or expired — fetch fresh
+  const fresh = await _fetchFromSupabase();
+  if (!fresh) return;
+  _populateCache(fresh.r1, fresh.r2);
+  _saveToLS(fresh.r1, fresh.r2);
 }
 
 export function getProduct(id) {
