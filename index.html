@@ -142,12 +142,6 @@
         <div class="field"><label>Password</label><input type="password" id="login-pass" placeholder="••••••••" /></div>
         <button class="auth-submit" onclick="doLogin()">Sign In</button>
         <div class="auth-error" id="login-err"></div>
-        <!-- Shown when email isn't confirmed yet -->
-        <div id="login-unconfirmed" style="display:none;margin-top:14px;padding:14px;background:rgba(204,31,31,.08);border:1px solid rgba(204,31,31,.25)">
-          <p style="font-family:var(--font-c);font-size:.7rem;font-weight:700;letter-spacing:.1em;color:var(--light);margin-bottom:8px">Please confirm your email before signing in.</p>
-          <button onclick="doResend()" style="font-family:var(--font-c);font-size:.65rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--red);text-decoration:underline;text-underline-offset:3px">Resend confirmation email</button>
-          <span id="resend-ok" style="display:none;font-family:var(--font-c);font-size:.65rem;font-weight:700;letter-spacing:.1em;color:#5BC75B;margin-left:10px">Sent ✓</span>
-        </div>
         <p class="auth-switch">No account? <button onclick="switchTab('register')">Register here</button> &nbsp;·&nbsp; <button onclick="switchTab('reset')">Forgot password?</button></p>
       </div>
 
@@ -160,23 +154,10 @@
           <div class="field"><label>Last Name</label><input type="text" id="reg-last" placeholder="Smith" /></div>
         </div>
         <div class="field"><label>Email</label><input type="email" id="reg-email" placeholder="you@example.com" /></div>
-        <div class="field"><label>Password</label><input type="password" id="reg-pass" placeholder="Min. 8 characters" /></div>
+        <div class="field"><label>Password</label><input type="password" id="reg-pass" placeholder="Min. 6 characters" /></div>
         <button class="auth-submit" onclick="doRegister()">Create Account</button>
         <div class="auth-error" id="reg-err"></div>
         <p class="auth-switch">Already have an account? <button onclick="switchTab('login')">Sign in</button></p>
-      </div>
-
-      <!-- EMAIL CONFIRMATION PENDING -->
-      <div class="auth-form" id="form-confirm">
-        <div class="auth-title">Check your email.</div>
-        <p class="auth-desc" style="margin-bottom:20px">We sent a confirmation link to <strong id="confirm-email-display" style="color:var(--white)"></strong>. Click it to activate your account, then sign in.</p>
-        <div style="padding:16px;background:rgba(91,199,91,.07);border:1px solid rgba(91,199,91,.25);margin-bottom:20px">
-          <p style="font-family:var(--font-c);font-size:.68rem;font-weight:700;letter-spacing:.1em;color:#5BC75B">Confirmation email sent ✓</p>
-        </div>
-        <p style="font-size:.78rem;color:var(--smoke);line-height:1.6;margin-bottom:14px">Didn't receive it? Check your spam folder, or:</p>
-        <button onclick="doResendConfirm()" style="font-family:var(--font-c);font-size:.7rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--red);text-decoration:underline;text-underline-offset:3px">Resend confirmation email</button>
-        <span id="resend-confirm-ok" style="display:none;font-family:var(--font-c);font-size:.65rem;font-weight:700;letter-spacing:.1em;color:#5BC75B;margin-left:10px">Sent ✓</span>
-        <p class="auth-switch" style="margin-top:20px">Already confirmed? <button onclick="switchTab('login')">Sign in</button></p>
       </div>
 
       <!-- RESET PASSWORD -->
@@ -215,26 +196,8 @@
       document.getElementById('denied').style.display = 'flex';
     };
     window.switchTab = (tab) => {
-      const order = { login: 0, register: 1, confirm: 2, reset: 3 };
-      const idx = order[tab] ?? 0;
-      document.querySelectorAll('.auth-tab').forEach((t, i) => t.classList.toggle('active', i === idx));
-      document.querySelectorAll('.auth-form').forEach((f, i) => f.classList.toggle('active', i === idx));
-    };
-
-    window.doResend = async () => {
-      const email = document.getElementById('login-email').value.trim().toLowerCase();
-      if (!email) return;
-      await Auth.resendConfirmation(email);
-      const okEl = document.getElementById('resend-ok');
-      if (okEl) { okEl.style.display = 'inline'; setTimeout(() => { okEl.style.display = 'none'; }, 4000); }
-    };
-
-    window.doResendConfirm = async () => {
-      const email = document.getElementById('confirm-email-display').textContent.trim();
-      if (!email) return;
-      await Auth.resendConfirmation(email);
-      const okEl = document.getElementById('resend-confirm-ok');
-      if (okEl) { okEl.style.display = 'inline'; setTimeout(() => { okEl.style.display = 'none'; }, 4000); }
+      document.querySelectorAll('.auth-tab').forEach((t,i) => t.classList.toggle('active', i===(tab==='login'?0:tab==='register'?1:2)));
+      document.querySelectorAll('.auth-form').forEach((f,i) => f.classList.toggle('active', i===(tab==='login'?0:tab==='register'?1:2)));
     };
 
     window.doReset = async () => {
@@ -308,65 +271,66 @@
 
 
     window.doLogin = async () => {
-      const email         = document.getElementById('login-email').value.trim().toLowerCase();
-      const pass          = document.getElementById('login-pass').value;
-      const err           = document.getElementById('login-err');
-      const unconfirmedEl = document.getElementById('login-unconfirmed');
+      const email = document.getElementById('login-email').value.trim();
+      const pass  = document.getElementById('login-pass').value;
+      const err   = document.getElementById('login-err');
       err.textContent = '';
-      unconfirmedEl.style.display = 'none';
       if (!email || !pass) { err.textContent = 'Please fill in both fields.'; return; }
+      const emailCheck = isValidEmail(email);
+      if (!emailCheck.ok) { err.textContent = emailCheck.msg; return; }
       const result = await Auth.login(email, pass);
-      if (!result.ok) {
-        if (result.err === 'email_not_confirmed') {
-          unconfirmedEl.style.display = 'block';
-        } else {
-          err.textContent = result.err;
-        }
-        return;
-      }
+      if (!result.ok) { err.textContent = result.err; return; }
       window.location.href = 'dashboard.html';
     };
 
     window.doRegister = async () => {
       const first = document.getElementById('reg-first').value.trim();
       const last  = document.getElementById('reg-last').value.trim();
-      const email = document.getElementById('reg-email').value.trim().toLowerCase();
+      const email = document.getElementById('reg-email').value.trim();
       const pass  = document.getElementById('reg-pass').value;
       const err   = document.getElementById('reg-err');
       err.textContent = '';
 
       if (!first || !last || !email || !pass) { err.textContent = 'All fields are required.'; return; }
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) { err.textContent = 'Please use a real email address.'; return; }
+
+      const emailCheck = isValidEmail(email);
+      if (!emailCheck.ok) { err.textContent = emailCheck.msg; return; }
+
       if (pass.length < 8) { err.textContent = 'Password must be at least 8 characters.'; return; }
 
       const result = await Auth.register(first, last, email, pass);
+      if (result.ok) {window.location = "/dashboard.html";}
       if (!result.ok) { err.textContent = result.err; return; }
 
-      if (result.needsConfirmation) {
-        // Email confirmation ON — show "check your email" screen
-        document.getElementById('confirm-email-display').textContent = email;
-        switchTab('confirm');
-      } else {
-        // Email confirmation OFF — go straight to dashboard
-        window.location.href = 'dashboard.html';
-      }
-
-      // Notify Brandon (fire-and-forget)
+      // Notify Brandon of new registration via Web3Forms
       try {
-        const ts = new Date().toLocaleString('en-US', { timeZone: 'America/Chicago', dateStyle: 'full', timeStyle: 'short' });
-        await fetch('https://api.web3forms.com/submit', {
+        const timestamp = new Date().toLocaleString('en-US', { timeZone: 'America/Chicago', dateStyle: 'full', timeStyle: 'short' });
+        const emailPayload = {
+          access_key: '8eec27a9-6e50-4206-a71a-a2c6f0c4c8bb',
+          subject:    'New Registration — BigBoyPeps',
+          from_name:  'BigBoyPeps Store',
+          name:       first + ' ' + last,
+          email:      'Brandon.burnell@hotmail.com',
+          message:
+            '=== NEW RESEARCHER REGISTERED ===\n\n' +
+            'First Name: ' + first + '\n' +
+            'Last Name:  ' + last + '\n' +
+            'Email:      ' + email + '\n' +
+            'Registered: ' + timestamp,
+        };
+        console.log('%c📧 REGISTRATION EMAIL PAYLOAD', 'color:#5BC75B;font-weight:bold;font-size:14px');
+        console.log('%cTo: Brandon.burnell@hotmail.com', 'color:#E8B84B');
+        console.log('%cMessage:\n' + emailPayload.message, 'color:#EEEBE6');
+        const response = await fetch('https://api.web3forms.com/submit', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-          body: JSON.stringify({
-            access_key: '8eec27a9-6e50-4206-a71a-a2c6f0c4c8bb',
-            subject:    'New Registration — BigBoyPeps',
-            from_name:  'BigBoyPeps Store',
-            name:       first + ' ' + last,
-            email:      'Brandon.burnell@hotmail.com',
-            message:    '=== NEW RESEARCHER REGISTERED ===\n\nFirst Name: ' + first + '\nLast Name:  ' + last + '\nEmail:      ' + email + '\nRegistered: ' + ts,
-          }),
+          body: JSON.stringify(emailPayload),
         });
-      } catch(e) { console.error('Registration notify failed:', e); }
+        const responseData = await response.json();
+        console.log('%c📬 Web3Forms Response:', 'color:#5BC75B;font-weight:bold', responseData);
+      } catch(e) { console.error('Registration notify failed:', e); 
+      }
+
     };
   </script>
 </body>

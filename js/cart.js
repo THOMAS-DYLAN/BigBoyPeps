@@ -117,45 +117,46 @@ window.buildNav = async function(activePage) {
 
 function buildNavFromSession(activePage, session) {
   const count = Cart.count();
-
-  const tabs = [
-    { href: 'dashboard.html', label: 'Home',   icon: '⌂', page: 'dashboard' },
-    { href: 'shop.html',      label: 'Shop',   icon: '◈', page: 'shop'      },
-    { href: 'orders.html',    label: 'Orders', icon: '☰', page: 'orders'    },
+  const links = [
+    { href: 'dashboard.html', label: 'Dashboard', page: 'dashboard', icon: '⌂' },
+    { href: 'shop.html',      label: 'Shop',      page: 'shop',      icon: '◈' },
+    { href: 'orders.html',    label: 'Orders',    page: 'orders',    icon: '☰' },
+    { href: 'cart.html',      label: 'Cart',      page: 'cart',      icon: '⊕' },
   ];
 
-  const navLinks = tabs.map(t =>
-    '<a href="' + t.href + '" class="nav-link' + (activePage===t.page?' active':'') + '">'
-    + '<span class="nav-icon">' + t.icon + '</span>'
-    + '<span class="nav-label">' + t.label + '</span>'
-    + '</a>'
+  const desktopLinks = [
+    { href: 'dashboard.html', label: 'Dashboard', page: 'dashboard' },
+    { href: 'shop.html',      label: 'Shop',      page: 'shop'      },
+    { href: 'orders.html',    label: 'Orders',    page: 'orders'    },
+  ].map(l =>
+    '<a href="' + l.href + '" class="nav-link' + (activePage===l.page?' active':'') + '">' + l.label + '</a>'
   ).join('');
 
-  const cartBadgeHtml = '<span id="cart-badge" class="cart-badge" style="display:' + (count>0?'flex':'none') + '">' + count + '</span>';
-
-  // Mobile-only sign out tab (hidden on desktop via CSS)
-  const mobileSignOut = '<button onclick="Auth.logout()" class="nav-signout-tab">'
-    + '<span class="nav-icon">⏻</span>'
-    + '<span class="nav-label">Sign Out</span>'
-    + '</button>';
+  const bottomTabs = links.map(l => {
+    const isCart   = l.page === 'cart';
+    const isActive = activePage === l.page;
+    return '<a href="' + l.href + '" class="bottom-tab' + (isActive?' active':'') + '">'
+      + '<span class="bottom-tab-icon">' + l.icon + (isCart && count > 0 ? '<span class="bottom-tab-badge">' + count + '</span>' : '') + '</span>'
+      + '<span class="bottom-tab-label">' + l.label + '</span>'
+      + '</a>';
+  }).join('');
 
   return '<nav>'
     + '<div class="nav-inner">'
     + '<a href="dashboard.html" class="nav-brand">' + NAV_LOGO + '</a>'
-    + '<div class="nav-links">' + navLinks + '</div>'
+    + '<div class="nav-links">' + desktopLinks + '</div>'
     + '<div class="nav-right">'
     + '<button onclick="Auth.logout()" class="nav-signout">Sign Out</button>'
-    + '<a href="cart.html" class="cart-nav-btn">'
-    + '<span class="nav-icon">⊕</span>'
-    + '<span class="nav-label">Cart</span>'
-    + cartBadgeHtml
-    + '</a>'
-    + mobileSignOut
+    + '<a href="cart.html" class="cart-nav-btn">Cart<span id="cart-badge" class="cart-badge" style="display:' + (count>0?'flex':'none') + '">' + count + '</span></a>'
     + '</div>'
     + '</div>'
-    + '</nav>';
+    + '</nav>'
+    + '<div class="bottom-nav" id="bottom-nav">'
+    + bottomTabs
+    + '</div>';
 }
 
+// Keep these as no-ops in case anything references them
 window.toggleMobileNav = function() {};
 window.closeMobileNav  = function() {};
 
@@ -173,37 +174,13 @@ function buildFooterFromSession() {
   return '<footer><div class="footer-inner"><a href="dashboard.html" class="footer-brand" style="text-decoration:none;display:flex;align-items:center"><img src="img/logo.png" alt="BigBoyPeps" style="height:32px;object-fit:contain"></a><div class="footer-copy">© 2025 BigBoyPeps · For research purposes only</div></div></footer>';
 }
 
-// ── Placeholder nav — renders instantly before auth ───────
-function buildPlaceholderNav() {
-  return '<nav>'
-    + '<div class="nav-inner">'
-    + '<a href="dashboard.html" class="nav-brand">' + NAV_LOGO + '</a>'
-    + '<div class="nav-links" style="opacity:.25;pointer-events:none">'
-    + '<span class="nav-link">Home</span>'
-    + '<span class="nav-link">Shop</span>'
-    + '<span class="nav-link">Orders</span>'
-    + '</div>'
-    + '<div class="nav-right" style="opacity:.25;pointer-events:none">'
-    + '<span class="nav-signout">···</span>'
-    + '</div>'
-    + '</div>'
-    + '</nav>';
-}
-
 // ── Page init ─────────────────────────────────────────────
 window.initPage = async function(activePage) {
-  // 1. Render nav + banner IMMEDIATELY — zero network wait
-  //    User sees the nav bar right away while auth check runs
-  document.getElementById('nav-mount').innerHTML    = buildPlaceholderNav();
-  document.getElementById('banner-mount').innerHTML = window.buildBanner();
-
-  // 2. Auth check — runs in parallel with page data loading
   const { data: { session } } = await supabase.auth.getSession();
   if (!session) { window.location.replace('index.html'); return; }
-
-  // 3. Swap placeholder for real nav (instant — no extra network call)
   Cart._key = 'bbp_cart_' + session.user.id;
   document.getElementById('nav-mount').innerHTML    = buildNavFromSession(activePage, session);
+  document.getElementById('banner-mount').innerHTML = window.buildBanner();
   document.getElementById('footer-mount').innerHTML = buildFooterFromSession();
   Cart.updateBadge();
 };

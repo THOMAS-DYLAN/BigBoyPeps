@@ -80,29 +80,13 @@ window.Auth = {
     });
 
     if (error) return { ok: false, err: error.message };
-
-    // If email confirmation is ON, data.session is null — tell the UI to show the confirm screen
-    const needsConfirmation = !data.session;
-    return { ok: true, user: data.user, needsConfirmation };
+    return { ok: true, user: data.user };
   },
 
   async login(email, password) {
     const { error } = await supabase.auth.signInWithPassword({ email, password });
-    if (!error) return { ok: true };
-    const msg = error.message.toLowerCase();
-    if (msg.includes('email not confirmed') || msg.includes('confirmation')) {
-      return { ok: false, err: 'email_not_confirmed' };
-    }
-    return { ok: false, err: 'Wrong email or password.' };
-  },
-
-  async resendConfirmation(email) {
-    const { error } = await supabase.auth.resend({
-      type: 'signup',
-      email,
-      options: { emailRedirectTo: 'https://bigboypeps.com/dashboard.html' },
-    });
-    return error ? { ok: false, err: error.message } : { ok: true };
+    if (error) return { ok: false, err: 'Wrong email or password.' };
+    return { ok: true };
   },
 
   async logout() {
