@@ -271,13 +271,11 @@
 
 
     window.doLogin = async () => {
-      const email = document.getElementById('login-email').value.trim();
+      const email = document.getElementById('login-email').value.trim().toLowerCase();
       const pass  = document.getElementById('login-pass').value;
       const err   = document.getElementById('login-err');
       err.textContent = '';
       if (!email || !pass) { err.textContent = 'Please fill in both fields.'; return; }
-      const emailCheck = isValidEmail(email);
-      if (!emailCheck.ok) { err.textContent = emailCheck.msg; return; }
       const result = await Auth.login(email, pass);
       if (!result.ok) { err.textContent = result.err; return; }
       window.location.href = 'dashboard.html';
@@ -299,38 +297,31 @@
       if (pass.length < 8) { err.textContent = 'Password must be at least 8 characters.'; return; }
 
       const result = await Auth.register(first, last, email, pass);
-      if (result.ok) {window.location = "/dashboard.html";}
       if (!result.ok) { err.textContent = result.err; return; }
 
-      // Notify Brandon of new registration via Web3Forms
+      // Notify Brandon before redirecting so it always fires
       try {
         const timestamp = new Date().toLocaleString('en-US', { timeZone: 'America/Chicago', dateStyle: 'full', timeStyle: 'short' });
-        const emailPayload = {
-          access_key: '8eec27a9-6e50-4206-a71a-a2c6f0c4c8bb',
-          subject:    'New Registration — BigBoyPeps',
-          from_name:  'BigBoyPeps Store',
-          name:       first + ' ' + last,
-          email:      'Brandon.burnell@hotmail.com',
-          message:
-            '=== NEW RESEARCHER REGISTERED ===\n\n' +
-            'First Name: ' + first + '\n' +
-            'Last Name:  ' + last + '\n' +
-            'Email:      ' + email + '\n' +
-            'Registered: ' + timestamp,
-        };
-        console.log('%c📧 REGISTRATION EMAIL PAYLOAD', 'color:#5BC75B;font-weight:bold;font-size:14px');
-        console.log('%cTo: Brandon.burnell@hotmail.com', 'color:#E8B84B');
-        console.log('%cMessage:\n' + emailPayload.message, 'color:#EEEBE6');
-        const response = await fetch('https://api.web3forms.com/submit', {
+        await fetch('https://api.web3forms.com/submit', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-          body: JSON.stringify(emailPayload),
+          body: JSON.stringify({
+            access_key: '8eec27a9-6e50-4206-a71a-a2c6f0c4c8bb',
+            subject:    'New Registration — BigBoyPeps',
+            from_name:  'BigBoyPeps Store',
+            name:       first + ' ' + last,
+            email:      'Brandon.burnell@hotmail.com',
+            message:
+              '=== NEW RESEARCHER REGISTERED ===\n\n' +
+              'First Name: ' + first + '\n' +
+              'Last Name:  ' + last  + '\n' +
+              'Email:      ' + email + '\n' +
+              'Registered: ' + timestamp,
+          }),
         });
-        const responseData = await response.json();
-        console.log('%c📬 Web3Forms Response:', 'color:#5BC75B;font-weight:bold', responseData);
-      } catch(e) { console.error('Registration notify failed:', e); 
-      }
+      } catch(e) { console.error('Registration notify failed:', e); }
 
+      window.location.href = 'dashboard.html';
     };
   </script>
 </body>
