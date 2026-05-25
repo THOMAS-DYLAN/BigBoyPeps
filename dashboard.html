@@ -2,10 +2,19 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <link rel="preconnect" href="https://utqviljholfvpfztfuvx.supabase.co" crossorigin>
+  <link rel="dns-prefetch" href="https://utqviljholfvpfztfuvx.supabase.co">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Dashboard — BigBoyPeps</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Permanent+Marker&family=Barlow:wght@300;400;500;600&family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet" />
+  <link rel="modulepreload" href="js/supabase.js">
+  <link rel="modulepreload" href="js/auth.js?v=15">
+  <link rel="modulepreload" href="js/cart.js?v=18">
+  <link rel="modulepreload" href="js/products.js?v=15">
   <link rel="stylesheet" href="css/global.css" />
   <link rel="stylesheet" href="css/shared.css" />
   <style>
@@ -167,9 +176,9 @@
   <div id="footer-mount"></div>
 
   <script type="module">
-    import './js/auth.js?v=14';
-    import './js/cart.js?v=17';
-    import { loadProducts, getProduct, miniPepperSVG } from './js/products.js?v=14';
+    import './js/auth.js?v=15';
+    import './js/cart.js?v=18';
+    import { loadProducts, getProduct, miniPepperSVG } from './js/products.js?v=15';
 
     const [, , profile, orders] = await Promise.all([
       window.initPage('dashboard'),

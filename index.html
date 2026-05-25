@@ -1,959 +1,328 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BigBoyPeps — Enter</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Permanent+Marker&family=Barlow:wght@300;400;500;600&family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/global.css" />
+  <style>
+    /* ── AGE GATE ──────────────────────────────────────── */
+    #age-gate {
+      position: fixed; inset: 0; z-index: 100;
+      background: var(--black);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .gate-scratches { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+    .scratch { position: absolute; background: var(--red); opacity: .07; border-radius: 1px; }
+    .gate-inner {
+      position: relative; z-index: 1;
+      text-align: center; max-width: 440px; padding: 0 32px;
+      animation: fadeUp .55s ease both;
+    }
+    .gate-brand { font-family: var(--font-d); font-size: 3.8rem; line-height: 1; letter-spacing: .08em; color: var(--white); margin-bottom: 4px; }
+    .gate-brand span { color: var(--red); }
+    .gate-sub { font-family: var(--font-c); font-size: .66rem; font-weight: 700; letter-spacing: .28em; text-transform: uppercase; color: var(--smoke); margin-bottom: 44px; }
+    .gate-rule { width: 48px; height: 2px; background: var(--red); margin: 0 auto 32px; }
+    .gate-prompt { font-size: .88rem; color: var(--ash); line-height: 1.85; margin-bottom: 38px; }
+    .gate-prompt strong { color: var(--light); font-weight: 600; }
+    .gate-btns { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+    .btn-yes { padding: 13px 34px; font-family: var(--font-c); font-size: .78rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; background: var(--red); color: var(--white); clip-path: polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,8px 100%,0 calc(100% - 8px)); transition: background .2s, transform .2s; }
+    .btn-yes:hover { background: var(--red-hot); transform: translateY(-2px); }
+    .btn-no { padding: 13px 34px; font-family: var(--font-c); font-size: .78rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: var(--smoke); border: 1px solid var(--border); transition: border-color .2s, color .2s; }
+    .btn-no:hover { border-color: var(--smoke); color: var(--ash); }
 
+    #denied { display: none; position: fixed; inset: 0; z-index: 200; background: var(--black); flex-direction: column; align-items: center; justify-content: center; gap: 14px; }
+    #denied p { font-family: var(--font-c); font-size: .75rem; font-weight: 700; letter-spacing: .22em; text-transform: uppercase; color: var(--smoke); }
 
-  <!-- ═══ PRIMARY SEO META ═══ -->
-  <title>Flat Fee Financial Planner Sioux Falls & Phoenix | Impact Wealth Partners</title>
-  <meta name="description" content="Impact Wealth Partners — your flat fee, fee-only, fiduciary financial planner in Sioux Falls SD and Phoenix AZ. Personalized investment, retirement, estate & tax planning with no hidden commissions. Call (605) 333-9886."/>
-  <meta name="keywords" content="flat fee financial planner Sioux Falls, fee-only financial advisor Sioux Falls SD, fiduciary financial planner South Dakota, flat fee financial planner Phoenix Arizona, fee-only financial advisor Phoenix AZ, financial planning Sioux Falls, retirement planning Sioux Falls, investment planning Phoenix, estate planning South Dakota, wealth management Phoenix AZ, Impact Wealth Partners, Michael Peterson wealth advisor, flat fee advisor SD AZ"/>
-  <meta name="author" content="Michael J. Peterson, Impact Wealth Partners"/>
-  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1"/>
-  <meta name="revisit-after" content="7 days"/>
-  <meta name="language" content="English"/>
-  <meta name="geo.region" content="US-SD"/>
-  <meta name="geo.placename" content="Sioux Falls, South Dakota"/>
-  <meta name="geo.position" content="43.5473;-96.7283"/>
-  <meta name="ICBM" content="43.5473, -96.7283"/>
-  <link rel="canonical" href="https://www.letsimpactwealth.com/index.html"/>
-  <link rel="alternate" href="https://www.letsimpactwealth.com/index2.html" hreflang="en-us" title="Dark Design"/>
-  <link rel="alternate" hreflang="en" href="https://www.letsimpactwealth.com/index.html"/>
-  <link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml"/>
-  <link rel="icon" type="image/x-icon" href="/favicon.ico"/>
-  <link rel="shortcut icon" href="/favicon.ico"/>
+    /* ── AUTH PAGE ─────────────────────────────────────── */
+    #auth-page { display: none; min-height: 100vh; grid-template-columns: 1fr 1fr; }
+    #auth-page.active { display: grid; }
 
-  <!-- ═══ OPEN GRAPH ═══ -->
-  <meta property="og:type" content="website"/>
-  <meta property="og:url" content="https://www.letsimpactwealth.com/index.html"/>
-  <meta property="og:title" content="Flat Fee Financial Planner Sioux Falls & Phoenix | Impact Wealth Partners"/>
-  <meta property="og:description" content="Impact Wealth Partners — your flat fee, fee-only, fiduciary financial planner in Sioux Falls SD and Phoenix AZ. Personalized investment, retirement, estate & tax planning with no hidden commissions. Call (605) 333-9886."/>
-  <meta property="og:image" content="https://www.letsimpactwealth.com/favicon.ico"/>
-  <meta property="og:image:alt" content="Impact Wealth Partners — Flat Fee Financial Planning"/>
-  <meta property="og:site_name" content="Impact Wealth Partners"/>
-  <meta property="og:locale" content="en_US"/>
+    .auth-visual {
+      background: var(--off); border-right: 1px solid var(--border);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: 56px 48px; position: relative; overflow: hidden;
+    }
+    .auth-visual-bg { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+    .auth-graffiti { position: absolute; font-family: var(--font-m); color: var(--red); opacity: .06; user-select: none; pointer-events: none; white-space: nowrap; }
+    .auth-visual-content { position: relative; z-index: 1; text-align: center; }
+    .auth-visual-name { font-family: var(--font-d); font-size: 2.6rem; letter-spacing: .1em; color: var(--white); line-height: 1; }
+    .auth-visual-name span { color: var(--red); }
+    .auth-visual-tagline { font-family: var(--font-m); font-size: .95rem; color: var(--smoke); margin-top: 12px; }
+    .auth-visual-divider { width: 100%; height: 1px; background: var(--border); margin: 28px 0; }
+    .auth-visual-pills { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+    .pill { font-family: var(--font-c); font-size: .62rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; padding: 5px 12px; border: 1px solid var(--border); color: var(--smoke); }
 
-  <!-- ═══ TWITTER CARD ═══ -->
-  <meta name="twitter:card" content="summary_large_image"/>
-  <meta name="twitter:title" content="Flat Fee Financial Planner Sioux Falls & Phoenix | Impact Wealth Partners"/>
-  <meta name="twitter:description" content="Impact Wealth Partners — your flat fee, fee-only, fiduciary financial planner in Sioux Falls SD and Phoenix AZ. Personalized investment, retirement, estate & tax planning with no hidden commissions. Call (605) 333-9886."/>
-  <meta name="twitter:image" content="https://www.letsimpactwealth.com/favicon.ico"/>
-  <meta name="twitter:image:alt" content="Impact Wealth Partners — Flat Fee Financial Planning"/>
+    .auth-form-side { display: flex; flex-direction: column; justify-content: center; padding: 56px 48px; background: var(--off); border-left: 1px solid var(--border); }
+    .auth-tabs { display: flex; border-bottom: 1px solid var(--border); margin-bottom: 32px; }
+    .auth-tab { padding: 10px 0; margin-right: 24px; font-family: var(--font-c); font-size: .73rem; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; color: var(--smoke); border-bottom: 2px solid transparent; transition: all .18s; }
+    .auth-tab.active { color: var(--white); border-bottom-color: var(--red); }
+    .auth-tab:hover:not(.active) { color: var(--ash); }
+    .auth-form { display: none; }
+    .auth-form.active { display: block; animation: fadeIn .2s ease; }
+    .auth-title { font-family: var(--font-d); font-size: 2rem; letter-spacing: .04em; color: var(--white); margin-bottom: 5px; }
+    .auth-desc { font-size: .81rem; color: var(--smoke); margin-bottom: 28px; line-height: 1.6; }
 
-  <!-- ═══ LOCAL BUSINESS ═══ -->
-  <meta name="business:contact_data:street_address" content="Sioux Falls, SD"/>
-  <meta name="business:contact_data:locality" content="Sioux Falls"/>
-  <meta name="business:contact_data:region" content="SD"/>
-  <meta name="business:contact_data:country_name" content="United States"/>
-  <meta name="business:contact_data:phone_number" content="+1-605-333-9886"/>
-  <meta name="business:contact_data:website" content="https://www.letsimpactwealth.com"/>
+    .field { margin-bottom: 16px; }
+    .field label { display: block; font-family: var(--font-c); font-size: .66rem; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; color: var(--ash); margin-bottom: 7px; }
+    .field input { width: 100%; padding: 11px 14px; background: var(--card); color: var(--light); border: 1px solid var(--border); font-size: .88rem; outline: none; transition: border-color .18s, box-shadow .18s; }
+    .field input:focus { border-color: var(--red); box-shadow: 0 0 0 3px rgba(204,31,31,.12); }
+    .field input::placeholder { color: #3a3a3a; }
+    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 
+    .auth-submit { width: 100%; padding: 13px; font-family: var(--font-c); font-size: .8rem; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; background: var(--red); color: var(--white); clip-path: polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,8px 100%,0 calc(100% - 8px)); transition: background .2s, transform .2s; margin-top: 4px; }
+    .auth-submit:hover { background: var(--red-hot); transform: translateY(-1px); }
+    .auth-error { font-family: var(--font-c); font-size: .73rem; font-weight: 600; letter-spacing: .06em; color: var(--red-hot); margin-top: 10px; min-height: 18px; }
+    .auth-switch { font-size: .78rem; color: var(--smoke); margin-top: 18px; text-align: center; }
+    .auth-switch button { color: var(--red); font-size: .78rem; text-decoration: underline; text-underline-offset: 3px; }
+    .auth-switch button:hover { color: var(--red-hot); }
 
-  <!-- ═══ STRUCTURED DATA ═══ -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@graph": [
-      {
-        "@type": ["FinancialService","LocalBusiness"],
-        "@id": "https://www.letsimpactwealth.com/#business",
-        "name": "Impact Wealth Partners",
-        "alternateName": ["Impact Wealth Management","IWP"],
-        "url": "https://www.letsimpactwealth.com",
-        "logo": "https://www.letsimpactwealth.com/favicon.ico",
-        "image": "https://www.letsimpactwealth.com/favicon.ico",
-        "description": "Impact Wealth Partners provides flat fee, fee-only, fiduciary financial planning in Sioux Falls SD and Phoenix AZ. Services include investment planning, tax planning, retirement planning, estate planning, and wealth management.",
-        "priceRange": "$$",
-        "currenciesAccepted": "USD",
-        "paymentAccepted": "Flat Fee",
-        "telephone": ["+1-605-333-9886","+1-602-691-0248"],
-        "email": "mike@letsimpactwealth.com",
-        "founder": {
-          "@type": "Person",
-          "@id": "https://www.letsimpactwealth.com/#michael-peterson",
-          "name": "Michael J. Peterson",
-          "jobTitle": "Wealth Advisor",
-          "worksFor": {"@id": "https://www.letsimpactwealth.com/#business"},
-          "telephone": ["+1-605-333-9886","+1-602-691-0248"],
-          "email": "mike@letsimpactwealth.com"
-        },
-        "address": [
-          {
-            "@type": "PostalAddress",
-            "addressLocality": "Sioux Falls",
-            "addressRegion": "SD",
-            "addressCountry": "US",
-            "description": "Primary Office"
-          },
-          {
-            "@type": "PostalAddress",
-            "addressLocality": "Phoenix",
-            "addressRegion": "AZ",
-            "addressCountry": "US",
-            "description": "Arizona Office"
-          }
-        ],
-        "areaServed": [
-          {"@type": "State", "name": "South Dakota"},
-          {"@type": "State", "name": "Arizona"},
-          {"@type": "City", "name": "Sioux Falls", "containedInPlace": {"@type": "State", "name": "South Dakota"}},
-          {"@type": "City", "name": "Phoenix", "containedInPlace": {"@type": "State", "name": "Arizona"}}
-        ],
-        "serviceType": [
-          "Flat Fee Financial Planning",
-          "Fee-Only Financial Advice",
-          "Fiduciary Wealth Management",
-          "Investment Planning",
-          "Retirement Planning",
-          "Estate Planning",
-          "Tax Planning",
-          "Protection Planning",
-          "Wealth Accumulation"
-        ],
-        "knowsAbout": [
-          "Flat Fee Financial Planning",
-          "Fee-Only Fiduciary Advice",
-          "Retirement Income Planning",
-          "Investment Portfolio Management",
-          "Estate and Legacy Planning",
-          "Tax Optimization Strategies",
-          "Wealth Accumulation"
-        ],
-        "sameAs": [
-          "https://www.facebook.com/weimpactwealth",
-          "https://www.letsimpactwealth.com"
-        ]
-      },
-      {
-        "@type": "WebSite",
-        "@id": "https://www.letsimpactwealth.com/#website",
-        "url": "https://www.letsimpactwealth.com",
-        "name": "Impact Wealth Partners",
-        "description": "Flat Fee Fee-Only Fiduciary Financial Planner in Sioux Falls SD and Phoenix AZ",
-        "publisher": {"@id": "https://www.letsimpactwealth.com/#business"},
-        "potentialAction": {
-          "@type": "SearchAction",
-          "target": "https://www.letsimpactwealth.com/?s={search_term_string}",
-          "query-input": "required name=search_term_string"
-        }
-      },
-      {
-        "@type": "FAQPage",
-        "mainEntity": [
-          {
-            "@type": "Question",
-            "name": "What is a flat fee financial planner?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "A flat fee financial planner charges a set, transparent fee for financial planning services rather than earning commissions from products they sell. This eliminates conflicts of interest and ensures advice is fully aligned with the client's best interests. Impact Wealth Partners charges a flat fee for all financial planning services in Sioux Falls and Phoenix."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "What is a fee-only financial advisor?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "A fee-only financial advisor is compensated solely by client fees — never by commissions, kickbacks, or referral fees. This means the advisor's recommendations are never influenced by financial incentives. Impact Wealth Partners is a fee-only firm serving Sioux Falls SD and Phoenix AZ."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "What does it mean to be a fiduciary financial advisor?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "A fiduciary financial advisor is legally obligated to act in the client's best interest at all times. Impact Wealth Partners upholds the fiduciary standard, meaning every recommendation is made with your financial wellbeing as the top priority — not the advisor's compensation."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "Does Impact Wealth Partners serve clients in Phoenix, Arizona?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Yes. Impact Wealth Partners, led by Wealth Advisor Michael J. Peterson, serves clients in both Sioux Falls, South Dakota and Phoenix, Arizona. You can reach the Arizona office at +1 (602) 691-0248 or by email at mike@letsimpactwealth.com."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "What financial planning services does Impact Wealth Partners offer?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Impact Wealth Partners offers comprehensive financial planning services including investment planning, retirement planning, estate planning, tax planning, protection planning, and wealth accumulation strategies — all on a flat fee, fee-only, fiduciary basis in Sioux Falls SD and Phoenix AZ."
-            }
-          }
-        ]
-      }
-    ]
-  }
-  </script>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<!-- Favicon -->
-<link rel="shortcut icon" href="/favicon.ico">
-<link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet"/>
-<style>
-
-:root {
-  --bg:                  #f0ece3;
-  --bg-alt:              #e8e3da;
-  --heading:             #3a4558;
-  --body:                #5a6472;
-  --accent:              #e8693d;
-  --border:              rgba(58,69,88,0.12);
-  --nav-bg:              #ffffff;
-  --nav-text:            #3a4558;
-  --nav-shadow:          rgba(58,69,88,0.1);
-  --nav-btn-border:      #3a4558;
-  --nav-btn-hover-bg:    #3a4558;
-  --nav-btn-hover-text:  #ffffff;
-  --btn-border:          #3a4558;
-  --btn-text:            #3a4558;
-  --btn-hover-bg:        #3a4558;
-  --btn-hover-text:      #ffffff;
-  --icon-border:         rgba(58,69,88,0.22);
-  --icon-bg:             #f0ece3;
-  --img-fallback:        #c8bfb0;
-  --input-bg:            #ffffff;
-  --input-text:          #3a4558;
-  --input-placeholder:   #8a9098;
-  --submit-bg:           #2c2f37;
-  --submit-text:         #ffffff;
-  --footer-bg:           #e8e3da;
-  --footer-disc:         #7a6856;
-  --switcher-label-bg:   #3a4558;
-  --switcher-label-text: #ffffff;
-  --switcher-btn-bg:     #e8693d;
-  --switcher-btn-text:   #ffffff;
-}
-body { background: var(--bg); color: var(--heading); }
-#nav { background: var(--nav-bg); border-bottom: 1px solid var(--border); }
-
-
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; }
-body { font-family: 'Nunito', sans-serif; font-weight: 400; line-height: 1.7; -webkit-font-smoothing: antialiased; }
-
-/* VERSION SWITCHER */
-.version-switcher {
-  position: fixed; bottom: 2rem; right: 2rem; z-index: 999;
-  display: flex; align-items: center; gap: 0;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.18);
-  border-radius: 50px;
-  overflow: hidden;
-  font-family: 'Nunito', sans-serif;
-}
-.version-label {
-  font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em;
-  text-transform: uppercase; padding: 0.65rem 1rem;
-  background: var(--switcher-label-bg);
-  color: var(--switcher-label-text);
-  white-space: nowrap;
-}
-.version-btn {
-  display: flex; align-items: center; gap: 6px;
-  padding: 0.65rem 1.1rem;
-  background: var(--switcher-btn-bg);
-  color: var(--switcher-btn-text);
-  font-size: 0.75rem; font-weight: 800; letter-spacing: 0.1em;
-  text-transform: uppercase; text-decoration: none;
-  transition: opacity 0.2s;
-  white-space: nowrap;
-}
-.version-btn:hover { opacity: 0.88; }
-.version-btn svg { width: 14px; height: 14px; flex-shrink: 0; }
-
-/* NAV */
-#nav { position: fixed; top: 0; left: 0; right: 0; z-index: 200; display: flex; align-items: center; justify-content: space-between; padding: 0 5%; height: 80px; transition: box-shadow 0.3s; }
-#nav.scrolled { box-shadow: 0 2px 24px var(--nav-shadow); }
-.nav-brand img { height: 52px; width: auto; display: block; }
-.nav-links { display: flex; align-items: center; gap: 0.2rem; list-style: none; }
-.nav-links li a { font-size: 0.8rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; text-decoration: none; padding: 0.4rem 0.6rem; transition: color 0.2s; color: var(--nav-text); }
-.nav-links li a:hover { color: var(--accent); }
-.nav-contact-btn { border: 1.5px solid var(--nav-btn-border) !important; padding: 0.4rem 1rem !important; margin-left: 0.5rem; transition: background 0.2s, color 0.2s !important; }
-.nav-contact-btn:hover { background: var(--nav-btn-hover-bg) !important; color: var(--nav-btn-hover-text) !important; }
-.hamburger { display: none; flex-direction: column; gap: 5px; background: none; border: none; cursor: pointer; padding: 4px; }
-.hamburger span { width: 24px; height: 2px; background: var(--nav-text); display: block; }
-
-/* HERO */
-.hero-text { padding: 5rem 5% 5rem 6%; display: flex; flex-direction: column; justify-content: center; }
-.hero-text h1 { font-family: 'Lora', serif; font-size: clamp(1.9rem, 3.5vw, 3.1rem); font-weight: 500; color: var(--heading); line-height: 1.18; margin-bottom: 1.2rem; animation: fadeUp 0.8s 0.2s both; }
-.hero-text p { font-size: 0.95rem; color: var(--body); line-height: 1.8; max-width: 500px; margin-bottom: 2rem; animation: fadeUp 0.8s 0.4s both; }
-.hero-photo img { width: 100%; height: 100%; object-fit: cover; object-position: center 20%; display: block; animation: fadeIn 1s 0.1s both; filter: brightness(0.96) saturate(0.88); }
-
-
-/* ALTERNATING */
-.alt-section { display: grid; grid-template-columns: 1fr 1fr; align-items: stretch; opacity: 0; transform: translateY(24px); transition: opacity 0.6s, transform 0.6s; }
-.alt-section.revealed { opacity: 1; transform: none; }
-.alt-section.alt-reverse { }
-.alt-section.alt-reverse .alt-photo { order: -1; }
-.alt-text { padding: 4rem 6%; display: flex; flex-direction: column; justify-content: center; background: var(--bg); }
-.alt-text h3 { font-family: 'Lora', serif; font-size: clamp(1.6rem, 2.8vw, 2.3rem); font-weight: 500; color: var(--heading); margin-bottom: 0.6rem; }
-.section-underline { width: 36px; height: 3px; background: var(--accent); margin-bottom: 1.2rem; border-radius: 2px; }
-.alt-text p { font-size: 0.93rem; color: var(--body); line-height: 1.85; }
-.alt-photo { overflow: hidden; min-height: 340px; max-height: 500px; background: var(--img-fallback); position: relative; }
-.alt-photo img { width: 100%; height: 100%; object-fit: cover; object-position: center 25%; display: block; filter: brightness(0.94) saturate(0.85); transition: filter 0.4s; }
-
-/* CTA STRIP */
-.cta-strip { text-align: center; padding: 3rem 5%; background: var(--bg); }
-
-/* BUTTONS */
-.btn-outline-dark { display: inline-block; border: 1.5px solid var(--btn-border); color: var(--btn-text); background: transparent; padding: 0.75rem 2.2rem; font-family: 'Nunito', sans-serif; font-size: 0.78rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; text-decoration: none; cursor: pointer; transition: background 0.2s, color 0.2s; }
-.btn-outline-dark:hover { background: var(--btn-hover-bg); color: var(--btn-hover-text); }
-.btn-outline-footer { display: inline-block; border: 1.5px solid var(--accent); color: var(--accent); background: transparent; padding: 0.6rem 1.8rem; font-family: 'Nunito', sans-serif; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; text-decoration: none; transition: background 0.2s, color 0.2s; margin-top: 1.2rem; }
-.btn-outline-footer:hover { background: var(--accent); color: #fff; }
-
-/* SERVICES */
-.services-section { padding: 5rem 5%; text-align: center; background: var(--bg-alt); }
-.section-heading { font-family: 'Lora', serif; font-size: clamp(1.6rem, 3vw, 2.6rem); font-weight: 500; color: var(--heading); margin-bottom: 1rem; }
-.section-subtext { font-size: 0.95rem; color: var(--body); max-width: 760px; margin: 0 auto 3.5rem; line-height: 1.85; }
-.services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 2.5rem 3rem; max-width: 900px; margin: 0 auto; }
-.service-item { text-align: center; opacity: 0; transform: translateY(16px); transition: opacity 0.5s, transform 0.5s; }
-.service-item.revealed { opacity: 1; transform: none; }
-.service-icon { width: 100px; height: 100px; border-radius: 50%; border: 1.5px solid var(--icon-border); display: flex; align-items: center; justify-content: center; margin: 0 auto 1.2rem; background: var(--icon-bg); }
-.service-icon svg { width: 44px; height: 44px; stroke: var(--accent); }
-.service-item h4 { font-family: 'Lora', serif; font-size: 1.15rem; font-weight: 500; color: var(--heading); margin-bottom: 0.6rem; }
-.service-item p { font-size: 0.87rem; color: var(--body); line-height: 1.8; }
-
-/* BENEFITS */
-.benefits-section { padding: 5rem 5%; text-align: center; background: var(--bg); }
-.benefits-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; margin: 3rem auto 0; max-width: 1000px; }
-.benefit-card { text-align: center; opacity: 0; transform: translateY(16px); transition: opacity 0.5s, transform 0.5s; }
-.benefit-card.revealed { opacity: 1; transform: none; }
-.benefit-card--tall { margin-top: 0; }
-.benefit-photo { overflow: hidden; width: 100%; height: 220px; margin-bottom: 1rem; background: var(--img-fallback); border-radius: 2px; }
-.benefit-photo img { width: 100%; height: 100%; object-fit: cover; object-position: center 30%; display: block; filter: brightness(0.93) saturate(0.82); transition: filter 0.4s, transform 0.4s; }
-.benefit-card h4 { font-family: 'Lora', serif; font-size: 1rem; font-weight: 500; color: var(--heading); margin-bottom: 0.5rem; }
-.benefit-card p { font-size: 0.82rem; color: var(--body); line-height: 1.75; }
-
-/* TRUST */
-.trust-section { padding: 4.5rem 5%; text-align: center; background: var(--bg-alt); }
-.trust-section h2 { font-family: 'Lora', serif; font-size: clamp(1.5rem, 3vw, 2.3rem); font-weight: 500; color: var(--heading); max-width: 700px; margin: 0 auto 1.5rem; line-height: 1.3; }
-.trust-divider { width: 48px; height: 2px; background: var(--heading); margin: 0 auto 1.8rem; }
-.social-label { font-size: 0.9rem; color: var(--body); margin-bottom: 0.8rem; }
-.social-icons { display: flex; justify-content: center; gap: 0.8rem; }
-.social-icon { width: 40px; height: 40px; border-radius: 50%; background: var(--accent); color: #fff; display: flex; align-items: center; justify-content: center; text-decoration: none; transition: opacity 0.2s; }
-.social-icon:hover { opacity: 0.8; }
-.social-icon svg { width: 18px; height: 18px; }
-
-/* SUBSCRIBE */
-.subscribe-section { background: var(--accent); padding: 3.5rem 5%; text-align: center; }
-.subscribe-section h3 { font-size: 1rem; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: #ffffff; margin-bottom: 1.8rem; }
-.subscribe-form { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.8rem; max-width: 780px; margin: 0 auto 2.5rem; }
-.subscribe-form input { flex: 1; min-width: 180px; padding: 0.75rem 1rem; border: none; background: var(--input-bg); color: var(--input-text); font-family: 'Nunito', sans-serif; font-size: 0.88rem; outline: none; }
-.subscribe-form input::placeholder { color: var(--input-placeholder); }
-.subscribe-form button { padding: 0.75rem 1.8rem; background: var(--submit-bg); color: var(--submit-text); border: none; font-family: 'Nunito', sans-serif; font-size: 0.85rem; font-weight: 700; cursor: pointer; transition: opacity 0.2s; white-space: nowrap; }
-.subscribe-form button:hover { opacity: 0.88; }
-.contact-info-strip { display: flex; justify-content: center; gap: 3rem; flex-wrap: wrap; }
-.contact-info-item { text-align: center; }
-.contact-info-label { display: block; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(255,255,255,0.7); margin-bottom: 0.3rem; }
-.contact-info-item a { color: #fff; text-decoration: none; font-size: 0.95rem; font-weight: 600; transition: opacity 0.2s; }
-.contact-info-item a:hover { opacity: 0.8; }
-
-/* FOOTER */
-footer { padding: 3.5rem 5% 2rem; text-align: center; background: var(--footer-bg); }
-.footer-logo { height: 60px; width: auto; display: block; margin: 0 auto 1.5rem; }
-.footer-nav { display: flex; justify-content: center; flex-wrap: wrap; gap: 0.3rem 1.5rem; margin-bottom: 1.2rem; }
-.footer-nav a { font-size: 0.82rem; font-weight: 600; color: var(--accent); text-decoration: none; transition: opacity 0.2s; }
-.footer-nav a:hover { opacity: 0.75; }
-.footer-socials { display: flex; justify-content: center; gap: 0.8rem; margin-bottom: 1rem; }
-.footer-disc { font-size: 0.72rem; color: var(--footer-disc); max-width: 700px; margin: 1.5rem auto 0; line-height: 1.75; }
-
-@keyframes fadeUp { from { opacity: 0; transform: translateY(22px); } to { opacity: 1; transform: none; } }
-@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-@media (max-width: 1100px) { .benefits-grid { grid-template-columns: repeat(3,1fr); } .benefit-card--tall { margin-top: 0; } }
-@media (max-width: 768px) {
-  #hero { grid-template-columns: 1fr; }
-  .alt-section.alt-reverse .alt-photo { order: -1; }
-  .benefits-grid { grid-template-columns: repeat(2,1fr); }
-  .benefit-card--tall { margin-top: 0; }
-  .nav-links { display: none; flex-direction: column; position: fixed; top: 80px; left: 0; right: 0; padding: 1.5rem 5%; gap: 0.4rem; border-bottom: 1px solid var(--border); z-index: 199; background: var(--nav-bg); }
-  .nav-links.open { display: flex; }
-  .hamburger { display: flex; }
-  .version-switcher { bottom: 1rem; right: 1rem; }
-}
-@media (max-width: 480px) { .benefits-grid { grid-template-columns: 1fr; } .contact-info-strip { gap: 1.5rem; } }
-
-
-  .subscribe-heading { font-size:1rem; font-weight:800; letter-spacing:0.12em; text-transform:uppercase; color:#ffffff; margin-bottom:1.8rem; }
-
-  /* image refinements */
-  .hero-photo::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(to right, rgba(0,0,0,0.08) 0%, transparent 40%);
-    pointer-events: none;
-  }
-  .alt-photo::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: rgba(0,0,0,0.04);
-    pointer-events: none;
-    transition: background 0.4s;
-  }
-  .alt-section:hover .alt-photo::after { background: rgba(0,0,0,0.01); }
-  .alt-section:hover .alt-photo img { filter: brightness(0.97) saturate(0.9); }
-  .benefit-card:hover .benefit-photo img { filter: brightness(0.96) saturate(0.88); transform: scale(1.03); }
-  .benefit-photo { overflow: hidden; }
-  /* benefits responsive update */
-  @media (max-width: 860px) { .benefits-grid { grid-template-columns: repeat(2,1fr) !important; } }
-  @media (max-width: 540px) { .benefits-grid { grid-template-columns: 1fr !important; } }
-</style>
-  <!-- ═══ RESOURCE HINTS ═══ -->
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link rel="dns-prefetch" href="https://images.unsplash.com"/>
-  <link rel="preload" as="image" href="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=900&q=75&fit=crop&crop=faces,center&auto=format" fetchpriority="high"/>
-  <link rel="preload" as="font" href="https://fonts.gstatic.com/s/nunito/v26/XRXI3I6Li01BKofiOc5wtlZ2di8HDDshRTM.woff2" type="font/woff2" crossorigin/>
-  <!-- ═══ PWA / MOBILE ═══ -->
-  <link rel="manifest" href="/manifest.json"/>
-  <meta name="theme-color" content="#e8693d"/>
-  <meta name="apple-mobile-web-app-capable" content="yes"/>
-  <meta name="apple-mobile-web-app-status-bar-style" content="default"/>
-  <meta name="apple-mobile-web-app-title" content="Impact Wealth"/>
-  <link rel="apple-touch-icon" href="/logo.png"/>
-  <!-- ═══ ANALYTICS (replace UA-XXXXXXXX with GA4 measurement ID) ═══ -->
-  <!-- 
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
-  <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-XXXXXXXXXX');</script>
-  -->
-
-  <script type="application/ld+json">
-  {"@context":"https://schema.org","@type":"WebPage","@id":"https://www.letsimpactwealth.com/index.html","url":"https://www.letsimpactwealth.com/index.html","name":"Flat Fee Financial Planner Sioux Falls & Phoenix | Impact Wealth Partners","description":"Flat fee, fee-only, fiduciary financial planning in Sioux Falls SD and Phoenix AZ. No commissions. No conflicts.","isPartOf":{"@id":"https://www.letsimpactwealth.com/#website"},"about":{"@id":"https://www.letsimpactwealth.com/#business"},"breadcrumb":{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.letsimpactwealth.com/"}]},"inLanguage":"en-US","potentialAction":{"@type":"ReadAction","target":"https://www.letsimpactwealth.com/index.html"}}
-  </script>
-
-<style>
-:root {
-  --bg:                  #f0ece3;
-  --bg-alt:              #e8e3da;
-  --heading:             #3a4558;
-  --body:                #5a6472;
-  --accent:              #e8693d;
-  --border:              rgba(58,69,88,0.12);
-  --nav-bg:              #ffffff;
-  --nav-text:            #3a4558;
-  --nav-shadow:          rgba(58,69,88,0.1);
-  --nav-btn-border:      #3a4558;
-  --nav-btn-hover-bg:    #3a4558;
-  --nav-btn-hover-text:  #ffffff;
-  --btn-border:          #3a4558;
-  --btn-text:            #3a4558;
-  --btn-hover-bg:        #3a4558;
-  --btn-hover-text:      #ffffff;
-  --icon-border:         rgba(58,69,88,0.22);
-  --icon-bg:             #f0ece3;
-  --img-fallback:        #c8bfb0;
-  --input-bg:            #ffffff;
-  --input-text:          #3a4558;
-  --input-placeholder:   #8a9098;
-  --submit-bg:           #2c2f37;
-  --submit-text:         #ffffff;
-  --footer-bg:           #e8e3da;
-  --footer-disc:         #7a6856;
-  
-  --surface:    #ffffff;
-  --footer-text: #3a4558;
-  --hero-overlay: rgba(240,236,227,0.25);
-
-  --switcher-label-bg:   #3a4558;
-  --switcher-label-text: #ffffff;
-  --switcher-btn-bg:     #e8693d;
-  --switcher-btn-text:   #ffffff;
-}
-
-/* ─ RESET & BASE ─ */
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; }
-body { font-family: 'Nunito', sans-serif; font-weight: 400; line-height: 1.7; -webkit-font-smoothing: antialiased; background: var(--bg); color: var(--text); }
-
-/* ─ VERSION SWITCHER ─ */
-.version-switcher { position: fixed; bottom: 2rem; right: 2rem; z-index: 999; display: flex; align-items: center; gap: 0; box-shadow: 0 4px 24px rgba(0,0,0,0.16); border-radius: 50px; overflow: hidden; font-family: 'Nunito', sans-serif; }
-.version-label { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; padding: 0.65rem 1rem; background: var(--switcher-label-bg); color: var(--switcher-label-text); white-space: nowrap; }
-.version-btn { display: flex; align-items: center; gap: 6px; padding: 0.65rem 1.1rem; background: var(--switcher-btn-bg); color: var(--switcher-btn-text); font-size: 0.73rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; text-decoration: none; transition: opacity 0.2s; }
-.version-btn:hover { opacity: 0.85; }
-.version-btn svg { width: 13px; height: 13px; }
-
-/* ─ NAV ─ */
-#nav { position: fixed; top: 0; left: 0; right: 0; z-index: 200; display: flex; align-items: center; justify-content: space-between; padding: 0 5%; height: 78px; transition: box-shadow 0.3s, background 0.3s; background: var(--nav-bg); border-bottom: 1px solid var(--border); }
-#nav.scrolled { box-shadow: 0 2px 28px var(--nav-shadow); }
-.nav-brand img { height: 50px; width: auto; display: block; }
-.nav-links { display: flex; align-items: center; gap: 0; list-style: none; }
-.nav-links li a { font-size: 0.78rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; text-decoration: none; padding: 0.5rem 0.7rem; color: var(--nav-text); transition: color 0.2s; position: relative; }
-.nav-links li a::after { content: ''; position: absolute; bottom: 2px; left: 0.7rem; right: 0.7rem; height: 2px; background: var(--accent); transform: scaleX(0); transform-origin: left; transition: transform 0.25s; }
-.nav-links li a:hover { color: var(--accent); }
-.nav-links li a:hover::after { transform: scaleX(1); }
-.nav-contact-btn::after { display: none !important; }
-.nav-contact-btn { border: 1.5px solid var(--nav-btn-border) !important; padding: 0.42rem 1.1rem !important; margin-left: 0.8rem; transition: all 0.2s !important; }
-.nav-contact-btn:hover { background: var(--nav-btn-hover-bg) !important; color: var(--nav-btn-hover-text) !important; border-color: var(--nav-btn-hover-bg) !important; }
-.hamburger { display: none; flex-direction: column; gap: 5px; background: none; border: none; cursor: pointer; padding: 4px; }
-.hamburger span { width: 22px; height: 2px; background: var(--nav-text); display: block; transition: all 0.3s; }
-
-/* ─ HERO ─ */
-#hero { height: calc(100vh - 78px); max-height: 820px; min-height: 500px; display: grid; grid-template-columns: 1fr 1fr; align-items: stretch; padding-top: 0; overflow: hidden; background: var(--bg); position: relative; }
-.hero-text { padding: calc(78px + 3rem) 4% 3rem 6%; display: flex; flex-direction: column; justify-content: center; }
-.hero-eyebrow { display: inline-flex; align-items: center; gap: 10px; font-size: 0.68rem; font-weight: 800; letter-spacing: 0.22em; text-transform: uppercase; color: var(--accent); margin-bottom: 1.2rem; animation: fadeUp 0.7s 0.1s both; }
-.hero-eyebrow::before { content: ''; width: 28px; height: 2px; background: var(--accent); flex-shrink: 0; }
-.hero-text h1 { font-family: 'Lora', serif; font-size: clamp(2rem, 3.4vw, 3.1rem); font-weight: 500; color: var(--heading); line-height: 1.16; margin-bottom: 1.2rem; animation: fadeUp 0.8s 0.25s both; }
-.hero-text p { font-size: 0.95rem; color: var(--body); line-height: 1.82; max-width: 480px; margin-bottom: 2rem; animation: fadeUp 0.8s 0.4s both; }
-.hero-actions { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; animation: fadeUp 0.8s 0.55s both; }
-.hero-photo { height: 100%; overflow: hidden; background: var(--img-fallback); position: relative; }
-.hero-photo img { width: 100%; height: 100%; object-fit: cover; object-position: center 20%; display: block; filter: brightness(0.96) saturate(0.88); animation: fadeIn 1s 0.1s both; }
-.hero-photo::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to right, var(--hero-overlay) 0%, transparent 35%); pointer-events: none; }
-
-/* Floating stat cards on hero */
-.hero-stats { position: absolute; bottom: 2.5rem; left: calc(50% - 80px); display: flex; flex-direction: row; gap: 0; z-index: 10; pointer-events: none; animation: fadeUp 0.9s 0.7s both; }
-.stat-card { background: var(--surface); border-top: 3px solid var(--accent); padding: 0.9rem 1.4rem; box-shadow: 0 -4px 24px rgba(0,0,0,0.1); min-width: 130px; border-right: 1px solid var(--border); }
-.stat-num { font-family: 'Lora', serif; font-size: 1.5rem; font-weight: 500; color: var(--accent); line-height: 1; }
-.stat-label { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--body); margin-top: 2px; }
-
-/* ─ BUTTONS ─ */
-.btn-outline-dark, .btn-primary-accent { display: inline-block; font-family: 'Nunito', sans-serif; font-size: 0.78rem; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; text-decoration: none; padding: 0.78rem 2rem; cursor: pointer; transition: all 0.22s; }
-.btn-outline-dark { background: transparent; color: var(--btn-text); border: 1.5px solid var(--btn-border); }
-.btn-outline-dark:hover { background: var(--btn-hover-bg); color: var(--btn-hover-text); transform: translateY(-1px); }
-.btn-primary-accent { background: var(--accent); color: #fff; border: 1.5px solid var(--accent); }
-.btn-primary-accent:hover { opacity: 0.88; transform: translateY(-1px); }
-.btn-outline-footer { display: inline-block; border: 1.5px solid var(--accent); color: var(--accent); background: transparent; padding: 0.55rem 1.6rem; font-family: 'Nunito', sans-serif; font-size: 0.73rem; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; text-decoration: none; transition: all 0.22s; margin-top: 1rem; }
-.btn-outline-footer:hover { background: var(--accent); color: #fff; }
-
-/* ─ SECTION CHROME ─ */
-.section-label { display: inline-flex; align-items: center; gap: 8px; font-size: 0.68rem; font-weight: 800; letter-spacing: 0.22em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.7rem; }
-.section-label::before { content: ''; width: 22px; height: 2px; background: var(--accent); }
-.section-heading { font-family: 'Lora', serif; font-size: clamp(1.7rem, 3vw, 2.7rem); font-weight: 500; color: var(--heading); margin-bottom: 1rem; line-height: 1.18; }
-.section-sub { font-size: 0.95rem; color: var(--body); max-width: 680px; margin: 0 auto 1rem; line-height: 1.82; }
-.section-underline { width: 32px; height: 3px; background: var(--accent); margin-bottom: 1.1rem; border-radius: 2px; }
-
-/* ─ ABOUT / ALTERNATING ─ */
-.alt-section { display: grid; grid-template-columns: 1fr 1fr; align-items: stretch; opacity: 0; transform: translateY(22px); transition: opacity 0.6s, transform 0.6s; }
-.alt-section.revealed { opacity: 1; transform: none; }
-.alt-section.alt-reverse .alt-photo { order: -1; }
-.alt-text { padding: 4.5rem 6%; display: flex; flex-direction: column; justify-content: center; background: var(--bg); position: relative; }
-.alt-text .bg-num { position: absolute; right: 5%; top: 50%; transform: translateY(-50%); font-family: 'Lora', serif; font-size: 8rem; font-weight: 600; color: var(--accent); opacity: 0.06; line-height: 1; user-select: none; pointer-events: none; }
-.alt-text h3 { font-family: 'Lora', serif; font-size: clamp(1.5rem, 2.6vw, 2.1rem); font-weight: 500; color: var(--heading); margin-bottom: 0.5rem; position: relative; }
-.alt-text p { font-size: 0.92rem; color: var(--body); line-height: 1.85; position: relative; }
-.alt-photo { overflow: hidden; min-height: 340px; max-height: 500px; background: var(--img-fallback); position: relative; }
-.alt-photo img { width: 100%; height: 100%; object-fit: cover; object-position: center 25%; display: block; filter: brightness(0.94) saturate(0.85); transition: filter 0.5s, transform 0.5s; }
-.alt-photo::after { content: ''; position: absolute; inset: 0; background: rgba(0,0,0,0.04); pointer-events: none; }
-.alt-section:hover .alt-photo img { filter: brightness(0.97) saturate(0.9); }
-
-/* ─ SERVICES ─ */
-.services-section { padding: 5.5rem 5%; text-align: center; background: var(--bg-alt); position: relative; overflow: hidden; }
-.services-section::before { content: 'SERVICES'; position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); font-family: 'Lora', serif; font-size: 14rem; font-weight: 700; color: var(--accent); opacity: 0.025; white-space: nowrap; pointer-events: none; user-select: none; letter-spacing: 0.2em; }
-.services-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--border); margin-top: 3rem; max-width: 960px; margin-left: auto; margin-right: auto; }
-.service-item { background: var(--surface); padding: 2.2rem 1.8rem; text-align: left; opacity: 0; transform: translateY(14px); transition: opacity 0.5s, transform 0.5s, box-shadow 0.3s, background 0.3s; position: relative; overflow: hidden; }
-.service-item.revealed { opacity: 1; transform: none; }
-.service-item::before { content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 3px; background: var(--accent); transform: scaleX(0); transform-origin: left; transition: transform 0.3s; }
-.service-item:hover { background: var(--bg); box-shadow: 0 8px 32px rgba(0,0,0,0.07); z-index: 1; }
-.service-item:hover::before { transform: scaleX(1); }
-.service-icon { width: 52px; height: 52px; border-radius: 12px; border: 1.5px solid var(--icon-border); display: flex; align-items: center; justify-content: center; margin-bottom: 1.2rem; background: var(--icon-bg); transition: background 0.3s, border-color 0.3s; }
-.service-item:hover .service-icon { background: var(--accent); border-color: var(--accent); }
-.service-icon svg { width: 26px; height: 26px; stroke: var(--accent); transition: stroke 0.3s; }
-.service-item:hover .service-icon svg { stroke: #fff; }
-.service-item h4 { font-family: 'Lora', serif; font-size: 1.1rem; font-weight: 500; color: var(--heading); margin-bottom: 0.5rem; }
-.service-item p { font-size: 0.85rem; color: var(--body); line-height: 1.8; }
-
-/* ─ PROCESS STRIP ─ */
-.process-section { padding: 5rem 5%; background: var(--bg); }
-.process-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; background: var(--border); margin-top: 3rem; }
-.process-step { background: var(--surface); padding: 2.5rem 2rem; position: relative; text-align: center; }
-.process-num { font-family: 'Lora', serif; font-size: 3rem; font-weight: 500; color: var(--accent); opacity: 0.2; line-height: 1; margin-bottom: 0.8rem; }
-.process-icon { width: 56px; height: 56px; border-radius: 50%; border: 2px solid var(--accent); display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; }
-.process-icon svg { width: 24px; height: 24px; stroke: var(--accent); }
-.process-step h4 { font-family: 'Lora', serif; font-size: 1.1rem; font-weight: 500; color: var(--heading); margin-bottom: 0.5rem; }
-.process-step p { font-size: 0.86rem; color: var(--body); line-height: 1.8; }
-.process-connector { position: absolute; top: 2.5rem; right: -1px; width: 2px; height: 3rem; background: var(--accent); opacity: 0.2; }
-.process-step:last-child .process-connector { display: none; }
-
-/* ─ COMPARISON STRIP ─ */
-.comparison-section { padding: 5rem 5%; background: var(--bg-alt); text-align: center; }
-.comparison-grid { display: grid; grid-template-columns: 1fr 60px 1fr; gap: 0; max-width: 760px; margin: 3rem auto 0; align-items: start; }
-.comparison-col { text-align: left; }
-.comparison-col.bad { opacity: 0.6; }
-.comparison-vs { display: flex; align-items: center; justify-content: center; padding-top: 2.8rem; }
-.comparison-vs span { width: 44px; height: 44px; border-radius: 50%; background: var(--accent); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 800; letter-spacing: 0.06em; }
-.comparison-col-header { font-family: 'Lora', serif; font-size: 1.05rem; font-weight: 500; color: var(--heading); margin-bottom: 1.2rem; padding-bottom: 0.8rem; border-bottom: 2px solid var(--border); }
-.comparison-col.good .comparison-col-header { color: var(--accent); border-bottom-color: var(--accent); }
-.comparison-item { display: flex; align-items: flex-start; gap: 0.6rem; margin-bottom: 0.9rem; font-size: 0.88rem; color: var(--body); line-height: 1.55; }
-.comparison-item svg { width: 16px; height: 16px; flex-shrink: 0; margin-top: 2px; }
-.check { stroke: var(--accent); }
-.cross { stroke: #c0392b; }
-
-/* ─ CTA BAND ─ */
-.cta-band { background: var(--heading); padding: 4rem 5%; display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 3rem; }
-.cta-band h2 { font-family: 'Lora', serif; font-size: clamp(1.4rem, 2.8vw, 2.2rem); font-weight: 500; color: #fff; line-height: 1.25; }
-.cta-band h2 em { color: var(--accent); font-style: italic; }
-.cta-band-actions { display: flex; flex-direction: column; gap: 0.8rem; align-items: flex-end; white-space: nowrap; }
-.btn-cta-white { display: inline-block; background: #fff; color: var(--heading); border: 1.5px solid #fff; padding: 0.78rem 2rem; font-family: 'Nunito', sans-serif; font-size: 0.78rem; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; text-decoration: none; transition: all 0.22s; }
-.btn-cta-white:hover { background: transparent; color: #fff; }
-.btn-cta-ghost { display: inline-block; background: transparent; color: rgba(255,255,255,0.75); border: 1.5px solid rgba(255,255,255,0.3); padding: 0.78rem 2rem; font-family: 'Nunito', sans-serif; font-size: 0.78rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; text-decoration: none; transition: all 0.22s; }
-.btn-cta-ghost:hover { border-color: rgba(255,255,255,0.7); color: #fff; }
-
-/* ─ CONTACT SECTION ─ */
-#contact { background: var(--accent); padding: 5rem 5%; }
-.contact-inner { max-width: 900px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; }
-.contact-left h2 { font-family: 'Lora', serif; font-size: clamp(1.5rem, 3vw, 2.4rem); font-weight: 500; color: #fff; line-height: 1.2; margin-bottom: 0.8rem; }
-.contact-left p { font-size: 0.95rem; color: rgba(255,255,255,0.88); line-height: 1.8; }
-.contact-right { display: flex; flex-direction: column; gap: 1.2rem; }
-.contact-card { background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.22); padding: 1.2rem 1.5rem; backdrop-filter: blur(4px); }
-.contact-card-label { font-size: 0.65rem; font-weight: 800; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(255,255,255,0.7); margin-bottom: 0.3rem; }
-.contact-card a { font-size: 1.05rem; font-weight: 700; color: #fff; text-decoration: none; display: block; transition: opacity 0.2s; }
-.contact-card a:hover { opacity: 0.8; }
-.contact-card-sub { font-size: 0.78rem; color: rgba(255,255,255,0.6); margin-top: 2px; }
-
-/* ─ FOOTER ─ */
-footer { background: var(--footer-bg); padding: 4rem 5% 2rem; }
-.footer-inner { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 3rem; margin-bottom: 3rem; }
-.footer-brand img { height: 52px; width: auto; margin-bottom: 1rem; display: block; }
-.footer-brand p { font-size: 0.84rem; color: var(--footer-disc); line-height: 1.7; max-width: 280px; }
-.footer-col h5 { font-size: 0.72rem; font-weight: 800; letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent); margin-bottom: 1rem; }
-.footer-col a { display: block; font-size: 0.86rem; color: var(--footer-disc); text-decoration: none; margin-bottom: 0.5rem; transition: color 0.2s; }
-.footer-col a:hover { color: var(--accent); }
-.footer-col .footer-phone { font-size: 0.95rem; font-weight: 700; color: var(--footer-text); }
-.footer-bottom { border-top: 1px solid var(--border); padding-top: 1.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
-.footer-bottom p { font-size: 0.72rem; color: var(--footer-disc); }
-.footer-socials { display: flex; gap: 0.6rem; }
-.social-icon { width: 36px; height: 36px; border-radius: 50%; background: var(--accent); color: #fff; display: flex; align-items: center; justify-content: center; text-decoration: none; transition: opacity 0.2s; }
-.social-icon:hover { opacity: 0.8; }
-.social-icon svg { width: 16px; height: 16px; }
-
-/* ─ ANIMATIONS ─ */
-@keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: none; } }
-@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-.service-item { opacity: 0; transform: translateY(14px); }
-.service-item.revealed { opacity: 1; transform: none; }
-.alt-section { opacity: 0; transform: translateY(22px); }
-.alt-section.revealed { opacity: 1; transform: none; }
-
-/* ─ RESPONSIVE ─ */
-@media (max-width: 960px) {
-  .services-grid { grid-template-columns: repeat(2,1fr); }
-  .comparison-grid { grid-template-columns: 1fr; gap: 2rem; }
-  .comparison-vs { display: none; }
-  .footer-inner { grid-template-columns: 1fr 1fr; }
-  .cta-band { grid-template-columns: 1fr; }
-  .cta-band-actions { align-items: flex-start; flex-direction: row; flex-wrap: wrap; }
-  .contact-inner { grid-template-columns: 1fr; gap: 2.5rem; }
-}
-@media (max-width: 768px) {
-  #hero { grid-template-columns: 1fr; height: auto; min-height: auto; }
-  .hero-photo { height: 50vw; min-height: 240px; max-height: 380px; }
-  .hero-stats { position: relative; left: 0; bottom: 0; flex-direction: row; padding: 1rem 5%; background: var(--bg-alt); margin: 0; animation: none; box-shadow: none; }
-  .stat-card { flex: 1; border-top: none; border-left: 3px solid var(--accent); border-right: none; border-bottom: none; box-shadow: none; }
-  
-  .alt-section.alt-reverse .alt-photo { order: -1; }
-  .process-grid { grid-template-columns: 1fr; }
-  .footer-inner { grid-template-columns: 1fr; }
-  .nav-links { display: none; flex-direction: column; position: fixed; top: 78px; left: 0; right: 0; background: var(--nav-bg); padding: 1.5rem 5%; gap: 0.3rem; border-bottom: 1px solid var(--border); z-index: 199; }
-  .nav-links li a::after { display: none; }
-  .nav-links.open { display: flex; }
-  .hamburger { display: flex; }
-  .footer-bottom { flex-direction: column; text-align: center; }
-}
-@media (max-width: 540px) {
-  .services-grid { grid-template-columns: 1fr; }
-  .hero-stats { flex-direction: column; }
-}
-
-</style>
+    @media (max-width: 860px) { #auth-page { grid-template-columns: 1fr; } .auth-visual { display: none; } .auth-form-side { border-left: none; } }
+    @media (max-width: 480px) { .gate-btns { flex-direction: column; align-items: center; } .field-row { grid-template-columns: 1fr; } }
+  </style>
 </head>
 <body>
 
-<!-- ── ALT DESIGN SWITCHER ── -->
-<div class="version-switcher">
-  <span class="version-label">Design 1 of 2</span>
-  <a href="index2.html" class="version-btn">
-    Choice 2
-    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
-  </a>
-</div>
-
-
-<!-- ── NAV ── -->
-<nav id="nav" role="navigation" aria-label="Main navigation">
-  <a href="#" class="nav-brand"><img src="logo.png" alt="Impact Wealth Partners" width="220" height="50" loading="eager"/></a>
-  <button class="hamburger" onclick="toggleNav()" aria-label="Toggle navigation">
-    <span></span><span></span><span></span>
-  </button>
-  <ul class="nav-links" id="navLinks">
-    <li><a href="#about">About</a></li>
-    <li><a href="#services">Services</a></li>
-    <li><a href="#process">How It Works</a></li>
-    <li><a href="#why">Why Flat Fee</a></li>
-    <li><a href="#contact" class="nav-contact-btn">Get Started</a></li>
-  </ul>
-</nav>
-
-<!-- ── HERO ── -->
-<section id="hero" aria-label="Hero">
-  <div class="hero-text">
-    <div class="hero-eyebrow">Flat Fee &middot; Fee-Only &middot; Fiduciary</div>
-    <h1>Your Financial Plan,<br>Built Around You</h1>
-    <p>Impact Wealth Partners delivers flat fee, fee-only financial planning in Sioux Falls and Phoenix. No commissions. No agendas. Just a fiduciary advisor fully aligned with your goals.</p>
-    <div class="hero-actions">
-      <a href="#contact" class="btn-primary-accent">Get Started</a>
-      <a href="#services" class="btn-outline-dark">Our Services</a>
-    </div>
-  </div>
-  <div class="hero-photo" aria-hidden="true">
-    <img src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=900&q=75&fit=crop&crop=faces,center&auto=format"
-         alt="Impact Wealth Partners team — flat fee financial planners in Sioux Falls and Phoenix"
-         width="900" height="860" loading="eager" fetchpriority="high"/>
-    <div class="hero-stats" aria-label="Key facts">
-      <div class="stat-card">
-        <div class="stat-num">20+</div>
-        <div class="stat-label">Years Experience</div>
+  <!-- ── AGE GATE ─────────────────────────────────────── -->
+  <div id="age-gate">
+    <div class="gate-scratches" id="scratches"></div>
+    <div class="gate-inner">
+      <div style="width:100%;text-align:center;margin-bottom:16px">
+        <img src="img/logo.png" alt="BigBoyPeps" style="height:120px;width:120px;object-fit:contain;display:inline-block" />
       </div>
-      <div class="stat-card">
-        <div class="stat-num">SD &amp; AZ</div>
-        <div class="stat-label">Two States Served</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-num">100%</div>
-        <div class="stat-label">Fee-Only Always</div>
+      <div class="gate-sub">Premium Research Peptides</div>
+      <div class="gate-rule"></div>
+      <p class="gate-prompt">Our products are <strong>research compounds</strong> intended for licensed researchers and adults only.<br/>You must be <strong>18 or older</strong> to enter.</p>
+      <div class="gate-btns">
+        <button class="btn-yes" onclick="enterSite()">I'm 18 or older</button>
+        <button class="btn-no"  onclick="denySite()">Under 18</button>
       </div>
     </div>
   </div>
-</section>
 
-<!-- ── ABOUT ── -->
-<section id="about">
-  <div class="alt-section">
-    <div class="alt-text">
-      <span class="bg-num">01</span>
-      <p class="section-label">Client Focused</p>
-      <div class="section-underline"></div>
-      <h3>A relationship built on understanding, not transactions.</h3>
-      <p style="margin-top:1rem;">Our dedicated team, led by Wealth Advisor Michael J. Peterson, prioritizes a relationship-driven approach. We sit with you, understand your financial story, and accompany you on the path to your goals — not just once, but throughout your financial life.</p>
-    </div>
-    <div class="alt-photo">
-      <img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=700&q=75&fit=crop&crop=faces,center&auto=format"
-           alt="Client focused fee-only financial planning consultation — Impact Wealth Partners"
-           width="700" height="500" loading="lazy" decoding="async"/>
-    </div>
+  <!-- ── DENIED ───────────────────────────────────────── -->
+  <div id="denied">
+    <svg width="36" height="36" viewBox="0 0 52 52" fill="none"><path d="M26 7C18 7 11 15 11 26C11 38 17 48 26 48C35 48 41 38 41 26C41 15 34 7 26 7Z" fill="#2a2a2a"/></svg>
+    <p>Access Restricted — Come Back When You're 18</p>
   </div>
 
-  <div class="alt-section alt-reverse">
-    <div class="alt-photo">
-      <img src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=700&q=75&fit=crop&crop=center&auto=format"
-           alt="Transparent flat fee financial planning — Impact Wealth Partners Sioux Falls SD"
-           width="700" height="500" loading="lazy" decoding="async"/>
-    </div>
-    <div class="alt-text">
-      <span class="bg-num">02</span>
-      <p class="section-label">Transparent</p>
-      <div class="section-underline"></div>
-      <h3>You always know exactly what you pay and why.</h3>
-      <p style="margin-top:1rem;">From initial conversations to retirement planning, every fee is straightforward and explained upfront. We use the IMPACT Framework to clearly outline how your assets are being managed — no surprises, no hidden costs, ever.</p>
-    </div>
-  </div>
+  <!-- ── AUTH PAGE ─────────────────────────────────────── -->
+  <div id="auth-page">
+    <div class="auth-visual">
+      <div class="auth-visual-bg">
 
-  <div class="alt-section">
-    <div class="alt-text">
-      <span class="bg-num">03</span>
-      <p class="section-label">Fair</p>
-      <div class="section-underline"></div>
-      <h3>A fiduciary standard. Your interests, always first.</h3>
-      <p style="margin-top:1rem;">As fee-only fiduciaries, we are legally obligated to put your interests above ours. With a flat fee model, we have no incentive to recommend one product over another — only to give you the best possible advice for your specific situation.</p>
-    </div>
-    <div class="alt-photo">
-      <img src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=700&q=75&fit=crop&crop=faces,top&auto=format"
-           alt="Fair fiduciary financial advisor meeting — Impact Wealth Partners Phoenix AZ"
-           width="700" height="500" loading="lazy" decoding="async"/>
-    </div>
-  </div>
-</section>
-
-<!-- ── SERVICES ── -->
-<section id="services" class="services-section" aria-labelledby="services-heading">
-  <p class="section-label" style="justify-content:center;">What We Do</p>
-  <h2 class="section-heading" id="services-heading">Fee-Only Financial Planning Services</h2>
-  <p class="section-sub">Every service we offer is delivered on a flat fee basis with no commissions, no hidden incentives, and a fiduciary commitment to your best interests.</p>
-  <div class="services-grid">
-    <div class="service-item">
-      <div class="service-icon"><svg viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="7" width="20" height="14" rx="1"/><path d="M3 11h20M8 17h2M15 17h4"/></svg></div>
-      <h4>Investment Planning</h4>
-      <p>Personalized portfolio construction using our IMPACT Framework — built around your risk tolerance, timeline, and goals. Never around what earns us a commission.</p>
-    </div>
-    <div class="service-item">
-      <div class="service-icon"><svg viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="4" y="4" width="18" height="18" rx="1"/><path d="M4 10h18M9 4v6M17 4v6"/></svg></div>
-      <h4>Tax Planning</h4>
-      <p>Proactive tax strategy in close collaboration with your CPA — Roth conversions, tax-loss harvesting, and charitable giving that keeps more of your wealth working for you.</p>
-    </div>
-    <div class="service-item">
-      <div class="service-icon"><svg viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M4 22V13l9-7 9 7v9"/><rect x="10" y="16" width="6" height="6"/></svg></div>
-      <h4>Estate Planning</h4>
-      <p>Coordinating with your legal advisors to align your financial plan with your estate documents, trust structures, and legacy goals across generations.</p>
-    </div>
-    <div class="service-item">
-      <div class="service-icon"><svg viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="13" cy="13" r="9"/><path d="M13 7v6l4 2.5"/></svg></div>
-      <h4>Retirement Planning</h4>
-      <p>A clear roadmap to retirement — Social Security optimization, income planning, withdrawal strategies, and sustainable cash flow through every stage of life.</p>
-    </div>
-    <div class="service-item">
-      <div class="service-icon"><svg viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M13 3c0 0-9 4-9 11a9 9 0 0018 0C22 7 13 3 13 3z"/><path d="M10 13l2 2 4-4"/></svg></div>
-      <h4>Protection Planning</h4>
-      <p>Objective, commission-free insurance analysis to close gaps in your coverage — life, disability, long-term care, and liability assessed purely in your interest.</p>
-    </div>
-    <div class="service-item">
-      <div class="service-icon"><svg viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M7 22V13M11 22V9M15 22V14M19 22V6M4 22h18"/></svg></div>
-      <h4>Wealth Accumulation</h4>
-      <p>Disciplined, goal-driven strategies to systematically grow and protect your wealth throughout your working years and into the future you're building toward.</p>
-    </div>
-  </div>
-</section>
-
-<!-- ── HOW IT WORKS ── -->
-<section id="process" class="process-section" aria-labelledby="process-heading">
-  <p class="section-label">How It Works</p>
-  <h2 class="section-heading" id="process-heading">Simple. Transparent. Yours.</h2>
-  <p class="section-sub" style="margin-left:0;">From first call to ongoing partnership, here&rsquo;s what working with Impact Wealth Partners looks like.</p>
-  <div class="process-grid">
-    <div class="process-step">
-      <div class="process-num">01</div>
-      <div class="process-icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
       </div>
-      <h4>Complimentary Call</h4>
-      <p>We start with a no-obligation conversation to understand your goals, answer your questions, and confirm we&rsquo;re the right fit for each other.</p>
-      <div class="process-connector"></div>
-    </div>
-    <div class="process-step">
-      <div class="process-num">02</div>
-      <div class="process-icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+      <div class="auth-visual-content">
+        <div style="width:100%;text-align:center;margin-bottom:24px"><img src="img/logo.png" alt="BigBoyPeps" style="height:90px;object-fit:contain;display:inline-block" /></div>
+        <div class="auth-visual-name">BigBoy<span>Peps</span></div>
+        <div class="auth-visual-tagline">Research-grade peptides for serious investigators.</div>
+        <div class="auth-visual-divider"></div>
+        <div class="auth-visual-pills">
+          <span class="pill">Research Grade</span>
+          <span class="pill">Lab Certified</span>
+          <span class="pill">Not For Consumption</span>
+        </div>
       </div>
-      <h4>Your Custom Plan</h4>
-      <p>We build a comprehensive financial plan tailored to your life — investment strategy, tax planning, retirement, estate, and protection all in one place.</p>
-      <div class="process-connector"></div>
     </div>
-    <div class="process-step">
-      <div class="process-num">03</div>
-      <div class="process-icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-      </div>
-      <h4>Ongoing Partnership</h4>
-      <p>Life changes. Your plan adapts. We meet regularly to review progress, adjust strategy, and keep your financial plan aligned with where you&rsquo;re headed.</p>
-    </div>
-  </div>
-</section>
 
-<!-- ── CTA BAND ── -->
-<div class="cta-band" aria-label="Call to action">
-  <h2>Ready to work with a financial advisor who&rsquo;s <em>fully on your side?</em></h2>
-  <div class="cta-band-actions">
-    <a href="tel:+16053339886" class="btn-cta-white">Call SD: (605) 333-9886</a>
-    <a href="tel:+16026910248" class="btn-cta-ghost">Call AZ: (602) 691-0248</a>
-  </div>
-</div>
-
-<!-- ── WHY FLAT FEE ── -->
-<section id="why" class="comparison-section" aria-labelledby="why-heading">
-  <p class="section-label" style="justify-content:center;">Why Flat Fee</p>
-  <h2 class="section-heading" id="why-heading">The difference is more than the price.</h2>
-  <p class="section-sub">The way your advisor gets paid shapes the advice they give. Here&rsquo;s why flat fee, fee-only planning produces better outcomes.</p>
-  <div class="comparison-grid">
-    <div class="comparison-col good">
-      <div class="comparison-col-header">Flat Fee &amp; Fee-Only ✓</div>
-      <div class="comparison-item"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" class="check"><polyline points="2 8 6 12 14 4"/></svg>You always know exactly what you pay</div>
-      <div class="comparison-item"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" class="check"><polyline points="2 8 6 12 14 4"/></svg>No commissions, ever</div>
-      <div class="comparison-item"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" class="check"><polyline points="2 8 6 12 14 4"/></svg>Advice is driven by your goals</div>
-      <div class="comparison-item"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" class="check"><polyline points="2 8 6 12 14 4"/></svg>Same fee regardless of portfolio size</div>
-      <div class="comparison-item"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" class="check"><polyline points="2 8 6 12 14 4"/></svg>Full fiduciary duty at all times</div>
-      <div class="comparison-item"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" class="check"><polyline points="2 8 6 12 14 4"/></svg>No incentive to recommend products</div>
-    </div>
-    <div class="comparison-vs"><span>VS</span></div>
-    <div class="comparison-col bad">
-      <div class="comparison-col-header">Commission-Based / AUM</div>
-      <div class="comparison-item"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" class="cross"><line x1="3" y1="3" x2="13" y2="13"/><line x1="13" y1="3" x2="3" y2="13"/></svg>Fees grow as your portfolio grows</div>
-      <div class="comparison-item"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" class="cross"><line x1="3" y1="3" x2="13" y2="13"/><line x1="13" y1="3" x2="3" y2="13"/></svg>Hidden commissions on products sold</div>
-      <div class="comparison-item"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" class="cross"><line x1="3" y1="3" x2="13" y2="13"/><line x1="13" y1="3" x2="3" y2="13"/></svg>Advice can be influenced by incentives</div>
-      <div class="comparison-item"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" class="cross"><line x1="3" y1="3" x2="13" y2="13"/><line x1="13" y1="3" x2="3" y2="13"/></svg>Pay more as wealth increases</div>
-      <div class="comparison-item"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" class="cross"><line x1="3" y1="3" x2="13" y2="13"/><line x1="13" y1="3" x2="3" y2="13"/></svg>May not always be a fiduciary</div>
-      <div class="comparison-item"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" class="cross"><line x1="3" y1="3" x2="13" y2="13"/><line x1="13" y1="3" x2="3" y2="13"/></svg>Product recommendations may be biased</div>
-    </div>
-  </div>
-</section>
-
-<!-- ── CONTACT ── -->
-<section id="contact" aria-labelledby="contact-heading">
-  <div class="contact-inner">
-    <div class="contact-left">
-      <p class="section-label" style="color:rgba(255,255,255,0.7);">Get in Touch</p>
-      <h2 id="contact-heading">Let&rsquo;s talk about your financial future.</h2>
-      <p>Schedule a complimentary call with Michael J. Peterson. No obligation, no pressure — just an honest conversation about where you are and where you want to be.</p>
-    </div>
-    <div class="contact-right">
-      <div class="contact-card" itemscope itemtype="https://schema.org/LocalBusiness">
-        <div class="contact-card-label">South Dakota</div>
-        <a href="tel:+16053339886" itemprop="telephone">+1 (605) 333-9886</a>
-        <div class="contact-card-sub">Sioux Falls, SD &mdash; Primary Office</div>
+    <div class="auth-form-side">
+      <div class="auth-tabs">
+        <button class="auth-tab active" onclick="switchTab('login')">Sign In</button>
+        <button class="auth-tab"        onclick="switchTab('register')">Register</button>
+        <button class="auth-tab"        onclick="switchTab('reset')">Reset Password</button>
       </div>
-      <div class="contact-card">
-        <div class="contact-card-label">Arizona</div>
-        <a href="tel:+16026910248" itemprop="telephone">+1 (602) 691-0248</a>
-        <div class="contact-card-sub">Phoenix, AZ &mdash; Arizona Office</div>
+
+      <!-- LOGIN -->
+      <div class="auth-form active" id="form-login">
+        <div class="auth-title">Welcome back.</div>
+        <p class="auth-desc">Sign in to access your account and shop.</p>
+        <div class="field"><label>Email</label><input type="email" id="login-email" placeholder="you@example.com" /></div>
+        <div class="field"><label>Password</label><input type="password" id="login-pass" placeholder="••••••••" /></div>
+        <button class="auth-submit" onclick="doLogin()">Sign In</button>
+        <div class="auth-error" id="login-err"></div>
+        <p class="auth-switch">No account? <button onclick="switchTab('register')">Register here</button> &nbsp;·&nbsp; <button onclick="switchTab('reset')">Forgot password?</button></p>
       </div>
-      <div class="contact-card">
-        <div class="contact-card-label">Email</div>
-        <a href="mailto:mike@letsimpactwealth.com" itemprop="email">mike@letsimpactwealth.com</a>
-        <div class="contact-card-sub">Michael J. Peterson, Wealth Advisor</div>
+
+      <!-- REGISTER -->
+      <div class="auth-form" id="form-register">
+        <div class="auth-title">Create your account.</div>
+        <p class="auth-desc">Create your account. Your membership date is set permanently on sign-up.</p>
+        <div class="field-row">
+          <div class="field"><label>First Name</label><input type="text" id="reg-first" placeholder="Jane" /></div>
+          <div class="field"><label>Last Name</label><input type="text" id="reg-last" placeholder="Smith" /></div>
+        </div>
+        <div class="field"><label>Email</label><input type="email" id="reg-email" placeholder="you@example.com" /></div>
+        <div class="field"><label>Password</label><input type="password" id="reg-pass" placeholder="Min. 6 characters" /></div>
+        <button class="auth-submit" onclick="doRegister()">Create Account</button>
+        <div class="auth-error" id="reg-err"></div>
+        <p class="auth-switch">Already have an account? <button onclick="switchTab('login')">Sign in</button></p>
+      </div>
+
+      <!-- RESET PASSWORD -->
+      <div class="auth-form" id="form-reset">
+        <div class="auth-title">Reset your password.</div>
+        <p class="auth-desc">Enter your email and we'll send you a link to set a new password.</p>
+        <div class="field"><label>Email</label><input type="email" id="reset-email" placeholder="you@example.com" /></div>
+        <button class="auth-submit" onclick="doReset()">Send Reset Link</button>
+        <div class="auth-error" id="reset-err"></div>
+        <div class="auth-success" id="reset-ok" style="display:none;margin-top:12px;font-family:var(--font-c);font-size:.72rem;font-weight:700;letter-spacing:.1em;color:#5BC75B;">Reset link sent — check your email.</div>
+        <p class="auth-switch">Remember it? <button onclick="switchTab('login')">Sign in</button></p>
       </div>
     </div>
   </div>
-</section>
 
-<!-- ── FOOTER ── -->
-<footer>
-  <div class="footer-inner">
-    <div class="footer-brand">
-      <img src="logo.png" alt="Impact Wealth Partners" width="200" height="52" loading="lazy"/>
-      <p>Flat fee, fee-only, fiduciary financial planning in Sioux Falls, South Dakota and Phoenix, Arizona. No commissions. No conflicts. Just advice built around you.</p>
-      <a href="#" class="btn-outline-footer">ADV Form</a>
-    </div>
-    <div class="footer-col">
-      <h5>Navigate</h5>
-      <a href="#about" aria-label="About Impact Wealth Partners">About</a>
-      <a href="#services" aria-label="Financial planning services">Services</a>
-      <a href="#process" aria-label="How our process works">How It Works</a>
-      <a href="#why" aria-label="Why choose flat fee">Why Flat Fee</a>
-      <a href="#contact" aria-label="Contact Impact Wealth Partners">Contact</a>
-    </div>
-    <div class="footer-col">
-      <h5>Contact</h5>
-      <a href="tel:+16053339886" class="footer-phone">(605) 333-9886</a>
-      <span style="font-size:0.75rem;color:var(--footer-disc);margin-bottom:0.8rem;display:block;">Sioux Falls, SD</span>
-      <a href="tel:+16026910248" class="footer-phone">(602) 691-0248</a>
-      <span style="font-size:0.75rem;color:var(--footer-disc);margin-bottom:0.8rem;display:block;">Phoenix, AZ</span>
-      <a href="mailto:mike@letsimpactwealth.com">mike@letsimpactwealth.com</a>
-    </div>
-  </div>
-  <div class="footer-bottom">
-    <p>&copy; 2025 Impact Wealth Partners. Securities and investment advisory services offered through registered channels. Michael J. Peterson, Wealth Advisor. Not legal or tax advice.</p>
-    <div class="footer-socials">
-      <a href="https://facebook.com/weimpactwealth" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="Follow Impact Wealth Partners on Facebook">
-        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg>
-      </a>
-    </div>
-  </div>
-</footer>
+  <!-- Redirect recovery links BEFORE any module/auth code runs -->
+  <script>
+    if (window.location.hash.includes('type=recovery')) {
+      window.location.replace('reset.html' + window.location.hash);
+    }
+  </script>
 
-<script>
-  // Nav scroll effect
-  const nav = document.getElementById('nav');
-  window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 50));
-  // Mobile nav
-  function toggleNav() {
-    const l = document.getElementById('navLinks');
-    l.classList.toggle('open');
-  }
-  // Scroll reveal
-  const obs = new IntersectionObserver(entries => {
-    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('revealed'); });
-  }, { threshold: 0.08 });
-  document.querySelectorAll('.alt-section, .service-item').forEach(el => obs.observe(el));
-  // Close nav on link click
-  document.querySelectorAll('.nav-links a').forEach(a => a.addEventListener('click', () => {
-    document.getElementById('navLinks').classList.remove('open');
-  }));
-</script>
+  <script type="module">
+    import { supabase } from './js/supabase.js';
+    import './js/auth.js?v=14';
+    import './js/cart.js?v=14';
+
+    /* expose to onclick handlers — defined FIRST before any await */
+    window.enterSite = () => {
+      localStorage.setItem('ageVerified', 'true');
+      document.getElementById('age-gate').style.display = 'none';
+      document.getElementById('auth-page').classList.add('active');
+    };
+    window.denySite = () => {
+      document.getElementById('age-gate').style.display = 'none';
+      document.getElementById('denied').style.display = 'flex';
+    };
+    window.switchTab = (tab) => {
+      document.querySelectorAll('.auth-tab').forEach((t,i) => t.classList.toggle('active', i===(tab==='login'?0:tab==='register'?1:2)));
+      document.querySelectorAll('.auth-form').forEach((f,i) => f.classList.toggle('active', i===(tab==='login'?0:tab==='register'?1:2)));
+    };
+
+    window.doReset = async () => {
+      const email = document.getElementById('reset-email').value.trim().toLowerCase();
+      const err   = document.getElementById('reset-err');
+      const ok    = document.getElementById('reset-ok');
+      const btn   = document.querySelector('#form-reset .auth-submit');
+      err.textContent = '';
+      ok.style.display = 'none';
+
+      if (!email) { err.textContent = 'Please enter your email.'; return; }
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) { err.textContent = 'Please enter a valid email address.'; return; }
+
+      if (btn) { btn.disabled = true; btn.textContent = 'Sending…'; }
+
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: 'https://bigboypeps.com/reset.html',
+      });
+
+      if (btn) { btn.disabled = false; btn.textContent = 'Send Reset Link'; }
+      if (error) { err.textContent = error.message; return; }
+      ok.style.display = 'block';
+    };
+
+    /* ── If already logged in, skip everything ── */
+    const { data } = await supabase.auth.getSession();
+    if (data.session) {
+      window.location.replace('dashboard.html');
+    } else if (localStorage.getItem('ageVerified') === 'true') {
+      /* Age already confirmed this browser session — show auth directly */
+      document.getElementById('age-gate').style.display = 'none';
+      document.getElementById('auth-page').classList.add('active');
+    }
+    /* Otherwise age gate stays visible (default) */
+
+    /* ── Scratch lines ── */
+    const wrap = document.getElementById('scratches');
+    for (let i = 0; i < 18; i++) {
+      const el = document.createElement('div');
+      el.className = 'scratch';
+      const h = Math.random() > .5;
+      el.style.cssText = h
+        ? `width:${60+Math.random()*180}px;height:${1+Math.random()*2}px;top:${Math.random()*100}%;left:${Math.random()*100}%;transform:rotate(${-15+Math.random()*30}deg)`
+        : `width:${1+Math.random()*2}px;height:${40+Math.random()*130}px;top:${Math.random()*100}%;left:${Math.random()*100}%;transform:rotate(${-8+Math.random()*16}deg)`;
+      wrap.appendChild(el);
+    }
+
+    // Known disposable/fake email domains to block
+    const BLOCKED_DOMAINS = [
+      'none.com','noemail.com','nomail.com','fake.com','test.com',
+      'example.com','mailinator.com','guerrillamail.com','tempmail.com',
+      'throwaway.com','trashmail.com','yopmail.com','sharklasers.com',
+      'dispostable.com','maildrop.cc','fakeinbox.com','spamgourmet.com',
+      'getairmail.com','filzmail.com','discard.email','spamspot.com',
+    ];
+
+    function isValidEmail(email) {
+      // Basic format check
+      const fmt = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email);
+      if (!fmt) return { ok: false, msg: 'Please enter a valid email address.' };
+      // Block obviously fake domains
+      const domain = email.split('@')[1].toLowerCase();
+      if (BLOCKED_DOMAINS.includes(domain)) return { ok: false, msg: 'Please use a real email address.' };
+      // Block emails with "noemail", "none", "test", "fake" in them
+      const local = email.split('@')[0].toLowerCase();
+      if (['none','noemail','nomail','fake','test','nope','notreal'].some(w => local.includes(w))) {
+        return { ok: false, msg: 'Please use a real email address.' };
+      }
+      return { ok: true };
+    }
+
+
+    window.doLogin = async () => {
+      const email = document.getElementById('login-email').value.trim().toLowerCase();
+      const pass  = document.getElementById('login-pass').value;
+      const err   = document.getElementById('login-err');
+      err.textContent = '';
+      if (!email || !pass) { err.textContent = 'Please fill in both fields.'; return; }
+      const result = await Auth.login(email, pass);
+      if (!result.ok) { err.textContent = result.err; return; }
+      window.location.href = 'dashboard.html';
+    };
+
+    window.doRegister = async () => {
+      const first = document.getElementById('reg-first').value.trim();
+      const last  = document.getElementById('reg-last').value.trim();
+      const email = document.getElementById('reg-email').value.trim();
+      const pass  = document.getElementById('reg-pass').value;
+      const err   = document.getElementById('reg-err');
+      err.textContent = '';
+
+      if (!first || !last || !email || !pass) { err.textContent = 'All fields are required.'; return; }
+
+      const emailCheck = isValidEmail(email);
+      if (!emailCheck.ok) { err.textContent = emailCheck.msg; return; }
+
+      if (pass.length < 8) { err.textContent = 'Password must be at least 8 characters.'; return; }
+
+      const result = await Auth.register(first, last, email, pass);
+      if (!result.ok) { err.textContent = result.err; return; }
+
+      // Notify Brandon before redirecting so it always fires
+      try {
+        const timestamp = new Date().toLocaleString('en-US', { timeZone: 'America/Chicago', dateStyle: 'full', timeStyle: 'short' });
+        await fetch('https://api.web3forms.com/submit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+          body: JSON.stringify({
+            access_key: '8eec27a9-6e50-4206-a71a-a2c6f0c4c8bb',
+            subject:    'New Registration — BigBoyPeps',
+            from_name:  'BigBoyPeps Store',
+            name:       first + ' ' + last,
+            email:      'Brandon.burnell@hotmail.com',
+            message:
+              '=== NEW RESEARCHER REGISTERED ===\n\n' +
+              'First Name: ' + first + '\n' +
+              'Last Name:  ' + last  + '\n' +
+              'Email:      ' + email + '\n' +
+              'Registered: ' + timestamp,
+          }),
+        });
+      } catch(e) { console.error('Registration notify failed:', e); }
+
+      window.location.href = 'dashboard.html';
+    };
+  </script>
 </body>
 </html>
