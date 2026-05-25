@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
+          http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd
+          http://www.google.com/schemas/sitemap-image/1.1
+          http://www.google.com/schemas/sitemap-image/1.1/sitemap-image.xsd">
+
+  <!-- Primary landing page -->
+  <url>
+    <loc>https://www.letsimpactwealth.com/index.html</loc>
+    <lastmod>2026-05-24</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>1.0</priority>
+    <image:image>
+      <image:loc>https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=900&amp;q=80&amp;fit=crop</image:loc>
+      <image:title>Impact Wealth Partners Team — Flat Fee Financial Planners Sioux Falls and Phoenix</image:title>
+      <image:caption>The Impact Wealth Partners team, serving clients in Sioux Falls SD and Phoenix AZ with flat fee, fee-only financial planning.</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.letsimpactwealth.com/logo.png</image:loc>
+      <image:title>Impact Wealth Partners Logo</image:title>
+    </image:image>
+  </url>
+
+  <!-- Alternate design -->
+  <url>
+    <loc>https://www.letsimpactwealth.com/index2.html</loc>
+    <lastmod>2026-05-24</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- SEO keyword landing page -->
+  <url>
+    <loc>https://www.letsimpactwealth.com/seo.html</loc>
+    <lastmod>2026-05-24</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+</urlset>

@@ -1,0 +1,32 @@
+User-agent: *
+Allow: /
+
+# Explicitly allow all key pages
+Allow: /index.html
+Allow: /index2.html
+Allow: /seo.html
+Allow: /logo.png
+Allow: /favicon.ico
+Allow: /manifest.json
+Allow: /sitemap.xml
+
+# Block server/config files
+Disallow: /.htaccess
+Disallow: /.git/
+Disallow: /404.html
+
+# Crawl delay (be polite to lesser-known bots)
+Crawl-delay: 10
+
+# Sitemap location
+Sitemap: https://www.letsimpactwealth.com/sitemap.xml
+
+# Google-specific
+User-agent: Googlebot
+Crawl-delay: 0
+Allow: /
+
+# Google Image Bot
+User-agent: Googlebot-Image
+Allow: /logo.png
+Allow: /favicon.ico
