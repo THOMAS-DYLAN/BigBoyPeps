@@ -126,6 +126,12 @@
     .info-cancel { font-family: var(--font-c); font-size: .63rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--smoke); padding: 7px 6px; text-decoration: underline; text-underline-offset: 3px; transition: color .18s; flex-shrink: 0; }
     .info-cancel:hover { color: var(--light); }
 
+    .quick-actions { display:flex; gap:10px; margin-top:20px; flex-wrap:wrap; }
+    .quick-btn { display:inline-flex; align-items:center; gap:6px; font-family:var(--font-c); font-size:.7rem; font-weight:700; letter-spacing:.14em; text-transform:uppercase; padding:10px 20px; transition:all .18s; }
+    .quick-btn-primary { background:var(--red); color:var(--white); clip-path:polygon(0 0,calc(100% - 6px) 0,100% 6px,100% 100%,6px 100%,0 calc(100% - 6px)); }
+    .quick-btn-primary:hover { background:var(--red-hot); }
+    .quick-btn-secondary { border:1px solid var(--border); color:var(--smoke); }
+    .quick-btn-secondary:hover { color:var(--light); border-color:var(--ash); }
     @media (max-width: 860px) { .dash-grid { grid-template-columns: 1fr; } }
     @media (max-width: 600px) {
       .info-row { flex-wrap: wrap; padding: 12px 16px; gap: 6px; }
@@ -147,6 +153,11 @@
       <div>
         <div class="dash-greeting">Welcome back,<br/><em id="dash-name">—</em></div>
         <div class="dash-since" id="dash-since">Member since —</div>
+        <div class="quick-actions">
+          <a href="shop.html" class="quick-btn quick-btn-primary">Browse Shop →</a>
+          <a href="orders.html" class="quick-btn quick-btn-secondary">View All Orders</a>
+          <a href="cart.html" class="quick-btn quick-btn-secondary">View Cart</a>
+        </div>
       </div>
       <span class="member-badge">⬡ Active Researcher</span>
     </div>

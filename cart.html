@@ -274,20 +274,9 @@
         <div class="summary-panel">
           <div class="summary-title">Order Summary</div>
           <div class="summary-row"><span>Subtotal</span><span class="val">$${subtotal.toFixed(2)}</span></div>
-          ${getDiscount() ? `<div class="summary-row" style="color:#5BC75B"><span>${getDiscount().code} (${getDiscount().pct}% off)</span><span class="val" style="color:#5BC75B">-$${(subtotal * getDiscount().pct / 100).toFixed(2)}</span></div>` : ''}
           <div class="summary-row"><span>Shipping</span><span class="val">From $15.00</span></div>
           <div class="summary-row" style="font-size:.72rem"><span style="font-style:italic">USPS Standard or UPS 2-Day Air — selected at checkout</span><span></span></div>
 
-          <!-- Discount code -->
-          <div style="padding:14px 0;border-bottom:1px solid var(--border)">
-            <div style="display:flex;gap:8px">
-              <input id="discount-input" type="text" placeholder="Discount code" style="flex:1;background:var(--card);border:1px solid var(--border);color:var(--white);padding:9px 12px;font-family:var(--font-c);font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;outline:none" />
-              <button onclick="applyDiscount(document.getElementById('discount-input').value)" style="padding:9px 14px;font-family:var(--font-c);font-size:.68rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;background:var(--red);color:var(--white);white-space:nowrap;transition:background .18s" onmouseover="this.style.background='var(--red-hot)'" onmouseout="this.style.background='var(--red)'">Apply</button>
-            </div>
-            <div id="discount-err" style="font-family:var(--font-c);font-size:.65rem;font-weight:700;letter-spacing:.08em;color:var(--red);margin-top:6px"></div>
-            <div id="discount-ok"  style="font-family:var(--font-c);font-size:.65rem;font-weight:700;letter-spacing:.08em;color:#5BC75B;margin-top:6px"></div>
-            ${getDiscount() ? `<button onclick="removeDiscount()" style="margin-top:6px;font-family:var(--font-c);font-size:.62rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--smoke);text-decoration:underline;text-underline-offset:3px">Remove discount</button>` : ''}
-          </div>
           <div class="summary-total">
             <span class="summary-total-label">Est. Total</span>
             <span class="summary-total-val">$${(subtotal - (subtotal * ((getDiscount()?.pct) || 0) / 100) + shipping).toFixed(2)}</span>

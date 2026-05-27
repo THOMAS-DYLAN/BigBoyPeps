@@ -97,14 +97,28 @@
     }
     .product-research { font-size: .67rem; color: var(--smoke); font-style: italic; margin-bottom: 9px; }
     .product-desc { font-size: .8rem; color: var(--smoke); line-height: 1.6; margin-bottom: 18px; flex: 1; }
-    .product-footer { display: flex; align-items: center; justify-content: space-between; }
-    .product-price { font-family: var(--font-d); font-size: 1.5rem; letter-spacing: .04em; color: var(--white); }
+    .product-footer { display: flex; flex-direction: column; gap: 10px; }
+    .product-price-row { display: flex; align-items: center; justify-content: space-between; }
+    .product-price { font-family: var(--font-d); font-size: 1.6rem; letter-spacing: .04em; color: var(--white); }
     .add-btn {
-      width: 34px; height: 34px; background: var(--red); color: var(--white);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1.3rem; transition: background .18s, transform .18s;
+      width: 100%; padding: 12px 16px;
+      background: var(--red); color: var(--white);
+      font-family: var(--font-c); font-size: .74rem; font-weight: 700;
+      letter-spacing: .18em; text-transform: uppercase;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      transition: background .18s;
+      clip-path: polygon(0 0,calc(100% - 6px) 0,100% 6px,100% 100%,6px 100%,0 calc(100% - 6px));
     }
-    .add-btn:hover { background: var(--red-hot); transform: scale(1.08); }
+    .add-btn:hover { background: var(--red-hot); }
+    .waitlist-btn {
+      width: 100%; padding: 11px 16px;
+      background: transparent; color: var(--red);
+      font-family: var(--font-c); font-size: .72rem; font-weight: 700;
+      letter-spacing: .16em; text-transform: uppercase;
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+      border: 1px solid rgba(204,31,31,.4); transition: all .18s;
+    }
+    .waitlist-btn:hover { background: rgba(204,31,31,.08); }
 
     .add-flash {
       position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(16px);
@@ -131,6 +145,7 @@
     .in-stock-label  { font-family:var(--font-c);font-size:.6rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#5BC75B;margin-bottom:8px; }
     @media (max-width: 700px) { .products-grid { grid-template-columns: 1fr 1fr; gap: 12px; } .nav-links { display: none; } }
     @media (max-width: 420px) { .products-grid { grid-template-columns: 1fr; } }
+
 
     /* skeleton loading */
     .skeleton-card { background: var(--card); border: 1px solid var(--border); }
@@ -225,7 +240,7 @@
         + '<div class="product-info">'
         + '<div class="product-cat">' + p.category + '</div>'
         + '<div class="product-name">' + p.name + '</div>'
-        + '<div class="product-research">For research purposes only · Not for human consumption</div>'
+
         + '<div class="product-desc">' + p.description + '</div>'
         + (p.inventory <= 0
           ? ''
@@ -233,10 +248,10 @@
           ? '<div class="low-stock-label">Low Stock — ' + p.inventory + ' left</div>'
           : '<div class="in-stock-label">In Stock</div>')
         + '<div class="product-footer">'
-        + '<div class="product-price">$' + Number(p.price).toFixed(2) + '</div>'
+        + '<div class="product-price-row"><div class="product-price">$' + Number(p.price).toFixed(2) + '</div></div>'
         + (p.inventory <= 0
-          ? '<button class="add-btn" onclick="event.stopPropagation();joinWaitlistShop(' + p.id + ',\'' + p.name + '\')" style="background:transparent;border:1px solid rgba(204,31,31,.5);color:var(--red);font-size:.55rem;cursor:pointer" title="Notify me when in stock">🔔</button>'
-          : '<button class="add-btn" onclick="event.stopPropagation();addToCart(' + p.id + ')" title="Add to cart">+</button>')
+          ? '<button class="waitlist-btn" onclick="event.stopPropagation();joinWaitlistShop(' + p.id + ',\'' + p.name + '\')" title="Notify me when in stock">🔔 Notify When Available</button>'
+          : '<button class="add-btn" onclick="event.stopPropagation();addToCart(' + p.id + ')" title="Add to cart">+ Add to Cart</button>')
         + '</div>'
         + '</div>'
         + '</div>';

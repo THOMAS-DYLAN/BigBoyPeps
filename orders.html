@@ -254,11 +254,17 @@
                       <span class="order-meta-label">Unit</span>
                       <span class="order-meta-val">$${Number(o.unit_price).toFixed(2)}</span>
                     </span>
+                    ${o.shipping_carrier ? `<span class="order-meta-item"><span class="order-meta-label">Ship via</span><span class="order-meta-val">${o.shipping_carrier}</span></span>` : ''}
                   </div>
                 </div>
                 <div class="order-right">
                   <div class="order-total">$${Number(o.total).toFixed(2)}</div>
                   <span class="order-status status-${o.status}">${o.status}</span>
+                  <div style="font-size:.61rem;color:var(--smoke);margin-top:3px;font-style:italic">${
+                    o.status==='processing' ? 'Being prepared &amp; packed' :
+                    o.status==='shipped'    ? 'On its way to you' :
+                    o.status==='delivered'  ? 'Successfully delivered' : ''
+                  }</div>
                 </div>
                 <span class="order-arrow">›</span>
               </a>`;

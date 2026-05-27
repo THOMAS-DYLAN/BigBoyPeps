@@ -300,6 +300,7 @@ function captureShipping() {
     state:           document.getElementById('co-state')?.value          || '',
     zip:             document.getElementById('co-zip')?.value.trim()     || '',
     country:         document.getElementById('co-country')?.value        || 'United States',
+    phone:           document.getElementById('co-phone')?.value.trim()   || '',
     saveAddr:        document.getElementById('co-save-addr')?.checked    ?? true,
     shipping_method: method.label,
     shipping_carrier:method.carrier,
@@ -331,7 +332,7 @@ function renderCheckoutModal(items, profile, addr) {
     + '</div>'
     + '<div class="modal-body">'
 
-    // SHIPPING
+    // ── SHIPPING ──────────────────────────────────────────
     + '<div class="modal-section">'
     + '<div class="modal-section-title">Shipping Address <span class="req-note">* required</span></div>'
     + '<div class="form-row">'
@@ -347,10 +348,11 @@ function renderCheckoutModal(items, profile, addr) {
     + '<div class="form-field"><label>State *</label><select id="co-state" onchange="validateShipping()"><option value="">— Select —</option>' + stateOptions + '</select><div class="field-err" id="err-state"></div></div>'
     + '<div class="form-field"><label>Country</label><select id="co-country"><option>United States</option><option>Canada</option><option>Other</option></select></div>'
     + '</div>'
+    + '<div class="form-field" style="margin-top:8px"><label>Phone Number <span style="font-weight:400;color:var(--smoke);font-size:.6rem;letter-spacing:.06em;text-transform:none">(optional)</span></label><input id="co-phone" type="tel" placeholder="(555) 000-0000" value="' + (profile.phone||'') + '" style="width:100%" /></div>'
     + '<label style="display:flex;align-items:center;gap:8px;margin-top:12px;font-family:var(--font-c);font-size:.65rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--smoke);cursor:pointer"><input type="checkbox" id="co-save-addr" checked style="width:14px;height:14px;accent-color:var(--red)"/> Save address to my account</label>'
     + '</div>'
 
-    // ORDER SUMMARY
+    // ── ORDER SUMMARY ─────────────────────────────────────
     + '<div class="modal-section">'
     + '<div class="modal-section-title">Order Summary</div>'
     + orderRows
@@ -365,7 +367,18 @@ function renderCheckoutModal(items, profile, addr) {
     + '<div class="modal-total-row"><span class="modal-total-label">Total</span><span class="modal-total-val" id="modal-total-val">$' + orderTotal.toFixed(2) + '</span></div>'
     + '</div>'
 
-    // PAYMENT
+    // ── DISCOUNT CODE ─────────────────────────────────────
+    + '<div class="modal-section" style="padding-top:16px;padding-bottom:16px">'
+    + '<div class="modal-section-title" style="margin-bottom:10px">Discount Code</div>'
+    + '<div style="display:flex;gap:8px">'
+    + '<input id="modal-discount-input" type="text" placeholder="Enter code" style="flex:1;background:var(--card);border:1px solid var(--border);color:var(--white);padding:10px 12px;font-family:var(--font-c);font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;outline:none;transition:border-color .18s" onfocus="this.style.borderColor=\'var(--red)\'" onblur="this.style.borderColor=\'var(--border)\'" />'
+    + '<button onclick="applyDiscountInModal()" style="padding:10px 16px;font-family:var(--font-c);font-size:.68rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;background:var(--red);color:var(--white);white-space:nowrap;transition:background .18s;flex-shrink:0" onmouseover="this.style.background=\'var(--red-hot)\'" onmouseout="this.style.background=\'var(--red)\'">Apply</button>'
+    + '</div>'
+    + '<div id="modal-discount-err" style="font-family:var(--font-c);font-size:.65rem;font-weight:700;letter-spacing:.08em;color:var(--red);margin-top:6px;min-height:18px"></div>'
+    + '<div id="modal-discount-ok"  style="font-family:var(--font-c);font-size:.65rem;font-weight:700;letter-spacing:.08em;color:#5BC75B;margin-top:2px;display:none"></div>'
+    + '</div>'
+
+    // ── PAYMENT ───────────────────────────────────────────
     + '<div class="modal-section">'
     + '<div class="modal-section-title">Payment Method</div>'
     + '<div id="paypal-button-container"></div>'
@@ -377,6 +390,40 @@ function renderCheckoutModal(items, profile, addr) {
 }
 
 
+
+// ── Apply discount from within the checkout modal ────────────
+window.applyDiscountInModal = function() {
+  var input  = document.getElementById('modal-discount-input');
+  var errEl  = document.getElementById('modal-discount-err');
+  var okEl   = document.getElementById('modal-discount-ok');
+  if (!input) return;
+  var code = input.value.trim().toUpperCase();
+  errEl.textContent = '';
+  okEl.style.display = 'none';
+
+  if (!code) { errEl.textContent = 'Please enter a code.'; return; }
+
+  var found = DISCOUNT_CODES[code];
+  if (!found) { errEl.textContent = 'Invalid discount code.'; return; }
+
+  _appliedDiscount = { code: code, pct: found.pct, label: found.label };
+
+  // Update the order summary rows + total in the modal live
+  var items     = Cart.get();
+  var subtotal  = items.reduce(function(s,i) { return s + i.price * i.qty; }, 0);
+  var discAmt   = Math.round(subtotal * found.pct) / 100;
+  var ship      = getSelectedShipping().price;
+  var newTotal  = subtotal - discAmt + ship;
+
+  var totalEl = document.getElementById('modal-total-val');
+  if (totalEl) totalEl.textContent = '$' + newTotal.toFixed(2);
+
+  okEl.textContent  = found.label + ' — ' + found.pct + '% off applied (' + '-$' + discAmt.toFixed(2) + ')';
+  okEl.style.display = 'block';
+  input.value = '';
+  input.disabled = true;
+  input.style.opacity = '.5';
+};
 
 // ── Mount PayPal buttons ──────────────────────────────────
 async function mountPayPal() {
@@ -522,7 +569,8 @@ async function sendOrderNotification(items, shipping, profile) {
         '=== NEW ORDER ===\n\n' +
         'CUSTOMER\n' +
         'Name: '  + (shipping.first_name || '') + ' ' + (shipping.last_name || '') + '\n' +
-        'Email: ' + (profile?.email || 'unknown') + '\n\n' +
+        'Email: ' + (profile?.email || 'unknown') + '\n' +
+        (shipping.phone ? 'Phone: ' + shipping.phone + '\n' : '') + '\n' +
         'SHIPPING ADDRESS\n' +
         (shipping.street_line1 || '') + '\n' +
         (shipping.city || '') + ', ' + (shipping.state || '') + ' ' + (shipping.zip || '') + '\n' +
