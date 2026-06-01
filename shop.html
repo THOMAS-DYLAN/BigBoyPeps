@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <link rel="icon" href="data:,">
   <link rel="preconnect" href="https://utqviljholfvpfztfuvx.supabase.co" crossorigin>
   <link rel="dns-prefetch" href="https://utqviljholfvpfztfuvx.supabase.co">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -61,6 +62,9 @@
     }
     .filter-btn:hover  { border-color: var(--ash); color: var(--light); }
     .filter-btn.active { background: var(--red); color: var(--white); border-color: var(--red); }
+    .filter-btn-bundle { color: #E8B84B; border-color: rgba(232,184,75,.4); letter-spacing: .14em; }
+    .filter-btn-bundle:hover { border-color: #E8B84B; color: #f5c842; background: rgba(232,184,75,.06); }
+    .filter-btn-bundle.active { background: #E8B84B; color: #0C0C0C; border-color: #E8B84B; }
 
     .products-section { padding: 48px 0 80px; flex: 1; }
     .products-grid {
@@ -133,6 +137,40 @@
     .product-card.out-of-stock { opacity: .45; cursor: pointer; }
     .product-card.out-of-stock .add-btn { display: none; }
     .product-card.out-of-stock:hover { transform: translateY(-4px); box-shadow: 0 12px 36px rgba(0,0,0,.5); border-color: var(--border); }
+
+    /* ── Bundle cards ─────────────────────────────── */
+    .bundle-badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-family: var(--font-c); font-size: .58rem; font-weight: 700;
+      letter-spacing: .14em; text-transform: uppercase;
+      background: rgba(232,184,75,.12); color: #E8B84B;
+      border: 1px solid rgba(232,184,75,.3); padding: 3px 9px; margin-bottom: 8px;
+    }
+    .bundle-qty-note {
+      font-family: var(--font-c); font-size: .62rem; font-weight: 700;
+      letter-spacing: .1em; text-transform: uppercase; color: var(--smoke);
+      margin-bottom: 4px;
+    }
+    .bundle-unit-note {
+      font-size: .72rem; color: var(--smoke); margin-top: 3px;
+    }
+    .bundle-btn {
+      width: 100%; padding: 12px 16px;
+      background: #E8B84B; color: #0C0C0C;
+      font-family: var(--font-c); font-size: .74rem; font-weight: 700;
+      letter-spacing: .18em; text-transform: uppercase;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      transition: background .18s;
+      clip-path: polygon(0 0,calc(100% - 6px) 0,100% 6px,100% 100%,6px 100%,0 calc(100% - 6px));
+    }
+    .bundle-btn:hover { background: #f5c842; }
+    .bundle-unavail {
+      width: 100%; padding: 11px 16px;
+      background: transparent; color: var(--smoke);
+      font-family: var(--font-c); font-size: .7rem; font-weight: 700;
+      letter-spacing: .14em; text-transform: uppercase;
+      border: 1px solid var(--border); text-align: center;
+    }
     .out-of-stock-banner {
       position: absolute; top: 50%; left: 50%;
       transform: translate(-50%, -50%);
@@ -179,7 +217,7 @@
       <button class="filter-btn" data-cat="GLP Peptides">GLP Peptides</button>
       <button class="filter-btn" data-cat="GH Peptides">GH Peptides</button>
       <button class="filter-btn" data-cat="Peptides">Peptides</button>
-      <button class="filter-btn" data-cat="Bundles">Bundles</button>
+      <button class="filter-btn" data-cat="Bundles">◈ Bundles</button>
     </div>
   </div>
 
@@ -226,6 +264,28 @@
       return 'transparent';
     }
 
+    function buildBundleCard(p) {
+      var bundlePrice = p.bundle_price;
+      var unitNote    = '$' + (bundlePrice / 10).toFixed(2) + ' per vial';
+      return '<div class="product-card" onclick="event.stopPropagation()" style="cursor:pointer">'
+        + '<div class="product-thumb" style="background:' + thumbBg(p) + '">'
+        + '<div class="thumb-glow"></div>'
+        + thumbHTML(p)
+        + '</div>'
+        + '<div class="product-info">'
+        + '<div class="bundle-badge">◈ Bundle of 10</div>'
+        + '<div class="product-name">' + p.name + '</div>'
+        + '<div class="product-desc">' + p.description + '</div>'
+        + '<div class="bundle-qty-note">' + p.inventory + ' units available</div>'
+        + '<div class="product-footer">'
+        + '<div class="product-price-row"><div class="product-price">$' + Number(bundlePrice).toFixed(2) + '</div></div>'
+        + '<div class="bundle-unit-note">' + unitNote + ' · 10 vials</div>'
+        + '<button class="bundle-btn" onclick="event.stopPropagation();addBundleToCart(' + p.id + ')">+ Add Bundle to Cart</button>'
+        + '</div>'
+        + '</div>'
+        + '</div>';
+    }
+
     function buildCard(p) {
       var badge = p.badge ? '<span class="product-badge' + (p.badge.includes('\uD83D\uDD25') ? ' badge-hot' : '') + '">' + p.badge + '</span>' : '';
       return (p.inventory <= 0
@@ -266,18 +326,27 @@
 
     function renderProducts(cat) {
       var all  = allProducts();
-      var list;
-      if (cat === 'In Stock') {
-        list = all.filter(function(p) { return p.inventory > 0; }).sort(function(a,b) { return a.id - b.id; });
-      } else {
-        list = cat === 'All' ? sortProducts(all) : sortProducts(all.filter(function(p) { return p.category === cat; }));
-      }
       var grid = document.getElementById('products-grid');
-      if (!list.length) {
-        grid.innerHTML = '<div style="grid-column:1/-1;padding:48px 0;text-align:center"><p style="font-family:var(--font-c);font-size:.75rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--smoke)">' + (all.length === 0 ? 'No products loaded — check browser console (F12) for errors' : 'No products in this category') + '</p></div>';
-        return;
+      var list, html;
+
+      if (cat === 'Bundles') {
+        // Show only products that have a bundle_price set
+        list = all.filter(function(p) { return p.bundle_price != null && p.inventory >= 10; })
+                  .sort(function(a,b) { return a.id - b.id; });
+        html = list.length
+          ? list.map(buildBundleCard).join('')
+          : '<div style="grid-column:1/-1;padding:48px 0;text-align:center"><p style="font-family:var(--font-c);font-size:.75rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--smoke)">No bundles available</p></div>';
+      } else {
+        if (cat === 'In Stock') {
+          list = all.filter(function(p) { return p.inventory > 0; }).sort(function(a,b) { return a.id - b.id; });
+        } else {
+          list = cat === 'All' ? sortProducts(all) : sortProducts(all.filter(function(p) { return p.category === cat; }));
+        }
+        html = list.length
+          ? list.map(buildCard).join('')
+          : '<div style="grid-column:1/-1;padding:48px 0;text-align:center"><p style="font-family:var(--font-c);font-size:.75rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--smoke)">' + (all.length === 0 ? 'No products loaded — check browser console (F12) for errors' : 'No products in this category') + '</p></div>';
       }
-      grid.innerHTML = list.map(buildCard).join('');
+      grid.innerHTML = html;
     }
 
     window.joinWaitlistShop = async function(id, name) {
@@ -300,6 +369,28 @@
 
     window.goToProduct = function(id) {
       window.location.href = 'product.html?id=' + id;
+    };
+
+    window.addBundleToCart = function(id) {
+      var p = getProduct(id);
+      if (!p || !p.bundle_price) return;
+      if (p.inventory < 10) {
+        var f = document.getElementById('add-flash');
+        f.textContent = 'Not enough stock for a bundle of ' + p.name;
+        f.style.borderLeftColor = '#FF3030';
+        f.classList.add('show');
+        clearTimeout(f._t);
+        f._t = setTimeout(function() { f.classList.remove('show'); }, 2500);
+        return;
+      }
+      // Add as bundle: price = bundle_price, qty = 1, isBundle = true, bundleQty = 10
+      Cart.addBundle({ id: p.id, name: p.name, price: p.bundle_price, bundleQty: 10 });
+      var f = document.getElementById('add-flash');
+      f.textContent = p.name + ' bundle added to cart';
+      f.style.borderLeftColor = '#E8B84B';
+      f.classList.add('show');
+      clearTimeout(f._t);
+      f._t = setTimeout(function() { f.classList.remove('show'); }, 2200);
     };
 
     window.addToCart = function(id) {
@@ -330,6 +421,17 @@
     });
 
     renderProducts('All');
+
+    // Style the Bundles tab amber only if at least one bundle is available
+    var hasBundles = allProducts().some(function(p) { return p.bundle_price != null && p.inventory >= 10; });
+    var bundleTab  = document.querySelector('.filter-btn[data-cat="Bundles"]');
+    if (bundleTab) {
+      if (hasBundles) {
+        bundleTab.classList.add('filter-btn-bundle');
+      } else {
+        bundleTab.classList.remove('filter-btn-bundle');
+      }
+    }
   </script>
 
 </body>

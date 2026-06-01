@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <link rel="icon" href="data:,">
   <link rel="preconnect" href="https://utqviljholfvpfztfuvx.supabase.co" crossorigin>
   <link rel="dns-prefetch" href="https://utqviljholfvpfztfuvx.supabase.co">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -64,60 +65,50 @@
     /* ── ORDER ROWS ──────────────────────────────── */
     .orders-list { margin-top: 8px; }
 
-    .order-row {
-      display: flex; align-items: center; gap: 18px;
-      padding: 18px 0; border-bottom: 1px solid var(--border);
-      cursor: pointer; transition: background .18s;
-      text-decoration: none;
+    .order-card {
+      display: flex; align-items: flex-start; gap: 14px;
+      background: var(--off); border: 1px solid var(--border);
+      padding: 16px; margin-bottom: 10px;
     }
-    .order-row:last-child { border-bottom: none; }
-    .order-row:hover { background: var(--card); padding-left: 12px; padding-right: 12px; margin: 0 -12px; }
-
-    .order-thumb {
+    .order-card:last-child { margin-bottom: 0; }
+    .order-card-thumb {
       width: 56px; height: 56px; flex-shrink: 0;
       border: 1px solid var(--border);
-      display: flex; align-items: center; justify-content: center;
-      overflow: hidden;
+      display: flex; align-items: center; justify-content: center; overflow: hidden;
     }
-
-    .order-info { flex: 1; min-width: 0; }
-    .order-name {
-      font-family: var(--font-c); font-size: .9rem; font-weight: 700;
+    .order-card-body { flex: 1; min-width: 0; }
+    .order-card-header {
+      display: flex; align-items: flex-start;
+      justify-content: space-between; gap: 12px; margin-bottom: 6px;
+    }
+    .order-card-name {
+      font-family: var(--font-c); font-size: .88rem; font-weight: 700;
       letter-spacing: .04em; text-transform: uppercase; color: var(--white);
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 4px;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
-    .order-meta {
-      font-size: .73rem; color: var(--smoke);
-      display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+    .order-card-total {
+      font-family: var(--font-d); font-size: 1.2rem;
+      color: var(--white); letter-spacing: .04em; flex-shrink: 0;
     }
-    .order-meta-item { display: flex; align-items: center; gap: 4px; }
-    .order-meta-label {
-      font-family: var(--font-c); font-size: .6rem; font-weight: 700;
+    .order-card-meta {
+      font-size: .72rem; color: var(--smoke);
+      display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 12px;
+    }
+    .order-card-meta-item { display: flex; align-items: center; gap: 4px; }
+    .order-card-meta-label {
+      font-family: var(--font-c); font-size: .58rem; font-weight: 700;
       letter-spacing: .12em; text-transform: uppercase; color: var(--smoke);
     }
-    .order-meta-val { color: var(--ash); }
-
-    .order-right { text-align: right; flex-shrink: 0; }
-    .order-total {
-      font-family: var(--font-d); font-size: 1.2rem;
-      color: var(--white); letter-spacing: .04em; margin-bottom: 5px;
-    }
-    .order-status {
-      display: inline-flex; align-items: center; gap: 5px;
-      font-family: var(--font-c); font-size: .6rem; font-weight: 700;
+    .order-card-meta-val { color: var(--ash); }
+    .order-review-link {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-family: var(--font-c); font-size: .62rem; font-weight: 700;
       letter-spacing: .12em; text-transform: uppercase;
-      padding: 3px 9px; border-radius: 999px;
+      color: var(--smoke); text-decoration: none;
+      border: 1px solid var(--border); padding: 4px 10px;
+      transition: color .18s, border-color .18s;
     }
-    .order-status::before { content: ''; width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
-    .status-delivered  { background: rgba(34,100,34,.2); color: #5BC75B; }
-    .status-delivered::before  { background: #5BC75B; }
-    .status-shipped    { background: rgba(30,80,180,.2); color: #6E9EF5; }
-    .status-shipped::before    { background: #6E9EF5; }
-    .status-processing { background: rgba(200,140,0,.2); color: #E8B84B; }
-    .status-processing::before { background: #E8B84B; }
-
-    .order-arrow { color: var(--smoke); font-size: 1rem; transition: all .18s; flex-shrink: 0; }
-    .order-row:hover .order-arrow { transform: translateX(4px); color: var(--red); }
+    .order-review-link:hover { color: var(--red); border-color: rgba(204,31,31,.4); }
 
     /* ── EMPTY STATE ─────────────────────────────── */
     .empty-state {
@@ -148,6 +139,57 @@
       margin-bottom: 4px;
     }
 
+    /* ── Order Cards ──────────────────────────────────── */
+    .order-card {
+      display: flex; align-items: flex-start; gap: 14px;
+      background: var(--off); border: 1px solid var(--border);
+      padding: 16px; margin-bottom: 10px;
+    }
+    .order-card:last-child { margin-bottom: 0; }
+    .order-card-thumb {
+      width: 56px; height: 56px; flex-shrink: 0;
+      border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center; overflow: hidden;
+    }
+    .order-card-body { flex: 1; min-width: 0; }
+    .order-card-header {
+      display: flex; align-items: baseline;
+      justify-content: space-between; gap: 12px; margin-bottom: 8px;
+    }
+    .order-card-name {
+      font-family: var(--font-c); font-size: .88rem; font-weight: 700;
+      letter-spacing: .05em; text-transform: uppercase; color: var(--white);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .order-card-total {
+      font-family: var(--font-d); font-size: 1.2rem;
+      color: var(--white); letter-spacing: .04em; flex-shrink: 0;
+    }
+    .order-card-bottom {
+      display: flex; align-items: center;
+      justify-content: space-between; gap: 12px; flex-wrap: wrap;
+    }
+    .order-card-meta {
+      display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+    }
+    .order-card-meta-item { display: flex; align-items: center; gap: 4px; line-height: 1; }
+    .order-card-meta-label {
+      font-family: var(--font-c); font-size: .66rem; font-weight: 700;
+      letter-spacing: .12em; text-transform: uppercase; color: var(--smoke);
+    }
+    .order-card-meta-val {
+      font-family: var(--font-c); font-size: .66rem;
+      font-weight: 600; letter-spacing: .04em; color: var(--ash);
+    }
+    .order-review-link {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-family: var(--font-c); font-size: .6rem; font-weight: 700;
+      letter-spacing: .12em; text-transform: uppercase;
+      color: var(--smoke); text-decoration: none;
+      border: 1px solid var(--border); padding: 4px 10px; flex-shrink: 0;
+      transition: color .18s, border-color .18s;
+    }
+    .order-review-link:hover { color: var(--red); border-color: rgba(204,31,31,.4); }
     @media (max-width: 600px) {
       .order-row { gap: 12px; }
       .order-thumb { width: 44px; height: 44px; }
@@ -237,36 +279,25 @@
             const thumb   = product ? miniPepperSVG(product) : '';
             const date    = new Date(o.ordered_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
             return `
-              <a class="order-row" href="product.html?id=${pid}">
-                <div class="order-thumb" style="background:${bg}">${thumb}</div>
-                <div class="order-info">
-                  <div class="order-name">${o.product_name}</div>
-                  <div class="order-meta">
-                    <span class="order-meta-item">
-                      <span class="order-meta-label">Date</span>
-                      <span class="order-meta-val">${date}</span>
-                    </span>
-                    <span class="order-meta-item">
-                      <span class="order-meta-label">Qty</span>
-                      <span class="order-meta-val">${o.qty}</span>
-                    </span>
-                    <span class="order-meta-item">
-                      <span class="order-meta-label">Unit</span>
-                      <span class="order-meta-val">$${Number(o.unit_price).toFixed(2)}</span>
-                    </span>
-                    ${o.shipping_carrier ? `<span class="order-meta-item"><span class="order-meta-label">Ship via</span><span class="order-meta-val">${o.shipping_carrier}</span></span>` : ''}
+              <div class="order-card">
+                <div class="order-card-thumb" style="background:${bg}">${thumb}</div>
+                <div class="order-card-body">
+                  <div class="order-card-header">
+                    <div class="order-card-name">${o.product_name}</div>
+                    <div class="order-card-total">$${Number(o.total).toFixed(2)}</div>
+                  </div>
+                  <div class="order-card-bottom">
+                    <div class="order-card-meta">
+                      <span class="order-card-meta-item"><span class="order-card-meta-label">Date</span><span class="order-card-meta-val">${date}</span></span>
+                      <span class="order-card-meta-item"><span class="order-card-meta-label">Qty</span><span class="order-card-meta-val">${o.qty}</span></span>
+                      <span class="order-card-meta-item"><span class="order-card-meta-label">Unit</span><span class="order-card-meta-val">$${Number(o.unit_price).toFixed(2)}</span></span>
+                      ${o.shipping_carrier ? `<span class="order-card-meta-item"><span class="order-card-meta-label">Via</span><span class="order-card-meta-val">${o.shipping_carrier}</span></span>` : ''}
+                    </div>
+                    <a href="product.html?id=${pid}#reviews" onclick="event.stopPropagation()" class="order-review-link">★ Write a Review</a>
                   </div>
                 </div>
-                <div class="order-right">
-                  <div class="order-total">$${Number(o.total).toFixed(2)}</div>
-                  <span class="order-status status-${o.status}">${o.status}</span>
-                  <div style="font-size:.61rem;color:var(--smoke);margin-top:3px;font-style:italic">${
-                    o.status==='processing' ? 'Being prepared &amp; packed' :
-                    o.status==='shipped'    ? 'On its way to you' :
-                    o.status==='delivered'  ? 'Successfully delivered' : ''
-                  }</div>
+              </div>
                 </div>
-                <span class="order-arrow">›</span>
               </a>`;
           }).join('')}
         </div>`).join('');

@@ -52,7 +52,7 @@ function _populateCache(r1data, r2data) {
 async function _fetchFromSupabase() {
   const phase1 = supabase
     .from('products')
-    .select('id, name, category, price, potency, badge, thumb_color, shape_key, images, inventory, active')
+    .select('id, name, category, price, potency, badge, thumb_color, shape_key, images, inventory, active, bundle_price')
     .eq('active', true)
     .order('id');
 

@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <link rel="icon" href="data:,">
   <link rel="preconnect" href="https://utqviljholfvpfztfuvx.supabase.co" crossorigin>
   <link rel="dns-prefetch" href="https://utqviljholfvpfztfuvx.supabase.co">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -66,27 +67,59 @@
     .panel-action:hover { color: var(--red-hot); }
     .panel-body { padding: 6px 0; }
 
-    .order-row {
-      display: flex; align-items: center; gap: 14px;
-      padding: 14px 22px; border-bottom: 1px solid var(--border);
-      cursor: pointer; transition: background .18s; text-decoration: none;
+    /* ── Order Cards ──────────────────────────────────── */
+    .order-card {
+      display: flex; align-items: flex-start; gap: 14px;
+      background: var(--off); border: 1px solid var(--border);
+      padding: 16px; margin-bottom: 10px;
     }
-    .order-row:last-child { border-bottom: none; }
-    .order-row:hover { background: var(--card); }
-    .order-thumb {
-      width: 46px; height: 46px; flex-shrink: 0;
-      background: transparent;
+    .order-card:last-child { margin-bottom: 0; }
+    .order-card-thumb {
+      width: 56px; height: 56px; flex-shrink: 0;
+      border: 1px solid var(--border);
       display: flex; align-items: center; justify-content: center; overflow: hidden;
     }
-    .order-info { flex: 1; min-width: 0; }
-    .order-name {
-      font-family: var(--font-c); font-size: .85rem; font-weight: 700;
-      letter-spacing: .03em; text-transform: uppercase; color: var(--white);
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 3px;
+    .order-card-body { flex: 1; min-width: 0; }
+    .order-card-header {
+      display: flex; align-items: baseline;
+      justify-content: space-between; gap: 12px; margin-bottom: 8px;
     }
-    .order-meta { font-size: .71rem; color: var(--smoke); }
-    .order-meta span { color: var(--ash); margin-right: 8px; }
-    .order-right { text-align: right; flex-shrink: 0; }
+    .order-card-name {
+      font-family: var(--font-c); font-size: .88rem; font-weight: 700;
+      letter-spacing: .05em; text-transform: uppercase; color: var(--white);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .order-card-total {
+      font-family: var(--font-d); font-size: 1.2rem;
+      color: var(--white); letter-spacing: .04em; flex-shrink: 0;
+    }
+    .order-card-bottom {
+      display: flex; align-items: center;
+      justify-content: space-between; gap: 12px; flex-wrap: wrap;
+    }
+    .order-card-meta {
+      display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+    }
+    .order-card-meta-item { display: flex; align-items: center; gap: 4px; line-height: 1; }
+    .order-card-meta-label {
+      font-family: var(--font-c); font-size: .66rem; font-weight: 700;
+      letter-spacing: .12em; text-transform: uppercase; color: var(--smoke);
+    }
+    .order-card-meta-val {
+      font-family: var(--font-c); font-size: .66rem;
+      font-weight: 600; letter-spacing: .04em; color: var(--ash);
+    }
+    .order-review-link {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-family: var(--font-c); font-size: .6rem; font-weight: 700;
+      letter-spacing: .12em; text-transform: uppercase;
+      color: var(--smoke); text-decoration: none;
+      border: 1px solid var(--border); padding: 4px 10px; flex-shrink: 0;
+      transition: color .18s, border-color .18s;
+    }
+    .order-review-link:hover { color: var(--red); border-color: rgba(204,31,31,.4); }
+    .order-review-link { display: inline-flex; align-items: center; gap: 4px; font-family: var(--font-c); font-size: .58rem; font-weight: 700; letter-spacing: .11em; text-transform: uppercase; color: var(--smoke); text-decoration: none; border: 1px solid var(--border); padding: 3px 8px; transition: color .18s, border-color .18s; }
+    .order-review-link:hover { color: var(--red); border-color: rgba(204,31,31,.4); }
     .order-price { font-family: var(--font-d); font-size: 1.05rem; color: var(--white); letter-spacing: .04em; margin-bottom: 4px; }
     .order-status {
       display: inline-flex; align-items: center; gap: 5px;
@@ -215,51 +248,24 @@
         const thumb   = product ? miniPepperSVG(product) : '';
         const date    = new Date(o.ordered_at).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
         return `
-          <a class="order-row" href="product.html?id=${pid}" title="View product">
-            <div class="order-thumb">${thumb}</div>
-            <div class="order-info">
-              <div class="order-name">${o.product_name}</div>
-              <div class="order-meta"><span>${date}</span>Qty: ${o.qty}</div>
+          <div class="order-card">
+            <div class="order-card-thumb" style="background:${bg}">${thumb}</div>
+            <div class="order-card-body">
+              <div class="order-card-header">
+                <div class="order-card-name">${o.product_name}</div>
+                <div class="order-card-total">$${Number(o.total).toFixed(2)}</div>
+              </div>
+              <div class="order-card-bottom">
+                <div class="order-card-meta">
+                  <span class="order-card-meta-item"><span class="order-card-meta-label">Date</span><span class="order-card-meta-val">${date}</span></span>
+                  <span class="order-card-meta-item"><span class="order-card-meta-label">Qty</span><span class="order-card-meta-val">${o.qty}</span></span>
+                  <span class="order-card-meta-item"><span class="order-card-meta-label">Unit</span><span class="order-card-meta-val">$${Number(o.unit_price).toFixed(2)}</span></span>
+                  ${o.shipping_carrier ? `<span class="order-card-meta-item"><span class="order-card-meta-label">Via</span><span class="order-card-meta-val">${o.shipping_carrier}</span></span>` : ''}
+                </div>
+                <a href="product.html?id=${pid}#reviews" onclick="event.stopPropagation()" class="order-review-link">★ Write a Review</a>
+              </div>
             </div>
-            <div class="order-right">
-              <div class="order-price">$${Number(o.total).toFixed(2)}</div>
-              <span class="order-status status-${o.status}">${o.status}</span>
-            </div>
-            <span class="order-arrow">›</span>
-          </a>`;
-      }).join('');
-    }
-
-    const [defaultAddr] = await Promise.all([Auth.getDefaultAddress()]);
-
-    const PROFILE_FIELDS = [
-      { key:'email',      label:'Email',      type:'email', placeholder:'you@example.com', note:'Changing email sends a confirmation link.' },
-      { key:'first_name', label:'First Name', type:'text',  placeholder:'Jane'  },
-      { key:'last_name',  label:'Last Name',  type:'text',  placeholder:'Smith' },
-      { key:'phone',      label:'Phone',      type:'tel',   placeholder:'+1 555 000 0000' },
-    ];
-
-    const ADDRESS_FIELDS = [
-      { key:'street_line1', label:'Street',   type:'text', placeholder:'123 Main St' },
-      { key:'street_line2', label:'Apt/Suite', type:'text', placeholder:'Apt 4B'     },
-      { key:'city',         label:'City',     type:'text', placeholder:'Austin'      },
-      { key:'state',        label:'State',    type:'text', placeholder:'TX'          },
-      { key:'zip',          label:'ZIP',      type:'text', placeholder:'78701'       },
-      { key:'country',      label:'Country',  type:'text', placeholder:'US'          },
-    ];
-
-    function makeInfoRow(f, val, note = '') {
-      return `
-        <div class="info-row">
-          <div class="info-label">${f.label}</div>
-          <div class="info-edit-wrap" id="wrap-${f.key}">
-            <input class="info-input" id="input-${f.key}" type="${f.type}" value="${val}" placeholder="${f.placeholder}" />
-            <button class="info-save"   onclick="saveField('${f.key}')">Save</button>
-            <button class="info-cancel" onclick="cancelEdit('${f.key}')">Cancel</button>
-          </div>
-          <div>
-            <div class="info-val${val?'':' empty'}" id="val-${f.key}">${val || 'Not set'}</div>
-            ${note ? `<div style="font-size:.62rem;color:var(--smoke);margin-top:2px;font-style:italic">${note}</div>` : ''}
+          </div>` : ''}
           </div>
           <button class="info-edit-btn" onclick="startEdit('${f.key}')">Edit</button>
         </div>`;

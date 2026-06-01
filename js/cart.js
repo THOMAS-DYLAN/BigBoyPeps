@@ -55,12 +55,39 @@ window.Cart = {
     if (liveInv <= 0) return { ok: false, err: 'out_of_stock' };
 
     const items      = this.get();
-    const existing   = items.find(i => i.id === product.id);
+    const existing   = items.find(i => i.id === product.id && !i.isBundle);
     const currentQty = existing ? existing.qty : 0;
     if (currentQty + 1 > liveInv) return { ok: false, err: 'insufficient_stock', available: liveInv };
 
     if (existing) existing.qty += 1;
     else items.push({ id: product.id, name: product.name, price: product.price, qty: 1 });
+    this.save(items);
+    this.updateBadge();
+    return { ok: true };
+  },
+
+  addBundle(bundle) {
+    // bundle = { id, name, price (bundle_price), bundleQty (10) }
+    const cached  = window.ProductCache?.[bundle.id];
+    const liveInv = cached?.inventory ?? 0;
+    if (liveInv < bundle.bundleQty) return { ok: false, err: 'insufficient_stock' };
+
+    const items    = this.get();
+    const existing = items.find(i => i.id === bundle.id && i.isBundle);
+    if (existing) {
+      // Already have this bundle — check stock for another bundle of 10
+      if ((existing.qty + 1) * bundle.bundleQty > liveInv) return { ok: false, err: 'insufficient_stock' };
+      existing.qty += 1;
+    } else {
+      items.push({
+        id:        bundle.id,
+        name:      bundle.name + ' (Bundle ×10)',
+        price:     bundle.price,
+        qty:       1,
+        isBundle:  true,
+        bundleQty: bundle.bundleQty,
+      });
+    }
     this.save(items);
     this.updateBadge();
     return { ok: true };
@@ -383,9 +410,6 @@ function renderCheckoutModal(items, profile, addr) {
     + '<div class="modal-section-title">Payment Method</div>'
     + '<div id="paypal-button-container"></div>'
     + '<div id="cashapp-container" style="margin-top:10px"></div>'
-    + '<div style="margin-top:18px;padding-top:14px;border-top:1px dashed var(--border)">'
-    + '<button onclick="testPay()" style="width:100%;padding:11px;font-family:var(--font-c);font-size:.65rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;border:1px dashed var(--border);background:transparent;color:var(--smoke);cursor:pointer;transition:all .18s" onmouseover="this.style.borderColor=\'var(--ash)\';this.style.color=\'var(--light)\'" onmouseout="this.style.borderColor=\'var(--border)\';this.style.color=\'var(--smoke)\'">⚙ Test Payment (Dev Only — No Charge)</button>'
-    + '</div>'
     + '</div>'
 
     + '<p class="modal-disclaimer">All products are sold for research purposes only and not intended for human consumption.</p>'
@@ -426,38 +450,6 @@ window.applyDiscountInModal = function() {
   input.value = '';
   input.disabled = true;
   input.style.opacity = '.5';
-};
-
-// ── Test payment (dev only — no charge, no email) ────────────
-window.testPay = async function() {
-  if (!shippingValid()) {
-    SHIP_RULES.forEach(function(r) {
-      var el    = document.getElementById(r.id);
-      var errEl = document.getElementById(r.err);
-      if (el && errEl && !r.test(el.value.trim())) errEl.textContent = r.msg;
-    });
-    return;
-  }
-  var modal = document.getElementById('checkout-modal');
-  if (!modal) return;
-  modal.innerHTML =
-    '<div class="modal-head"><div class="modal-title">Test Mode</div></div>'
-    + '<div class="modal-body" style="text-align:center;padding:40px 24px">'
-    + '<p style="font-family:var(--font-c);font-size:.68rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--smoke);margin-bottom:12px">Simulating PayPal capture…</p>'
-    + '<div id="test-spinner" style="width:32px;height:32px;border:2px solid var(--border);border-top-color:var(--red);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto"></div>'
-    + '<style>@keyframes spin{to{transform:rotate(360deg)}}</style>'
-    + '</div>';
-
-  await new Promise(function(r) { setTimeout(r, 1800); });
-
-  modal.innerHTML =
-    '<div class="modal-head"><div class="modal-title">Test Complete</div><button class="modal-close" onclick="closeCheckout()">&#x2715;</button></div>'
-    + '<div class="order-success">'
-    + '<div class="order-success-icon" style="color:var(--smoke)">✓</div>'
-    + '<h2>PayPal Flow Works.</h2>'
-    + '<p style="color:var(--smoke)">Test only — no charge was made.<br/>No order saved. No email sent to Brandon.</p>'
-    + '<button onclick="closeCheckout()" style="display:inline-block;margin-top:24px;font-family:var(--font-c);font-size:.75rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;border:1px solid var(--border);color:var(--smoke);padding:12px 28px;background:transparent;cursor:pointer">Close</button>'
-    + '</div>';
 };
 
 // ── Mount PayPal buttons ──────────────────────────────────
@@ -507,40 +499,23 @@ async function mountPayPal() {
         return actions.resolve();
       },
 
-      // Always recalculate total at click time so discount + shipping changes are reflected
       createOrder: function(data, actions) {
-        var currentItems    = Cart.get();
-        var currentSubtotal = currentItems.reduce(function(s,i) { return s + i.price * i.qty; }, 0);
-        var currentDiscount = _appliedDiscount;
-        var currentDiscAmt  = currentDiscount ? Math.round(currentSubtotal * currentDiscount.pct) / 100 : 0;
-        var currentShip     = getSelectedShipping().price;
-        var currentTotal    = (currentSubtotal - currentDiscAmt + currentShip).toFixed(2);
         return actions.order.create({
           intent: 'CAPTURE',
-          purchase_units: [{ amount: { value: currentTotal, currency_code: 'USD' } }],
+          purchase_units: [{ amount: { value: total, currency_code: 'USD' } }],
         });
       },
 
       onApprove: async function(data, actions) {
         var shippingData = captureShipping();
-        var paypalContainer = document.getElementById('paypal-button-container');
-        if (paypalContainer) paypalContainer.innerHTML = '<p style="font-family:var(--font-c);font-size:.68rem;text-align:center;color:var(--smoke);padding:12px 0">Processing payment…</p>';
-        try {
-          await actions.order.capture();
-          await finishOrder(shippingData);
-        } catch(err) {
-          console.error('PayPal capture/order failed:', err);
-          if (paypalContainer) paypalContainer.innerHTML = '<p style="font-family:var(--font-c);font-size:.72rem;font-weight:700;letter-spacing:.08em;color:#FF3030;text-align:center;padding:12px 0">Payment failed — please try again or use Cash App.</p>';
-          // Re-mount PayPal buttons so they can try again
-          setTimeout(function() { mountPayPal(); }, 2000);
-        }
+        container.innerHTML = '<p style="font-family:var(--font-c);font-size:.68rem;text-align:center;color:var(--smoke);padding:12px 0">Processing payment…</p>';
+        await actions.order.capture();
+        await finishOrder(shippingData);
       },
 
       onError: function(err) {
         console.error('PayPal error:', err);
-        var paypalContainer = document.getElementById('paypal-button-container');
-        if (paypalContainer) paypalContainer.innerHTML = '<p style="font-family:var(--font-c);font-size:.72rem;font-weight:700;letter-spacing:.08em;color:#FF3030;text-align:center;padding:12px 0">Payment failed — please try again or use Cash App.</p>';
-        setTimeout(function() { mountPayPal(); }, 2000);
+        container.innerHTML = '<p style="color:#FF3030;font-size:.72rem;text-align:center;font-family:var(--font-c);padding:12px 0">Payment failed — please try again.</p>';
       },
 
       onCancel: function() {},
@@ -667,17 +642,21 @@ async function finishOrder(shipping) {
   // ── Save orders + decrement inventory ─────────────────────
   try {
     for (var i = 0; i < items.length; i++) {
+      var item         = items[i];
+      var isBundle     = !!item.isBundle;
+      var actualQty    = isBundle ? item.qty * (item.bundleQty || 10) : item.qty;
+      var unitPrice    = isBundle ? item.price / (item.bundleQty || 10) : item.price;
       await Auth.createOrder({
-        productId:        items[i].id,
-        name:             items[i].name,
-        qty:              items[i].qty,
-        price:            items[i].price,
-        total:            items[i].price * items[i].qty,
+        productId:        item.id,
+        name:             item.name,
+        qty:              actualQty,
+        price:            unitPrice,
+        total:            item.price * item.qty,
         shipping_method:  shipping.shipping_method,
         shipping_carrier: shipping.shipping_carrier,
         shipping_price:   shipping.shipping_price,
       });
-      await Auth.decrementInventory(items[i].id, items[i].qty);
+      await Auth.decrementInventory(item.id, actualQty);
     }
   } catch(e) {
     console.error('Order save failed:', e);
