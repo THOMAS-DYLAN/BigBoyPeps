@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <link rel="icon" href="data:,">
   <link rel="preconnect" href="https://utqviljholfvpfztfuvx.supabase.co" crossorigin>
   <link rel="dns-prefetch" href="https://utqviljholfvpfztfuvx.supabase.co">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -293,7 +294,9 @@
       if (!item) return;
       if (item.qty + delta < 1) { removeItem(id); return; }
       const product = getProduct(id);
-      const maxQty = product?.inventory ?? 999;
+      const maxQty = item.isBundle
+        ? Math.floor((product?.inventory ?? 0) / (item.bundleQty || 10))
+        : (product?.inventory ?? 999);
       if (item.qty + delta > maxQty) return;
       Cart.setQty(id, item.qty + delta);
       renderCart();

@@ -65,50 +65,6 @@
     /* ── ORDER ROWS ──────────────────────────────── */
     .orders-list { margin-top: 8px; }
 
-    .order-card {
-      display: flex; align-items: flex-start; gap: 14px;
-      background: var(--off); border: 1px solid var(--border);
-      padding: 16px; margin-bottom: 10px;
-    }
-    .order-card:last-child { margin-bottom: 0; }
-    .order-card-thumb {
-      width: 56px; height: 56px; flex-shrink: 0;
-      border: 1px solid var(--border);
-      display: flex; align-items: center; justify-content: center; overflow: hidden;
-    }
-    .order-card-body { flex: 1; min-width: 0; }
-    .order-card-header {
-      display: flex; align-items: flex-start;
-      justify-content: space-between; gap: 12px; margin-bottom: 6px;
-    }
-    .order-card-name {
-      font-family: var(--font-c); font-size: .88rem; font-weight: 700;
-      letter-spacing: .04em; text-transform: uppercase; color: var(--white);
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-    }
-    .order-card-total {
-      font-family: var(--font-d); font-size: 1.2rem;
-      color: var(--white); letter-spacing: .04em; flex-shrink: 0;
-    }
-    .order-card-meta {
-      font-size: .72rem; color: var(--smoke);
-      display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 12px;
-    }
-    .order-card-meta-item { display: flex; align-items: center; gap: 4px; }
-    .order-card-meta-label {
-      font-family: var(--font-c); font-size: .58rem; font-weight: 700;
-      letter-spacing: .12em; text-transform: uppercase; color: var(--smoke);
-    }
-    .order-card-meta-val { color: var(--ash); }
-    .order-review-link {
-      display: inline-flex; align-items: center; gap: 4px;
-      font-family: var(--font-c); font-size: .62rem; font-weight: 700;
-      letter-spacing: .12em; text-transform: uppercase;
-      color: var(--smoke); text-decoration: none;
-      border: 1px solid var(--border); padding: 4px 10px;
-      transition: color .18s, border-color .18s;
-    }
-    .order-review-link:hover { color: var(--red); border-color: rgba(204,31,31,.4); }
 
     /* ── EMPTY STATE ─────────────────────────────── */
     .empty-state {
@@ -190,11 +146,9 @@
       transition: color .18s, border-color .18s;
     }
     .order-review-link:hover { color: var(--red); border-color: rgba(204,31,31,.4); }
+
     @media (max-width: 600px) {
-      .order-row { gap: 12px; }
-      .order-thumb { width: 44px; height: 44px; }
       .summary-divider { display: none; }
-      .nav-links { display: none; }
     }
   </style>
 </head>

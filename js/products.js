@@ -17,8 +17,8 @@
 import { supabase } from './supabase.js';
 
 // ── Cache ─────────────────────────────────────────────────────
-const PRODUCTS_VERSION = '14';
-const LS_KEY = 'bbp_products_v14';
+const PRODUCTS_VERSION = '15';
+const LS_KEY = 'bbp_products_v15';
 const LS_TTL = 5 * 60 * 1000; // 5 minutes — background refresh keeps it fresh
 let _loaded = false;
 

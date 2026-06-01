@@ -445,7 +445,22 @@ window.applyDiscountInModal = function() {
   var totalEl = document.getElementById('modal-total-val');
   if (totalEl) totalEl.textContent = '$' + newTotal.toFixed(2);
 
-  okEl.textContent  = found.label + ' — ' + found.pct + '% off applied (' + '-$' + discAmt.toFixed(2) + ')';
+  // Inject/update discount row in Order Summary
+  var existingRow = document.getElementById('modal-discount-row');
+  if (existingRow) {
+    existingRow.querySelector('span:last-child').textContent = '-$' + discAmt.toFixed(2);
+  } else {
+    var subtotalRow = document.querySelector('.modal-order-row');
+    if (subtotalRow && subtotalRow.parentNode) {
+      var discRow = document.createElement('div');
+      discRow.id = 'modal-discount-row';
+      discRow.className = 'modal-order-row';
+      discRow.style.cssText = 'color:#5BC75B;padding-top:4px';
+      discRow.innerHTML = '<span>' + code + ' (' + found.pct + '% off)</span><span>-$' + discAmt.toFixed(2) + '</span>';
+      subtotalRow.parentNode.insertBefore(discRow, subtotalRow.nextSibling);
+    }
+  }
+  okEl.textContent  = found.label + ' — ' + found.pct + '% off applied';
   okEl.style.display = 'block';
   input.value = '';
   input.disabled = true;
@@ -567,6 +582,14 @@ window.payCashApp = async function() {
   var total    = (subtotal + ship).toFixed(2);
   var shippingData = captureShipping();
 
+  if (!shippingValid()) {
+    SHIP_RULES.forEach(function(r) {
+      var el    = document.getElementById(r.id);
+      var errEl = document.getElementById(r.err);
+      if (el && errEl && !r.test(el.value.trim())) errEl.textContent = r.msg;
+    });
+    return;
+  }
   window.open('https://cash.app/' + CASHAPP_USERNAME + '/' + total, '_blank');
   await finishOrder(shippingData);
 };
