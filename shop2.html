@@ -167,6 +167,58 @@
     /* ── Scrollbar ────────────────────────────── */
     ::-webkit-scrollbar-track { background: #060C18 !important; }
     ::-webkit-scrollbar-thumb { background: #142238 !important; border-radius: 4px; }
+
+    /* ── MOBILE OVERRIDES ─────────────────────── */
+    @media (max-width: 767px) {
+      /* Nav tab bar background */
+      nav { background: rgba(6,12,24,.98) !important; border-bottom: 1px solid #142238 !important; }
+
+      /* Active nav tab — gold not red */
+      .nav-link.active {
+        color: #B8892A !important;
+        background: rgba(184,137,42,.08) !important;
+      }
+      .nav-link:hover { color: #C8DEFF !important; }
+
+      /* Cart button tab */
+      .cart-nav-btn:hover { color: #C8DEFF !important; }
+
+      /* Sign out tab */
+      .nav-signout-tab        { color: #4A6A94 !important; border-left-color: #142238 !important; }
+      .nav-signout-tab:hover,
+      .nav-signout-tab:active { color: #B8892A !important; background: rgba(184,137,42,.07) !important; }
+
+      /* Cart badge */
+      .cart-badge { background: #B8892A !important; }
+
+      /* Nav tab borders */
+      .nav-link, .cart-nav-btn { border-right-color: #142238 !important; color: #4A6A94 !important; }
+
+      /* Filter bar — horizontal scroll, no overflow clip */
+      .filter-bar {
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+        flex-wrap: nowrap !important;
+        padding-bottom: 2px !important;
+      }
+      .filter-btn { flex-shrink: 0 !important; white-space: nowrap !important; }
+
+      /* Cards — tighter on mobile */
+      .product-card { background: #0A1525 !important; }
+      .product-card:hover {
+        border-color: rgba(184,137,42,.4) !important;
+        box-shadow: 0 8px 24px rgba(6,12,24,.8) !important;
+        transform: none !important;
+      }
+
+      /* Flash nudge to avoid nav overlap */
+      #add-flash { bottom: 72px !important; }
+    }
+
+    /* Very small screens */
+    @media (max-width: 380px) {
+      .nav-label { font-size: .46rem !important; letter-spacing: .06em !important; }
+    }
   </style>
   <link rel="stylesheet" href="css/shared.css" />
   <style>
@@ -345,6 +397,58 @@
     @keyframes skeletonPulse {
       0%, 100% { opacity: 1; }
       50%       { opacity: .4; }
+    }
+
+    /* ── MOBILE OVERRIDES ─────────────────────── */
+    @media (max-width: 767px) {
+      /* Nav tab bar background */
+      nav { background: rgba(6,12,24,.98) !important; border-bottom: 1px solid #142238 !important; }
+
+      /* Active nav tab — gold not red */
+      .nav-link.active {
+        color: #B8892A !important;
+        background: rgba(184,137,42,.08) !important;
+      }
+      .nav-link:hover { color: #C8DEFF !important; }
+
+      /* Cart button tab */
+      .cart-nav-btn:hover { color: #C8DEFF !important; }
+
+      /* Sign out tab */
+      .nav-signout-tab        { color: #4A6A94 !important; border-left-color: #142238 !important; }
+      .nav-signout-tab:hover,
+      .nav-signout-tab:active { color: #B8892A !important; background: rgba(184,137,42,.07) !important; }
+
+      /* Cart badge */
+      .cart-badge { background: #B8892A !important; }
+
+      /* Nav tab borders */
+      .nav-link, .cart-nav-btn { border-right-color: #142238 !important; color: #4A6A94 !important; }
+
+      /* Filter bar — horizontal scroll, no overflow clip */
+      .filter-bar {
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+        flex-wrap: nowrap !important;
+        padding-bottom: 2px !important;
+      }
+      .filter-btn { flex-shrink: 0 !important; white-space: nowrap !important; }
+
+      /* Cards — tighter on mobile */
+      .product-card { background: #0A1525 !important; }
+      .product-card:hover {
+        border-color: rgba(184,137,42,.4) !important;
+        box-shadow: 0 8px 24px rgba(6,12,24,.8) !important;
+        transform: none !important;
+      }
+
+      /* Flash nudge to avoid nav overlap */
+      #add-flash { bottom: 72px !important; }
+    }
+
+    /* Very small screens */
+    @media (max-width: 380px) {
+      .nav-label { font-size: .46rem !important; letter-spacing: .06em !important; }
     }
   </style>
 </head>
