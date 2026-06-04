@@ -75,7 +75,7 @@ window.Auth = {
       password,
       options: {
         data: { first_name: firstName, last_name: lastName },
-        emailRedirectTo: 'https://bigboypeps.com/dashboard.html',
+        emailRedirectTo: 'https://houston.bigboypeps.com/dashboard.html',
       }
     });
 
@@ -100,7 +100,7 @@ window.Auth = {
     const { error } = await supabase.auth.resend({
       type: 'signup',
       email,
-      options: { emailRedirectTo: 'https://bigboypeps.com/dashboard.html' },
+      options: { emailRedirectTo: 'https://houston.bigboypeps.com/dashboard.html' },
     });
     return error ? { ok: false, err: error.message } : { ok: true };
   },

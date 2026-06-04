@@ -243,7 +243,7 @@ const STATES = ['AL','AK','AZ','AR','CA','CO','CT','DE','FL','GA','HI','ID','IL'
 // ── Keys ──────────────────────────────────────────────────
 // Replace with live Client ID from developer.paypal.com → Apps & Credentials → Live
 const PAYPAL_CLIENT_ID  = 'AZSLv66rtWR7MDNObiUvYST-XeQEl4-aDzwxsV42ocY3EGXLLUscQ1l_zmmB4FPOOAkMLU5wlMpsGYUa';
-const CASHAPP_USERNAME  = '$BigBoyPeps';
+const CASHAPP_USERNAME  = '$CTXLabs';
 
 // ── Shipping options ──────────────────────────────────────────
 const SHIPPING_OPTIONS = [
