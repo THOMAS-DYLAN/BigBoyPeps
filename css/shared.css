@@ -77,8 +77,8 @@ nav {
 .cart-nav-btn:hover { background: var(--red-hot); }
 
 .cart-badge {
-  background: var(--white); color: var(--red);
-  font-size: .58rem; font-weight: 700;
+  background: #B8892A; color: #04090F;
+  font-size: .58rem; font-weight: 800;
   width: 16px; height: 16px; border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
   flex-shrink: 0;
@@ -541,7 +541,6 @@ nav {
   clip-path: polygon(0 0,calc(100% - 6px) 0,100% 6px,100% 100%,6px 100%,0 calc(100% - 6px));
 }
 .cart-nav-btn:hover { background: #D4A843; }
-.cart-badge { background: #B8892A; }
 
 /* Mobile nav tab gold */
 @media (max-width: 767px) {
@@ -552,5 +551,5 @@ nav {
   }
   .nav-signout-tab:hover,
   .nav-signout-tab:active { color: var(--red) !important; background: rgba(184,137,42,.07) !important; }
-  .cart-badge { top: 6px !important; background: #B8892A !important; }
+  .cart-badge { top: 6px !important; background: #B8892A !important; color: #04090F !important; }
 }
