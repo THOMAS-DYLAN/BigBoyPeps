@@ -3,14 +3,14 @@
 :root {
   --red:     #B8892A;
   --red-hot: #D4A843;
-  --black:   #060C18;
-  --off:     #0A1220;
-  --card:    #0C1828;
-  --border:  #142238;
-  --smoke:   #4A6A94;
-  --ash:     #7A9BBC;
-  --light:   #C8DEFF;
-  --white:   #EEF4FF;
+  --black:   #04090F;
+  --off:     #07111F;
+  --card:    #0A1829;
+  --border:  #112033;
+  --smoke:   #3A5F8A;
+  --ash:     #6A8FAD;
+  --light:   #C2DAFF;
+  --white:   #E8F2FF;
   --font-d: 'Bebas Neue', sans-serif;
   --font-m: 'Permanent Marker', cursive;
   --font-b: 'Barlow', sans-serif;
