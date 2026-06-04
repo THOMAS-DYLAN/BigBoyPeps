@@ -14,7 +14,7 @@
 //   heatPips(p.potency)             // 5-pip heat meter HTML
 // ═══════════════════════════════════════════════════════════════
 
-import { supabaseProducts as supabase } from './supabase.js';
+import { supabase } from './supabase.js';
 
 // ── Cache ─────────────────────────────────────────────────────
 const PRODUCTS_VERSION = '15';

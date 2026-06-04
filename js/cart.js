@@ -550,7 +550,6 @@ async function mountPayPal() {
 
 // ── Cash App ──────────────────────────────────────────────
 function mountCashApp() {
-  return; // TEMPORARILY OFFLINE
   var container = document.getElementById('cashapp-container');
   if (!container) return;
 
