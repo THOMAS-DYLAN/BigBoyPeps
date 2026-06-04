@@ -550,6 +550,7 @@ async function mountPayPal() {
 
 // ── Cash App ──────────────────────────────────────────────
 function mountCashApp() {
+  return; // TEMPORARILY OFFLINE
   var container = document.getElementById('cashapp-container');
   if (!container) return;
 
@@ -563,7 +564,7 @@ function mountCashApp() {
     + '<svg width="20" height="20" viewBox="0 0 32 32" fill="none"><rect width="32" height="32" rx="8" fill="#00D632"/><path d="M22.5 9.5L16 16m0 0L9.5 9.5M16 16l6.5 6.5M16 16l-6.5 6.5" stroke="#000" stroke-width="2.5" stroke-linecap="round"/></svg>'
     + 'Pay $' + total + ' with Cash App'
     + '</button>'
-    + '<p style="font-size:.62rem;color:var(--smoke);text-align:center;margin-top:6px;font-style:italic;font-family:var(--font-c);letter-spacing:.06em">Opens Cash App &middot; Send to ' + CASHAPP_USERNAME + ' &middot; Order saves automatically</p>';
+    + '<p style="font-size:.62rem;color:var(--smoke);text-align:center;margin-top:6px;font-style:italic;font-family:var(--font-c);letter-spacing:.06em">Send $' + total + ' to ' + CASHAPP_USERNAME + ' in Cash App &middot; Order saves automatically</p>';
 }
 
 window.payCashApp = async function() {
@@ -590,7 +591,7 @@ window.payCashApp = async function() {
     });
     return;
   }
-  window.open('https://cash.app/' + CASHAPP_USERNAME + '/' + total, '_blank');
+  window.open('https://cash.app/' + CASHAPP_USERNAME, '_blank');
   await finishOrder(shippingData);
 };
 
