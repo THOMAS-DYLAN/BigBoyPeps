@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" href="data:,">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- SEO -->
+  <title>956 Labs — Research Peptides | Rio Grande Valley, Texas</title>
+  <meta name="description" content="956 Labs supplies premium research-grade peptides to researchers in the Rio Grande Valley, McAllen, Edinburg, Harlingen, and Brownsville. Not for human consumption." />
+  <meta name="keywords" content="research peptides RGV, peptides McAllen TX, peptides Rio Grande Valley, 956 research compounds, GLP peptides South Texas, research chemicals 78501" />
+  <meta property="og:title" content="956 Labs — Research Peptides | Rio Grande Valley" />
+  <meta property="og:description" content="Premium research-grade peptides for the Rio Grande Valley research community." />
+  <meta property="og:type" content="website" />
+  <link rel="canonical" href="https://bigboypeps.com/956labs/" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/global.css" />
+  <style>
+    /* ── AGE GATE ────────────────────────────────── */
+    #age-gate {
+      position: fixed; inset: 0; z-index: 100;
+      background: var(--black);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .gate-flag-bar {
+      position: absolute; top: 0; left: 0; right: 0; height: 4px;
+      background: linear-gradient(to right, var(--green) 33.3%, #fff 33.3% 66.6%, var(--red) 66.6%);
+    }
+    .gate-inner {
+      position: relative; z-index: 1;
+      text-align: center; max-width: 420px; padding: 0 32px;
+      animation: fadeUp .5s ease both;
+    }
+    @keyframes fadeUp { from { opacity:0; transform:translateY(18px); } to { opacity:1; transform:none; } }
+
+    .gate-logo { height: 110px; width: auto; object-fit: contain; margin-bottom: 16px; }
+    .gate-name {
+      font-family: var(--font-d); font-size: 2.8rem; letter-spacing: .08em;
+      color: var(--white); line-height: 1; margin-bottom: 4px;
+    }
+    .gate-name span { color: var(--green); }
+    .gate-sub {
+      font-family: var(--font-c); font-size: .62rem; font-weight: 700;
+      letter-spacing: .28em; text-transform: uppercase; color: var(--smoke); margin-bottom: 36px;
+    }
+    .gate-rule { width: 40px; height: 2px; background: var(--green); margin: 0 auto 28px; }
+    .gate-prompt { font-size: .86rem; color: var(--text-2); line-height: 1.85; margin-bottom: 36px; }
+    .gate-prompt strong { color: var(--white); font-weight: 600; }
+    .gate-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+    .btn-yes {
+      padding: 13px 32px; font-family: var(--font-c); font-size: .75rem;
+      font-weight: 700; letter-spacing: .16em; text-transform: uppercase;
+      background: var(--green); color: #fff; border-radius: 3px;
+      transition: background .2s, transform .2s;
+    }
+    .btn-yes:hover { background: var(--green-hi); transform: translateY(-2px); }
+    .btn-no {
+      padding: 13px 32px; font-family: var(--font-c); font-size: .75rem;
+      font-weight: 700; letter-spacing: .16em; text-transform: uppercase;
+      color: var(--smoke); border: 1px solid var(--border); border-radius: 3px;
+      transition: border-color .2s, color .2s;
+    }
+    .btn-no:hover { border-color: var(--smoke); color: var(--text-2); }
+
+    #denied {
+      display: none; position: fixed; inset: 0; z-index: 200;
+      background: var(--black); flex-direction: column;
+      align-items: center; justify-content: center; gap: 14px;
+    }
+    #denied p {
+      font-family: var(--font-c); font-size: .72rem; font-weight: 700;
+      letter-spacing: .22em; text-transform: uppercase; color: var(--smoke);
+    }
+
+    /* ── AUTH PAGE ───────────────────────────────── */
+    #auth-page { display: none; min-height: 100vh; grid-template-columns: 1fr 1fr; }
+    #auth-page.active { display: grid; }
+
+    .auth-visual {
+      background: var(--off); border-right: 1px solid var(--border);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: 56px 48px; position: relative; overflow: hidden;
+    }
+    .auth-flag-stripe {
+      position: absolute; top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(to right, var(--green) 33.3%, #fff 33.3% 66.6%, var(--red) 66.6%);
+    }
+    .auth-visual-content { position: relative; z-index: 1; text-align: center; }
+    .auth-logo { height: 120px; width: auto; object-fit: contain; margin-bottom: 20px; }
+    .auth-visual-name {
+      font-family: var(--font-d); font-size: 2.4rem;
+      letter-spacing: .1em; color: var(--white); line-height: 1;
+    }
+    .auth-visual-name span { color: var(--green); }
+    .auth-visual-tagline { font-size: .85rem; color: var(--smoke); margin-top: 10px; }
+    .auth-visual-divider { width: 100%; height: 1px; background: var(--border); margin: 24px 0; }
+    .auth-visual-pills { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+    .pill {
+      font-family: var(--font-c); font-size: .6rem; font-weight: 700;
+      letter-spacing: .16em; text-transform: uppercase;
+      padding: 5px 12px; border: 1px solid var(--border); color: var(--smoke);
+      border-radius: 2px;
+    }
+    .pill-green { border-color: var(--green-lo); color: var(--green-hi); background: var(--green-bg); }
+
+    .auth-form-side {
+      display: flex; flex-direction: column; justify-content: center;
+      padding: 56px 48px; background: var(--off);
+    }
+    .auth-tabs { display: flex; border-bottom: 1px solid var(--border); margin-bottom: 28px; }
+    .auth-tab {
+      padding: 10px 0; margin-right: 24px;
+      font-family: var(--font-c); font-size: .7rem; font-weight: 700;
+      letter-spacing: .18em; text-transform: uppercase;
+      color: var(--smoke); border-bottom: 2px solid transparent; transition: all .18s;
+    }
+    .auth-tab.active { color: var(--white); border-bottom-color: var(--green); }
+    .auth-tab:hover:not(.active) { color: var(--text-2); }
+    .auth-form { display: none; }
+    .auth-form.active { display: block; animation: fadeIn .2s ease; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    .auth-title {
+      font-family: var(--font-d); font-size: 1.9rem;
+      letter-spacing: .04em; color: var(--white); margin-bottom: 5px;
+    }
+    .auth-desc { font-size: .8rem; color: var(--smoke); margin-bottom: 24px; line-height: 1.6; }
+    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .auth-submit {
+      width: 100%; padding: 13px;
+      font-family: var(--font-c); font-size: .78rem; font-weight: 700;
+      letter-spacing: .18em; text-transform: uppercase;
+      background: var(--green); color: #fff; border-radius: 3px;
+      transition: background .2s, transform .2s; margin-top: 4px;
+    }
+    .auth-submit:hover { background: var(--green-hi); transform: translateY(-1px); }
+    .auth-error {
+      font-family: var(--font-c); font-size: .7rem; font-weight: 600;
+      letter-spacing: .06em; color: #f77; margin-top: 10px; min-height: 18px;
+    }
+    .auth-switch { font-size: .76rem; color: var(--smoke); margin-top: 16px; text-align: center; }
+    .auth-switch button { color: var(--green-hi); font-size: .76rem; text-decoration: underline; text-underline-offset: 3px; }
+    .auth-switch button:hover { color: var(--green); }
+
+    @media (max-width: 860px) { #auth-page { grid-template-columns: 1fr; } .auth-visual { display: none; } }
+    @media (max-width: 480px) { .gate-btns { flex-direction: column; align-items: center; } .field-row { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+
+  <!-- AGE GATE -->
+  <div id="age-gate">
+    <div class="gate-flag-bar"></div>
+    <div class="gate-inner">
+      <img src="img/logo.png" alt="956 Labs" class="gate-logo" />
+      <div class="gate-name">956 <span>Labs</span></div>
+      <div class="gate-sub">Research Peptides · Rio Grande Valley</div>
+      <div class="gate-rule"></div>
+      <p class="gate-prompt">Our products are <strong>research compounds</strong> intended for licensed researchers and adults only.<br/>You must be <strong>18 or older</strong> to enter.</p>
+      <div class="gate-btns">
+        <button class="btn-yes" onclick="enterSite()">I'm 18 or older</button>
+        <button class="btn-no"  onclick="denySite()">Under 18</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- DENIED -->
+  <div id="denied">
+    <p>Access Restricted — Come Back When You're 18</p>
+  </div>
+
+  <!-- AUTH PAGE -->
+  <div id="auth-page">
+    <div class="auth-visual">
+      <div class="auth-flag-stripe"></div>
+      <div class="auth-visual-content">
+        <img src="img/logo.png" alt="956 Labs" class="auth-logo" />
+        <div class="auth-visual-name">956 <span>Labs</span></div>
+        <div class="auth-visual-tagline">Research-grade peptides for the Rio Grande Valley.</div>
+        <div class="auth-visual-divider"></div>
+        <div class="auth-visual-pills">
+          <span class="pill pill-green">Research Grade</span>
+          <span class="pill pill-green">Lab Certified</span>
+          <span class="pill">Not For Consumption</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="auth-form-side">
+      <div class="auth-tabs">
+        <button class="auth-tab active" onclick="switchTab('login')">Sign In</button>
+        <button class="auth-tab"        onclick="switchTab('register')">Register</button>
+        <button class="auth-tab"        onclick="switchTab('reset')">Reset Password</button>
+      </div>
+
+      <!-- LOGIN -->
+      <div class="auth-form active" id="form-login">
+        <div class="auth-title">Welcome back.</div>
+        <p class="auth-desc">Sign in to access your account and shop.</p>
+        <div class="field"><label>Email</label><input type="email" id="login-email" placeholder="you@example.com" /></div>
+        <div class="field"><label>Password</label><input type="password" id="login-pass" placeholder="••••••••" /></div>
+        <button class="auth-submit" onclick="doLogin()">Sign In</button>
+        <div class="auth-error" id="login-err"></div>
+        <p class="auth-switch">No account? <button onclick="switchTab('register')">Register here</button> &nbsp;·&nbsp; <button onclick="switchTab('reset')">Forgot password?</button></p>
+      </div>
+
+      <!-- REGISTER -->
+      <div class="auth-form" id="form-register">
+        <div class="auth-title">Create your account.</div>
+        <p class="auth-desc">Join 956 Labs. Your membership date is set permanently on sign-up.</p>
+        <div class="field-row">
+          <div class="field"><label>First Name</label><input type="text" id="reg-first" placeholder="Jane" /></div>
+          <div class="field"><label>Last Name</label><input type="text" id="reg-last" placeholder="Smith" /></div>
+        </div>
+        <div class="field"><label>Email</label><input type="email" id="reg-email" placeholder="you@example.com" /></div>
+        <div class="field"><label>Password</label><input type="password" id="reg-pass" placeholder="Min. 8 characters" /></div>
+        <button class="auth-submit" onclick="doRegister()">Create Account</button>
+        <div class="auth-error" id="reg-err"></div>
+        <p class="auth-switch">Already have an account? <button onclick="switchTab('login')">Sign in</button></p>
+      </div>
+
+      <!-- RESET -->
+      <div class="auth-form" id="form-reset">
+        <div class="auth-title">Reset your password.</div>
+        <p class="auth-desc">Enter your email and we'll send you a link to set a new password.</p>
+        <div class="field"><label>Email</label><input type="email" id="reset-email" placeholder="you@example.com" /></div>
+        <button class="auth-submit" onclick="doReset()">Send Reset Link</button>
+        <div class="auth-error" id="reset-err"></div>
+        <div id="reset-ok" style="display:none;margin-top:12px;font-family:var(--font-c);font-size:.7rem;font-weight:700;letter-spacing:.1em;color:var(--ok)">Reset link sent — check your email.</div>
+        <p class="auth-switch">Remember it? <button onclick="switchTab('login')">Sign in</button></p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    if (window.location.hash.includes('type=recovery')) {
+      window.location.replace('reset.html' + window.location.hash);
+    }
+  </script>
+
+  <script type="module">
+    import { supabase } from '../js/supabase.js';
+    import '../js/auth.js?v=15';
+    import '../js/cart.js?v=18';
+
+    window.enterSite = () => {
+      localStorage.setItem('ageVerified956', 'true');
+      document.getElementById('age-gate').style.display = 'none';
+      document.getElementById('auth-page').classList.add('active');
+    };
+    window.denySite = () => {
+      document.getElementById('age-gate').style.display = 'none';
+      document.getElementById('denied').style.display = 'flex';
+    };
+    window.switchTab = (tab) => {
+      const tabs  = document.querySelectorAll('.auth-tab');
+      const forms = document.querySelectorAll('.auth-form');
+      const idx = tab === 'login' ? 0 : tab === 'register' ? 1 : 2;
+      tabs.forEach((t,i)  => t.classList.toggle('active', i === idx));
+      forms.forEach((f,i) => f.classList.toggle('active', i === idx));
+    };
+
+    window.doReset = async () => {
+      const email = document.getElementById('reset-email').value.trim().toLowerCase();
+      const err   = document.getElementById('reset-err');
+      const ok    = document.getElementById('reset-ok');
+      const btn   = document.querySelector('#form-reset .auth-submit');
+      err.textContent = ''; ok.style.display = 'none';
+      if (!email) { err.textContent = 'Please enter your email.'; return; }
+      btn.disabled = true; btn.textContent = 'Sending…';
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: 'https://bigboypeps.com/956labs/reset.html',
+      });
+      btn.disabled = false; btn.textContent = 'Send Reset Link';
+      if (error) { err.textContent = error.message; return; }
+      ok.style.display = 'block';
+    };
+
+    const { data } = await supabase.auth.getSession();
+    if (data.session) {
+      window.location.replace('dashboard.html');
+    } else if (localStorage.getItem('ageVerified956') === 'true') {
+      document.getElementById('age-gate').style.display = 'none';
+      document.getElementById('auth-page').classList.add('active');
+    }
+
+    const BLOCKED_DOMAINS = ['none.com','noemail.com','nomail.com','fake.com','test.com','example.com','mailinator.com','guerrillamail.com','tempmail.com','throwaway.com','trashmail.com','yopmail.com','sharklasers.com','dispostable.com','maildrop.cc','fakeinbox.com','spamgourmet.com'];
+    function isValidEmail(email) {
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return { ok: false, msg: 'Please enter a valid email address.' };
+      const domain = email.split('@')[1].toLowerCase();
+      if (BLOCKED_DOMAINS.includes(domain)) return { ok: false, msg: 'Please use a real email address.' };
+      return { ok: true };
+    }
+
+    window.doLogin = async () => {
+      const email = document.getElementById('login-email').value.trim().toLowerCase();
+      const pass  = document.getElementById('login-pass').value;
+      const err   = document.getElementById('login-err');
+      err.textContent = '';
+      if (!email || !pass) { err.textContent = 'Please fill in both fields.'; return; }
+      const result = await Auth.login(email, pass);
+      if (!result.ok) { err.textContent = result.err; return; }
+      window.location.href = 'dashboard.html';
+    };
+
+    window.doRegister = async () => {
+      const first = document.getElementById('reg-first').value.trim();
+      const last  = document.getElementById('reg-last').value.trim();
+      const email = document.getElementById('reg-email').value.trim();
+      const pass  = document.getElementById('reg-pass').value;
+      const err   = document.getElementById('reg-err');
+      err.textContent = '';
+      if (!first || !last || !email || !pass) { err.textContent = 'All fields are required.'; return; }
+      const emailCheck = isValidEmail(email);
+      if (!emailCheck.ok) { err.textContent = emailCheck.msg; return; }
+      if (pass.length < 8) { err.textContent = 'Password must be at least 8 characters.'; return; }
+      const result = await Auth.register(first, last, email, pass);
+      if (!result.ok) { err.textContent = result.err; return; }
+      window.location.href = 'dashboard.html';
+    };
+  </script>
+</body>
+</html>

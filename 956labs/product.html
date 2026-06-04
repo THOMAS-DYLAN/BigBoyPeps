@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" href="data:,">
+  <link rel="preconnect" href="https://azgqvcnkhifmqdbssalt.supabase.co" crossorigin>
+  <link rel="preconnect" href="https://utqviljholfvpfztfuvx.supabase.co" crossorigin>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Product — 956 Labs | Research Peptides Rio Grande Valley</title>
+  <meta name="description" content="Research-grade peptides available to the Rio Grande Valley, McAllen, Edinburg, Harlingen, and Brownsville. For research purposes only." />
+  <link rel="canonical" href="https://bigboypeps.com/956labs/product.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="modulepreload" href="../js/supabase.js">
+  <link rel="modulepreload" href="../js/auth.js?v=15">
+  <link rel="modulepreload" href="../js/cart.js?v=18">
+  <link rel="modulepreload" href="../js/products.js?v=15">
+  <link rel="stylesheet" href="css/global.css" />
+  <style>
+    body { display: flex; flex-direction: column; min-height: 100vh; }
+    .container { max-width: 1140px; margin: 0 auto; padding: 0 16px; }
+
+    .breadcrumb {
+      padding: 16px 0; border-bottom: 1px solid var(--border);
+      font-family: var(--font-c); font-size: .63rem; font-weight: 600;
+      letter-spacing: .14em; text-transform: uppercase; color: var(--smoke);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .breadcrumb a { color: var(--smoke); transition: color .18s; }
+    .breadcrumb a:hover { color: var(--green-hi); }
+
+    .product-page { flex: 1; padding: 48px 0 80px; }
+    .product-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: start; }
+
+    .product-visual { position: sticky; top: 72px; }
+    .product-main-thumb {
+      width: 100%; aspect-ratio: 1/1;
+      display: flex; align-items: center; justify-content: center;
+      border: 1px solid var(--border); position: relative; overflow: hidden;
+      background: var(--card);
+    }
+    .product-main-thumb img { height: 72%; width: auto; object-fit: contain; display: block; margin: auto; position: relative; z-index: 1; }
+    .product-visual-badge {
+      position: absolute; top: 14px; left: 14px; z-index: 2;
+      font-family: var(--font-c); font-size: .6rem; font-weight: 700;
+      letter-spacing: .18em; text-transform: uppercase;
+      padding: 4px 12px; border: 1px solid rgba(0,104,71,.4);
+      background: rgba(0,104,71,.15); color: var(--green-hi); border-radius: 2px;
+    }
+    .product-oos-overlay {
+      position: absolute; inset: 0; background: rgba(4,10,6,.7); z-index: 5;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .product-oos-banner {
+      font-family: var(--font-c); font-size: .72rem; font-weight: 700;
+      letter-spacing: .2em; text-transform: uppercase;
+      background: rgba(206,17,38,.88); color: #fff;
+      padding: 8px 20px; border-radius: 2px;
+    }
+    .product-research-tag {
+      margin-top: 14px; padding: 11px 16px;
+      border: 1px solid var(--border); background: var(--off);
+      font-size: .68rem; color: var(--smoke); font-style: italic;
+      line-height: 1.6; text-align: center; border-radius: 2px;
+    }
+
+    .product-cat-tag {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-family: var(--font-c); font-size: .63rem; font-weight: 700;
+      letter-spacing: .22em; text-transform: uppercase; color: var(--green-hi); margin-bottom: 12px;
+    }
+    .product-cat-tag::before { content: ''; width: 18px; height: 2px; background: var(--green); }
+    .product-title {
+      font-family: var(--font-d); font-size: clamp(2rem, 4vw, 3.2rem);
+      letter-spacing: .04em; line-height: .95; color: var(--white); margin-bottom: 18px;
+    }
+    .product-info-row { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+    .product-info-label { font-family: var(--font-c); font-size: .6rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--smoke); }
+    .product-description { font-size: .88rem; color: var(--smoke); line-height: 1.75; margin-bottom: 24px; }
+    .product-divider { height: 1px; background: var(--border); margin: 24px 0; }
+    .product-price-row { display: flex; align-items: baseline; gap: 10px; margin-bottom: 20px; }
+    .product-price-big { font-family: var(--font-d); font-size: 2.4rem; letter-spacing: .04em; color: var(--white); }
+    .product-price-note { font-family: var(--font-c); font-size: .65rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--smoke); }
+
+    .product-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 28px; }
+    .qty-control { display: flex; border: 1px solid var(--border); }
+    .qty-dec, .qty-inc {
+      width: 38px; height: 48px; display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem; color: var(--text-2); background: var(--card); transition: all .18s;
+    }
+    .qty-dec:hover, .qty-inc:hover { color: var(--white); background: var(--border); }
+    .qty-display {
+      width: 50px; height: 48px; display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-d); font-size: 1.2rem; letter-spacing: .04em;
+      color: var(--white); background: var(--off);
+      border-left: 1px solid var(--border); border-right: 1px solid var(--border);
+      user-select: none;
+    }
+    .add-to-cart-btn {
+      flex: 1; min-width: 170px; height: 48px;
+      font-family: var(--font-c); font-size: .78rem; font-weight: 700;
+      letter-spacing: .18em; text-transform: uppercase;
+      background: var(--green); color: #fff; border-radius: 2px;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      transition: background .2s, transform .2s;
+    }
+    .add-to-cart-btn:hover { background: var(--green-hi); transform: translateY(-1px); }
+    .add-to-cart-btn.added { background: var(--card); color: var(--ok); }
+
+    .detail-row { display: flex; padding: 11px 0; border-bottom: 1px solid var(--border); font-size: .84rem; }
+    .detail-row:first-child { border-top: 1px solid var(--border); }
+    .detail-key { font-family: var(--font-c); font-size: .62rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--smoke); width: 120px; flex-shrink: 0; padding-top: 2px; }
+    .detail-val { color: var(--text); }
+
+    .related-section { padding: 48px 0; border-top: 1px solid var(--border); }
+    .related-title { font-family: var(--font-d); font-size: 1.7rem; letter-spacing: .04em; color: var(--white); margin-bottom: 22px; }
+    .related-title em { color: var(--green); font-style: normal; }
+    .related-row { display: flex; gap: 14px; overflow-x: auto; padding-bottom: 10px; scrollbar-width: thin; scrollbar-color: var(--border) transparent; }
+    .related-card { background: var(--card); border: 1px solid var(--border); cursor: pointer; transition: border-color .2s, transform .2s; flex: 0 0 190px; }
+    .related-card:hover { border-color: var(--green); transform: translateY(-3px); }
+    .related-thumb { height: 120px; display: flex; align-items: center; justify-content: center; border-bottom: 1px solid var(--border); overflow: hidden; }
+    .related-thumb img { height: 80px; width: auto; object-fit: contain; }
+    .related-info { padding: 12px 14px; }
+    .related-name { font-family: var(--font-c); font-size: .82rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--white); margin-bottom: 4px; line-height: 1.2; }
+    .related-price { font-family: var(--font-d); font-size: 1.1rem; color: var(--white); }
+
+    .reviews-area { padding: 56px 0; border-top: 1px solid var(--border); }
+    .review-card { background: var(--card); border: 1px solid var(--border); padding: 16px 18px; margin-bottom: 10px; border-radius: 2px; }
+    .review-card-header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; flex-wrap: wrap; }
+    .review-card-username { font-family: var(--font-c); font-size: .7rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--white); }
+    .review-card-stars { display: flex; gap: 2px; }
+    .review-card-stars svg { width: 13px; height: 13px; }
+    .review-card-date { font-size: .66rem; color: var(--smoke); margin-left: auto; }
+    .review-card-comment { font-size: .84rem; color: var(--text); line-height: 1.65; }
+    .your-rating-panel { background: var(--off); border: 1px solid var(--border); padding: 20px 22px; margin-bottom: 28px; display: flex; align-items: center; gap: 18px; flex-wrap: wrap; border-radius: 2px; }
+    .your-rating-label { font-family: var(--font-c); font-size: .65rem; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; color: var(--smoke); flex-shrink: 0; }
+
+    .add-toast {
+      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(16px);
+      background: var(--off); border: 1px solid var(--border); border-left: 3px solid var(--green);
+      font-family: var(--font-c); font-size: .75rem; font-weight: 700; letter-spacing: .08em;
+      color: var(--text); padding: 12px 22px; border-radius: 2px;
+      opacity: 0; transition: all .26s; pointer-events: none; white-space: nowrap; z-index: 100;
+    }
+    .add-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    /* Lab report */
+    .lab-report-section { padding: 40px 0; border-top: 1px solid var(--border); }
+    .lab-report-title { font-family: var(--font-d); font-size: 1.5rem; letter-spacing: .04em; color: var(--white); margin-bottom: 16px; }
+    .lab-report-img { max-width: 600px; width: 100%; filter: invert(.9) hue-rotate(90deg); border: 1px solid var(--border); border-radius: 2px; }
+
+    @media (max-width: 800px) { .product-layout { grid-template-columns: 1fr; gap: 28px; } .product-visual { position: static; } }
+  </style>
+</head>
+<body>
+  <div id="nav-mount"></div>
+  <div id="banner-mount"></div>
+
+  <div class="container">
+    <div class="breadcrumb">
+      <a href="shop.html">Shop</a>
+      <span>›</span>
+      <span id="breadcrumb-name">Loading…</span>
+    </div>
+  </div>
+
+  <div class="product-page">
+    <div class="container">
+      <div id="product-content"><p style="color:var(--smoke)">Loading product…</p></div>
+    </div>
+  </div>
+
+  <div class="container" id="lab-report-mount" style="display:none"></div>
+  <div class="container" id="reviews-section"><div class="reviews-area"><div id="your-rating-panel"></div><div id="reviews-list"></div></div></div>
+  <div class="container" id="related-section" style="display:none"></div>
+
+  <div id="footer-mount"></div>
+  <div class="add-toast" id="add-toast"></div>
+
+  <script type="module">
+    import '../js/auth.js?v=15';
+    import '../js/cart.js?v=18';
+    import { loadProducts, allProducts, getProduct, pepperSVG, miniPepperSVG, heatPips } from '../js/products.js?v=15';
+
+    await Promise.all([window.initPage('product'), loadProducts()]);
+
+    const params = new URLSearchParams(window.location.search);
+    const productId = parseInt(params.get('id'), 10);
+    const content   = document.getElementById('product-content');
+
+    if (!productId || isNaN(productId)) {
+      content.innerHTML = '<p style="color:var(--smoke)">No product specified. <a href="shop.html">← Back to Shop</a></p>';
+    } else {
+      const p = getProduct(productId);
+      if (!p) {
+        content.innerHTML = '<p style="color:var(--smoke)">Product not found. <a href="shop.html">← Back to Shop</a></p>';
+      } else {
+        const rating = await Auth.getProductRating(productId);
+        renderProduct(p, rating);
+        renderLabReport(p);
+        renderRelated(p);
+        renderReviews(productId, rating);
+      }
+    }
+
+    function starSVG(filled) {
+      return '<svg viewBox="0 0 24 24" fill="' + (filled ? 'var(--green)' : 'var(--border)') + '" width="20" height="20"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>';
+    }
+
+    function renderProduct(p, rating) {
+      document.title = p.name + ' — 956 Labs';
+      document.getElementById('breadcrumb-name').textContent = p.name;
+      const avg = Math.round(rating.average || 0);
+
+      content.innerHTML = `
+        <div class="product-layout">
+          <div class="product-visual">
+            <div class="product-main-thumb">
+              ${p.inventory <= 0 ? '<div class="product-oos-overlay"><div class="product-oos-banner">Out of Stock</div></div>' : ''}
+              ${p.badge ? '<div class="product-visual-badge">' + p.badge + '</div>' : ''}
+              ${p.images ? '<img src="../pdct img/' + p.images + '" alt="' + p.name + '" />' : pepperSVG(p)}
+            </div>
+            <div class="product-research-tag">⚠️ For research purposes only · Not intended for human consumption · Handle with care</div>
+          </div>
+
+          <div class="product-info-panel">
+            <div class="product-cat-tag">${p.category}</div>
+            <div class="product-title">${p.name}</div>
+
+            <div class="product-info-row">
+              <span class="product-info-label">Rating</span>
+              <div style="display:flex;gap:3px">
+                ${Array.from({length:5},(_,i) => '<span style="display:inline-flex">' + starSVG(i < avg) + '</span>').join('')}
+              </div>
+              <span style="font-family:var(--font-c);font-size:.63rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--smoke)">${rating.count === 0 ? 'No reviews' : rating.count + ' review' + (rating.count !== 1 ? 's' : '')}</span>
+            </div>
+
+            <div class="product-description">${p.description}</div>
+            <div class="product-divider"></div>
+
+            <div class="product-price-row">
+              <span class="product-price-big">$${Number(p.price).toFixed(2)}</span>
+              <span class="product-price-note">per unit</span>
+            </div>
+
+            <div class="product-actions">
+              <div class="qty-control">
+                <button class="qty-dec" onclick="changeQty(-1)">−</button>
+                <div class="qty-display" id="qty-display">1</div>
+                <button class="qty-inc" onclick="changeQty(1)">+</button>
+              </div>
+              <button class="add-to-cart-btn" id="add-btn"
+                onclick="${p.inventory > 0 ? 'addToCart(' + p.id + ')' : 'joinWaitlist(' + p.id + ',\'' + p.name.replace(/'/g,"\\'") + '\')'}">
+                ${p.inventory <= 0 ? '🔔 Notify Me When In Stock' : 'Add to Cart — $' + Number(p.price).toFixed(2)}
+              </button>
+            </div>
+            <div id="waitlist-msg" style="font-family:var(--font-c);font-size:.62rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--ok);display:none">✓ On the waitlist — we'll email you when it's back.</div>
+
+            <div style="margin-top:24px">
+              ${[['Category',p.category],['Use','Research purposes only'],['Consumption','Not for human consumption'],['Status',p.inventory<=0?'Out of Stock':p.inventory<=10?'Low Stock — '+p.inventory+' left':'In Stock']].map(([k,v])=>
+                '<div class="detail-row"><div class="detail-key">'+k+'</div><div class="detail-val">'+v+'</div></div>'
+              ).join('')}
+            </div>
+          </div>
+        </div>`;
+    }
+
+    let qty = 1;
+    window.changeQty = d => {
+      const p = getProduct(productId);
+      if (!p) return;
+      qty = Math.max(1, Math.min(p.inventory || 0, qty + d));
+      const el = document.getElementById('qty-display');
+      if (el) el.textContent = qty;
+      const btn = document.getElementById('add-btn');
+      if (btn && p.inventory > 0) btn.textContent = 'Add to Cart — $' + (p.price * qty).toFixed(2) + (qty > 1 ? ' (' + qty + '×)' : '');
+    };
+
+    window.joinWaitlist = async (id, name) => {
+      const btn = document.getElementById('add-btn');
+      if (btn) { btn.disabled = true; btn.textContent = 'Adding to waitlist…'; }
+      const result = await Auth.joinWaitlist(id, name);
+      if (result.ok) {
+        if (btn) btn.style.display = 'none';
+        document.getElementById('waitlist-msg').style.display = 'block';
+      } else if (result.err === 'already_on_waitlist') {
+        if (btn) { btn.disabled = false; btn.textContent = '🔔 Already on Waitlist'; }
+      } else {
+        if (btn) { btn.disabled = false; btn.textContent = '🔔 Notify Me When In Stock'; }
+      }
+    };
+
+    window.addToCart = id => {
+      const p = getProduct(id);
+      if (!p) return;
+      const btn = document.getElementById('add-btn');
+      const toast = document.getElementById('add-toast');
+      let added = 0;
+      for (let i = 0; i < qty; i++) { const r = Cart.add(p); if (!r?.ok) break; added++; }
+      if (added === 0) {
+        toast.textContent = p.name + ' is out of stock';
+        toast.style.borderLeftColor = 'var(--red)';
+      } else {
+        btn.textContent = '✓ Added'; btn.classList.add('added');
+        setTimeout(() => { btn.textContent = 'Add to Cart — $' + Number(p.price).toFixed(2); btn.classList.remove('added'); }, 1800);
+        toast.textContent = added + '× ' + p.name + ' added to cart';
+        toast.style.borderLeftColor = 'var(--green)';
+      }
+      toast.classList.add('show');
+      clearTimeout(toast._t);
+      toast._t = setTimeout(() => toast.classList.remove('show'), 2400);
+    };
+
+    function renderLabReport(p) {
+      if (!p.lab_report) return;
+      const mount = document.getElementById('lab-report-mount');
+      mount.style.display = '';
+      mount.innerHTML = '<div class="lab-report-section"><div class="lab-report-title">Lab Report</div><img src="../report img/' + p.lab_report + '" alt="Lab Report" class="lab-report-img" /></div>';
+    }
+
+    function renderRelated(p) {
+      const others = allProducts().filter(x => x.id !== p.id && x.category === p.category && x.inventory > 0).slice(0,6);
+      if (!others.length) return;
+      const sec = document.getElementById('related-section');
+      sec.style.display = '';
+      sec.innerHTML = '<div class="related-section"><div class="related-title">More <em>Research</em></div><div class="related-row">'
+        + others.map(r => '<div class="related-card" onclick="window.location.href=\'product.html?id='+r.id+'\'">'
+            + '<div class="related-thumb">' + (r.images ? '<img src="../pdct img/'+r.images+'" alt="'+r.name+'" />' : miniPepperSVG(r)) + '</div>'
+            + '<div class="related-info"><div class="related-name">'+r.name+'</div><div class="related-price">$'+Number(r.price).toFixed(2)+'</div></div>'
+            + '</div>').join('')
+        + '</div></div>';
+    }
+
+    async function renderReviews(productId, rating) {
+      const reviews = await Auth.getReviewsForProduct(productId);
+      const panel = document.getElementById('your-rating-panel');
+      const list  = document.getElementById('reviews-list');
+
+      // Your rating panel
+      const userStars = rating.userStars || 0;
+      panel.innerHTML = '<div class="your-rating-panel">'
+        + '<span class="your-rating-label">Your Rating</span>'
+        + '<div style="display:flex;gap:4px" id="star-picker">'
+        + Array.from({length:5},(_,i) => '<button style="background:none;padding:0;cursor:pointer;display:inline-flex;transition:transform .12s" onmouseenter="hoverStars('+(i+1)+')" onmouseleave="resetStars()" onclick="rateProduct('+(i+1)+')">'
+            + '<svg viewBox="0 0 24 24" fill="' + (i < userStars ? 'var(--green)' : 'var(--border)') + '" width="26" height="26" id="star-'+(i+1)+'"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>'
+            + '</button>').join('')
+        + '</div>'
+        + '<span id="rating-saved" style="font-family:var(--font-c);font-size:.65rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--ok);display:none">✓ Saved</span>'
+        + '</div>';
+
+      let _hovered = 0, _selected = userStars;
+      window.hoverStars = n => { _hovered = n; updateStarUI(n); };
+      window.resetStars = ()  => { _hovered = 0; updateStarUI(_selected); };
+      window.rateProduct = async n => {
+        _selected = n;
+        updateStarUI(n);
+        await Auth.rateProduct(productId, n);
+        const saved = document.getElementById('rating-saved');
+        if (saved) { saved.style.display = 'block'; setTimeout(() => saved.style.display = 'none', 2000); }
+      };
+      function updateStarUI(n) {
+        for (let i = 1; i <= 5; i++) {
+          const s = document.getElementById('star-' + i);
+          if (s) s.setAttribute('fill', i <= n ? 'var(--green)' : 'var(--border)');
+        }
+      }
+
+      // Reviews list
+      if (!reviews.length) { list.innerHTML = '<p style="color:var(--smoke);font-size:.85rem;padding:20px 0">No reviews yet. Be the first to rate this product.</p>'; return; }
+      list.innerHTML = '<div style="font-family:var(--font-c);font-size:.62rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--smoke);margin-bottom:14px">Community Reviews</div>'
+        + reviews.map(r => '<div class="review-card">'
+            + '<div class="review-card-header">'
+            + '<span class="review-card-username">' + (r.username || 'Anonymous') + '</span>'
+            + '<div class="review-card-stars">' + Array.from({length:5},(_,i) => '<svg viewBox="0 0 24 24" fill="'+(i<r.stars?'var(--green)':'var(--border)')+'"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>').join('') + '</div>'
+            + '<span class="review-card-date">' + Auth.formatDate(r.updated_at) + '</span>'
+            + '</div>'
+            + (r.comment ? '<div class="review-card-comment">' + r.comment + '</div>' : '')
+            + '</div>').join('');
+    }
+  </script>
+</body>
+</html>
