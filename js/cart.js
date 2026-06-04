@@ -530,7 +530,7 @@ async function mountPayPal() {
 
       onError: function(err) {
         console.error('PayPal error:', err);
-        container.innerHTML = '<p style="color:#FF3030;font-size:.72rem;text-align:center;font-family:var(--font-c);padding:12px 0">Payment failed — please try again.</p>';
+        container.innerHTML = '<p style="color:#D4A843;font-size:.72rem;text-align:center;font-family:var(--font-c);padding:12px 0">Payment failed — please try again.</p>';
       },
 
       onCancel: function() {},

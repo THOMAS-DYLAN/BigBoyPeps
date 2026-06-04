@@ -43,8 +43,8 @@
       display: inline-flex; align-items: center; gap: 6px;
       font-family: var(--font-c); font-size: .62rem; font-weight: 700;
       letter-spacing: .14em; text-transform: uppercase;
-      background: rgba(204,31,31,.1); color: var(--red);
-      border: 1px solid rgba(204,31,31,.2); padding: 5px 14px; border-radius: 999px;
+      background: rgba(184,137,42,.12); color: var(--red);
+      border: 1px solid rgba(184,137,42,.22); padding: 5px 14px; border-radius: 999px;
     }
 
     .dash-body { padding: 40px 0 80px; flex: 1; }
@@ -117,9 +117,9 @@
       border: 1px solid var(--border); padding: 4px 10px; flex-shrink: 0;
       transition: color .18s, border-color .18s;
     }
-    .order-review-link:hover { color: var(--red); border-color: rgba(204,31,31,.4); }
+    .order-review-link:hover { color: var(--red); border-color: rgba(184,137,42,.4); }
     .order-review-link { display: inline-flex; align-items: center; gap: 4px; font-family: var(--font-c); font-size: .58rem; font-weight: 700; letter-spacing: .11em; text-transform: uppercase; color: var(--smoke); text-decoration: none; border: 1px solid var(--border); padding: 3px 8px; transition: color .18s, border-color .18s; }
-    .order-review-link:hover { color: var(--red); border-color: rgba(204,31,31,.4); }
+    .order-review-link:hover { color: var(--red); border-color: rgba(184,137,42,.4); }
     .order-price { font-family: var(--font-d); font-size: 1.05rem; color: var(--white); letter-spacing: .04em; margin-bottom: 4px; }
     .order-status {
       display: inline-flex; align-items: center; gap: 5px;
@@ -129,7 +129,7 @@
     .order-status::before { content: ''; width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
     .status-delivered  { background: rgba(34,100,34,.2);  color: #5BC75B; } .status-delivered::before  { background: #5BC75B; }
     .status-shipped    { background: rgba(30,80,180,.2);  color: #6E9EF5; } .status-shipped::before    { background: #6E9EF5; }
-    .status-processing { background: rgba(200,140,0,.2);  color: #E8B84B; } .status-processing::before { background: #E8B84B; }
+    .status-processing { background: rgba(200,140,0,.2);  color: #D4A843; } .status-processing::before { background: #D4A843; }
     .order-arrow { color: var(--smoke); margin-left: 6px; transition: transform .18s, color .18s; }
     .order-row:hover .order-arrow { transform: translateX(3px); color: var(--red); }
 
@@ -153,7 +153,7 @@
     .info-edit-wrap.open { display: flex; }
     .info-edit-wrap.open ~ .info-val, .info-edit-wrap.open ~ .info-edit-btn { display: none; }
     .info-input { flex: 1; padding: 7px 11px; background: var(--card); color: var(--light); border: 1px solid var(--border); font-size: .87rem; outline: none; transition: border-color .18s; }
-    .info-input:focus { border-color: var(--red); box-shadow: 0 0 0 3px rgba(204,31,31,.1); }
+    .info-input:focus { border-color: var(--red); box-shadow: 0 0 0 3px rgba(184,137,42,.12); }
     .info-save { font-family: var(--font-c); font-size: .63rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; background: var(--red); color: var(--white); padding: 7px 13px; transition: background .18s; flex-shrink: 0; }
     .info-save:hover { background: var(--red-hot); }
     .info-cancel { font-family: var(--font-c); font-size: .63rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--smoke); padding: 7px 6px; text-decoration: underline; text-underline-offset: 3px; transition: color .18s; flex-shrink: 0; }

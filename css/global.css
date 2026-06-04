@@ -1,16 +1,16 @@
 @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Permanent+Marker&family=Barlow:wght@300;400;500;600&family=Barlow+Condensed:wght@600;700&display=swap');
 
 :root {
-  --red:     #CC1F1F;
-  --red-hot: #FF3030;
-  --black:   #0C0C0C;
-  --off:     #161616;
-  --card:    #1E1E1E;
-  --border:  #2A2A2A;
-  --smoke:   #666;
-  --ash:     #999;
-  --light:   #EEEBE6;
-  --white:   #FFF;
+  --red:     #B8892A;
+  --red-hot: #D4A843;
+  --black:   #060C18;
+  --off:     #0A1220;
+  --card:    #0C1828;
+  --border:  #142238;
+  --smoke:   #4A6A94;
+  --ash:     #7A9BBC;
+  --light:   #C8DEFF;
+  --white:   #EEF4FF;
   --font-d: 'Bebas Neue', sans-serif;
   --font-m: 'Permanent Marker', cursive;
   --font-b: 'Barlow', sans-serif;

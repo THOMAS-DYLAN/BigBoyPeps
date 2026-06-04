@@ -132,7 +132,7 @@ nav {
     transition: color .18s;
   }
   .nav-link:last-child, .cart-nav-btn { border-right: none; }
-  .nav-link.active  { color: var(--red) !important; background: rgba(204,31,31,.05) !important; }
+  .nav-link.active  { color: var(--red) !important; background: rgba(184,137,42,.08) !important; }
   .nav-link:hover   { color: var(--light) !important; }
   .cart-nav-btn:hover { color: var(--light) !important; }
 
@@ -182,7 +182,7 @@ nav {
     transition: color .18s, background .18s;
   }
   .nav-signout-tab:hover,
-  .nav-signout-tab:active { color: var(--red) !important; background: rgba(204,31,31,.06) !important; }
+  .nav-signout-tab:active { color: var(--red) !important; background: rgba(184,137,42,.09) !important; }
   .nav-signout-tab .nav-icon { font-size: 1rem !important; }
 }
 
@@ -192,8 +192,8 @@ nav {
 
 
 .research-banner {
-  background: rgba(204,31,31,.07);
-  border-bottom: 1px solid rgba(204,31,31,.18);
+  background: rgba(184,137,42,.08);
+  border-bottom: 1px solid rgba(184,137,42,.2);
   padding: 7px 16px;
   text-align: center;
 }
@@ -310,7 +310,7 @@ footer {
 }
 .form-field input:focus, .form-field select:focus {
   border-color: var(--red);
-  box-shadow: 0 0 0 3px rgba(204,31,31,.1);
+  box-shadow: 0 0 0 3px rgba(184,137,42,.12);
 }
 .form-field input::placeholder { color: #3a3a3a; }
 .form-field select { color: var(--light); appearance: none; cursor: pointer; }
@@ -357,8 +357,8 @@ footer {
 .order-success { text-align: center; padding: 40px 20px; }
 @media (min-width: 480px) { .order-success { padding: 48px 28px; } }
 .order-success-icon {
-  width: 60px; height: 60px; background: rgba(204,31,31,.15);
-  border: 1px solid rgba(204,31,31,.3); border-radius: 50%;
+  width: 60px; height: 60px; background: rgba(184,137,42,.15);
+  border: 1px solid rgba(184,137,42,.3); border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
   font-size: 1.5rem; margin: 0 auto 18px;
 }
@@ -367,7 +367,7 @@ footer {
 
 /* ── FIELD ERRORS ────────────────────────────────────── */
 .field-err {
-  font-size: .66rem; color: #FF3030;
+  font-size: .66rem; color: #D4A843;
   min-height: 16px; margin-top: 4px;
   font-family: var(--font-c); letter-spacing: .06em;
 }
@@ -386,7 +386,7 @@ footer {
   cursor: pointer; transition: all .18s;
 }
 .pay-method-btn:hover  { border-color: var(--ash); color: var(--light); }
-.pay-method-btn.active { border-color: var(--red); color: var(--white); background: rgba(204,31,31,.08); }
+.pay-method-btn.active { border-color: var(--red); color: var(--white); background: rgba(184,137,42,.1); }
 
 /* ── SKELETON LOADING ────────────────────────────────── */
 .skeleton-card { background: var(--card); border: 1px solid var(--border); }
@@ -529,4 +529,28 @@ footer {
   .cart-page-title,
   .orders-title,
   .dashboard-title { font-size: clamp(2rem, 8vw, 3.5rem) !important; }
+}
+
+/* ── Blue & Gold design polish ─────────────────────────── */
+nav {
+  background: rgba(6,12,24,.97);
+  backdrop-filter: blur(12px);
+}
+.cart-nav-btn {
+  background: #B8892A;
+  clip-path: polygon(0 0,calc(100% - 6px) 0,100% 6px,100% 100%,6px 100%,0 calc(100% - 6px));
+}
+.cart-nav-btn:hover { background: #D4A843; }
+.cart-badge { background: #B8892A; }
+
+/* Mobile nav tab gold */
+@media (max-width: 767px) {
+  nav { background: rgba(6,12,24,.98) !important; }
+  .nav-link.active {
+    color: var(--red) !important;
+    background: rgba(184,137,42,.08) !important;
+  }
+  .nav-signout-tab:hover,
+  .nav-signout-tab:active { color: var(--red) !important; background: rgba(184,137,42,.07) !important; }
+  .cart-badge { top: 6px !important; background: #B8892A !important; }
 }
