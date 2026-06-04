@@ -1,185 +1,100 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8"/>
   <link rel="icon" href="data:,">
-  <link rel="preconnect" href="https://azgqvcnkhifmqdbssalt.supabase.co" crossorigin>
   <link rel="preconnect" href="https://utqviljholfvpfztfuvx.supabase.co" crossorigin>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-  <!-- Local SEO -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Shop Research Peptides — 956 Labs | Rio Grande Valley TX</title>
-  <meta name="description" content="Buy research-grade peptides in the Rio Grande Valley. GLP peptides, GH peptides, and research compounds serving McAllen, Edinburg, Harlingen, Brownsville, and the entire 956 area. For research purposes only." />
-  <meta name="keywords" content="buy peptides RGV, research peptides McAllen, GLP peptides Rio Grande Valley, peptides 956, research compounds South Texas, peptides Edinburg TX, peptides Harlingen TX, peptides Brownsville TX" />
-  <link rel="canonical" href="https://bigboypeps.com/956labs/shop.html" />
-
-  <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <meta name="description" content="Buy research-grade peptides in the Rio Grande Valley. GLP peptides, GH peptides, and research compounds serving McAllen, Edinburg, Harlingen, Brownsville and the 956 area. For research purposes only."/>
+  <meta name="keywords" content="buy peptides RGV, research peptides McAllen, GLP peptides Rio Grande Valley, peptides 956, research compounds South Texas, peptides Edinburg Harlingen Brownsville"/>
+  <link rel="canonical" href="https://bigboypeps.com/956labs/shop.html"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet"/>
   <link rel="modulepreload" href="../js/supabase.js">
   <link rel="modulepreload" href="../js/auth.js?v=15">
   <link rel="modulepreload" href="../js/cart.js?v=18">
   <link rel="modulepreload" href="../js/products.js?v=15">
-  <link rel="stylesheet" href="css/global.css" />
+  <link rel="stylesheet" href="css/global.css"/>
   <style>
-    body { display: flex; flex-direction: column; min-height: 100vh; }
+    body { display:flex; flex-direction:column; min-height:100vh; }
+    .container { max-width:1140px; margin:0 auto; padding:0 16px; }
 
+    /* ── Shop header ──────────────────────────────────── */
     .shop-header {
-      padding: 56px 0 40px; border-bottom: 1px solid var(--border);
+      padding: 52px 0 36px; border-bottom: 1px solid var(--border);
       position: relative; overflow: hidden;
     }
     .shop-header::before {
-      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
-      background: linear-gradient(to right, var(--green) 33.3%, rgba(255,255,255,.15) 33.3% 66.6%, var(--red) 66.6%);
+      content:''; position:absolute; top:0; left:0; right:0; height:3px;
+      background: linear-gradient(to right, var(--green) 33.3%, rgba(240,244,239,.15) 33.3% 66.6%, var(--red) 66.6%);
     }
-    .shop-eyebrow {
-      font-family: var(--font-c); font-size: .65rem; font-weight: 700;
-      letter-spacing: .28em; text-transform: uppercase; color: var(--green-hi);
-      margin-bottom: 10px; display: flex; align-items: center; gap: 10px;
-    }
-    .shop-eyebrow::before { content: ''; width: 24px; height: 2px; background: var(--green); }
-    .shop-title {
-      font-family: var(--font-d); font-size: clamp(2.6rem,6vw,5rem);
-      line-height: .92; letter-spacing: .03em; color: var(--white); margin-bottom: 14px;
-    }
-    .shop-title em { color: var(--green); font-style: normal; }
-    .shop-desc { font-size: .88rem; color: var(--smoke); max-width: 480px; line-height: 1.75; }
+    .shop-eyebrow { font-family:var(--font-c); font-size:.64rem; font-weight:700; letter-spacing:.28em; text-transform:uppercase; color:var(--green-hi); margin-bottom:10px; display:flex; align-items:center; gap:10px; }
+    .shop-eyebrow::before { content:''; width:22px; height:2px; background:var(--green); }
+    .shop-title { font-family:var(--font-d); font-size:clamp(2.4rem,6vw,4.8rem); line-height:.92; letter-spacing:.03em; color:var(--white); margin-bottom:12px; }
+    .shop-title em { color:var(--green); font-style:normal; }
+    .shop-desc { font-size:.86rem; color:var(--smoke); max-width:500px; line-height:1.75; }
 
-    .filters-bar {
-      display: flex; align-items: center; gap: 8px;
-      padding: 24px 0; flex-wrap: wrap; border-bottom: 1px solid var(--border);
-    }
-    .filters-label {
-      font-family: var(--font-c); font-size: .65rem; font-weight: 700;
-      letter-spacing: .2em; text-transform: uppercase; color: var(--smoke); margin-right: 8px;
-    }
-    .filter-btn {
-      padding: 6px 16px; font-family: var(--font-c); font-size: .68rem; font-weight: 700;
-      letter-spacing: .14em; text-transform: uppercase;
-      color: var(--smoke); border: 1px solid var(--border); background: transparent;
-      border-radius: 2px; transition: all .18s;
-    }
-    .filter-btn:hover { border-color: var(--text-2); color: var(--text); }
-    .filter-btn.active { background: var(--green); color: #fff; border-color: var(--green); }
-    .filter-btn-bundle { color: var(--red-hi); border-color: rgba(206,17,38,.3); }
-    .filter-btn-bundle.active { background: var(--red); color: #fff; border-color: var(--red); }
+    /* ── Filters ──────────────────────────────────────── */
+    .filters-bar { display:flex; align-items:center; gap:8px; padding:22px 0; flex-wrap:wrap; border-bottom:1px solid var(--border); }
+    .filters-label { font-family:var(--font-c); font-size:.63rem; font-weight:700; letter-spacing:.2em; text-transform:uppercase; color:var(--smoke); margin-right:6px; }
+    .filter-btn { padding:6px 15px; font-family:var(--font-c); font-size:.67rem; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--smoke); border:1px solid var(--border); background:transparent; border-radius:2px; transition:all .18s; cursor:pointer; }
+    .filter-btn:hover { border-color:var(--text-3); color:var(--text); }
+    .filter-btn.active { background:var(--green); color:#fff; border-color:var(--green); }
+    .filter-btn-bundle { color:var(--red-hi); border-color:rgba(206,17,38,.3); }
+    .filter-btn-bundle.active { background:var(--red); color:#fff; border-color:var(--red); }
 
-    .products-section { padding: 40px 0 80px; flex: 1; }
-    .products-grid {
-      display: grid; grid-template-columns: repeat(auto-fill, minmax(252px,1fr)); gap: 18px;
-    }
+    /* ── Product grid ─────────────────────────────────── */
+    .products-section { padding:36px 0 80px; flex:1; }
+    .products-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(248px,1fr)); gap:16px; }
 
-    .product-card {
-      background: var(--card); border: 1px solid var(--border);
-      display: flex; flex-direction: column;
-      transition: border-color .22s, transform .22s, box-shadow .22s;
-    }
-    .product-card:hover {
-      border-color: var(--green); transform: translateY(-4px);
-      box-shadow: 0 12px 36px rgba(0,0,0,.5);
-    }
-    .product-thumb {
-      height: 210px; display: flex; align-items: center; justify-content: center;
-      position: relative; overflow: hidden; border-bottom: 1px solid var(--border);
-    }
-    .thumb-glow { position: absolute; inset: 0; background: rgba(0,104,71,.07); opacity: 0; transition: opacity .22s; }
-    .product-card:hover .thumb-glow { opacity: 1; }
-    .product-thumb img { height: 155px; width: auto; object-fit: contain; position: relative; z-index: 1; }
-    .product-badge {
-      position: absolute; top: 10px; left: 10px; z-index: 2;
-      font-family: var(--font-c); font-size: .58rem; font-weight: 700;
-      letter-spacing: .18em; text-transform: uppercase;
-      padding: 3px 9px; border: 1px solid var(--border); background: rgba(11,26,13,.85); color: var(--smoke);
-      border-radius: 2px;
-    }
-    .product-badge.badge-hot { background: rgba(0,104,71,.2); color: var(--green-hi); border-color: rgba(0,104,71,.4); }
+    .product-card { background:var(--card); border:1px solid var(--border); display:flex; flex-direction:column; cursor:pointer; transition:border-color .22s, transform .22s, box-shadow .22s; }
+    .product-card:hover { border-color:var(--green); transform:translateY(-4px); box-shadow:0 12px 36px rgba(0,0,0,.5); }
+    .product-card.out-of-stock { opacity:.48; }
+    .product-card.out-of-stock:hover { transform:translateY(-2px); border-color:var(--border); }
 
-    .product-info { padding: 16px 18px 18px; display: flex; flex-direction: column; flex: 1; }
-    .product-cat {
-      font-family: var(--font-c); font-size: .6rem; font-weight: 700;
-      letter-spacing: .2em; text-transform: uppercase; color: var(--green-hi); margin-bottom: 4px;
-    }
-    .product-name {
-      font-family: var(--font-c); font-size: 1rem; font-weight: 700;
-      letter-spacing: .04em; text-transform: uppercase; color: var(--white);
-      margin-bottom: 6px; line-height: 1.25;
-    }
-    .product-desc { font-size: .78rem; color: var(--smoke); line-height: 1.6; margin-bottom: 16px; flex: 1; }
-    .product-footer { display: flex; flex-direction: column; gap: 8px; }
-    .product-price-row { display: flex; align-items: center; justify-content: space-between; }
-    .product-price { font-family: var(--font-d); font-size: 1.55rem; letter-spacing: .04em; color: var(--white); }
+    .product-thumb { height:200px; display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden; border-bottom:1px solid var(--border); }
+    .thumb-glow { position:absolute; inset:0; background:rgba(0,104,71,.07); opacity:0; transition:opacity .22s; }
+    .product-card:hover .thumb-glow { opacity:1; }
+    .product-thumb img { height:150px; width:auto; object-fit:contain; position:relative; z-index:1; }
+    .product-badge { position:absolute; top:10px; left:10px; z-index:2; font-family:var(--font-c); font-size:.56rem; font-weight:700; letter-spacing:.18em; text-transform:uppercase; padding:3px 8px; border:1px solid var(--border); background:rgba(11,26,13,.85); color:var(--smoke); border-radius:2px; }
+    .product-badge.badge-hot { background:rgba(0,104,71,.2); color:var(--green-hi); border-color:rgba(0,104,71,.4); }
+    .oos-banner { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); background:rgba(206,17,38,.88); color:#fff; z-index:10; font-family:var(--font-c); font-size:.66rem; font-weight:700; letter-spacing:.2em; text-transform:uppercase; padding:6px 16px; border-radius:2px; pointer-events:none; white-space:nowrap; }
 
-    .add-btn {
-      width: 100%; padding: 11px 16px;
-      background: var(--green); color: #fff;
-      font-family: var(--font-c); font-size: .72rem; font-weight: 700;
-      letter-spacing: .18em; text-transform: uppercase;
-      display: flex; align-items: center; justify-content: center; gap: 8px;
-      border-radius: 2px; transition: background .18s;
-    }
-    .add-btn:hover { background: var(--green-hi); }
-    .waitlist-btn {
-      width: 100%; padding: 10px 16px;
-      background: transparent; color: var(--green-hi);
-      font-family: var(--font-c); font-size: .7rem; font-weight: 700;
-      letter-spacing: .16em; text-transform: uppercase;
-      display: flex; align-items: center; justify-content: center; gap: 6px;
-      border: 1px solid rgba(0,104,71,.35); border-radius: 2px; transition: all .18s;
-    }
-    .waitlist-btn:hover { background: var(--green-bg); }
-    .bundle-btn {
-      width: 100%; padding: 11px 16px;
-      background: var(--red); color: #fff;
-      font-family: var(--font-c); font-size: .72rem; font-weight: 700;
-      letter-spacing: .18em; text-transform: uppercase;
-      display: flex; align-items: center; justify-content: center; gap: 8px;
-      border-radius: 2px; transition: background .18s;
-    }
-    .bundle-btn:hover { background: var(--red-hi); }
+    .product-info { padding:15px 16px 16px; display:flex; flex-direction:column; flex:1; }
+    .product-cat { font-family:var(--font-c); font-size:.58rem; font-weight:700; letter-spacing:.2em; text-transform:uppercase; color:var(--green-hi); margin-bottom:3px; }
+    .product-name { font-family:var(--font-c); font-size:.98rem; font-weight:700; letter-spacing:.04em; text-transform:uppercase; color:var(--white); margin-bottom:5px; line-height:1.2; }
+    .product-desc { font-size:.76rem; color:var(--smoke); line-height:1.6; margin-bottom:14px; flex:1; }
+    .product-footer { display:flex; flex-direction:column; gap:8px; }
+    .product-price { font-family:var(--font-d); font-size:1.5rem; letter-spacing:.04em; color:var(--white); }
+    .low-stock { font-family:var(--font-c); font-size:.56rem; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--red-hi); margin-bottom:4px; }
+    .in-stock  { font-family:var(--font-c); font-size:.56rem; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--ok); margin-bottom:4px; }
 
-    .low-stock-label { font-family:var(--font-c);font-size:.58rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--red-hi);margin-bottom:6px; }
-    .in-stock-label  { font-family:var(--font-c);font-size:.58rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--ok);margin-bottom:6px; }
-    .out-of-stock-banner {
-      position: absolute; top: 50%; left: 50%;
-      transform: translate(-50%,-50%);
-      background: rgba(206,17,38,.88); color: #fff; z-index: 10;
-      font-family: var(--font-c); font-size: .68rem; font-weight: 700;
-      letter-spacing: .2em; text-transform: uppercase;
-      padding: 7px 18px; white-space: nowrap; pointer-events: none; border-radius: 2px;
-    }
-    .product-card.out-of-stock { opacity: .48; }
-    .product-card.out-of-stock .add-btn { display: none; }
+    .add-btn { width:100%; padding:10px 14px; background:var(--green); color:#fff; font-family:var(--font-c); font-size:.7rem; font-weight:700; letter-spacing:.18em; text-transform:uppercase; display:flex; align-items:center; justify-content:center; gap:7px; border-radius:2px; transition:background .18s; border:none; cursor:pointer; }
+    .add-btn:hover { background:var(--green-hi); }
+    .waitlist-btn { width:100%; padding:9px 14px; background:transparent; color:var(--green-hi); font-family:var(--font-c); font-size:.68rem; font-weight:700; letter-spacing:.16em; text-transform:uppercase; display:flex; align-items:center; justify-content:center; gap:6px; border:1px solid rgba(0,104,71,.35); border-radius:2px; transition:all .18s; cursor:pointer; }
+    .waitlist-btn:hover { background:var(--green-bg); }
+    .bundle-badge { display:inline-flex; align-items:center; gap:4px; font-family:var(--font-c); font-size:.54rem; font-weight:700; letter-spacing:.14em; text-transform:uppercase; background:rgba(206,17,38,.1); color:var(--red-hi); border:1px solid rgba(206,17,38,.25); padding:2px 7px; border-radius:2px; margin-bottom:5px; }
+    .bundle-btn { width:100%; padding:10px 14px; background:var(--red); color:#fff; font-family:var(--font-c); font-size:.7rem; font-weight:700; letter-spacing:.18em; text-transform:uppercase; display:flex; align-items:center; justify-content:center; gap:7px; border-radius:2px; transition:background .18s; border:none; cursor:pointer; }
+    .bundle-btn:hover { background:var(--red-hi); }
 
-    .bundle-badge {
-      display: inline-flex; align-items: center; gap: 5px;
-      font-family: var(--font-c); font-size: .56rem; font-weight: 700;
-      letter-spacing: .14em; text-transform: uppercase;
-      background: rgba(206,17,38,.1); color: var(--red-hi);
-      border: 1px solid rgba(206,17,38,.25); padding: 2px 8px; margin-bottom: 6px;
-      border-radius: 2px;
-    }
+    /* ── Toast ────────────────────────────────────────── */
+    .add-flash { position:fixed; bottom:72px; left:50%; transform:translateX(-50%) translateY(16px); background:var(--off); border:1px solid var(--border); border-left:3px solid var(--green); font-family:var(--font-c); font-size:.73rem; font-weight:700; letter-spacing:.08em; color:var(--text); padding:11px 20px; border-radius:2px; opacity:0; transition:all .26s; pointer-events:none; white-space:nowrap; z-index:99; }
+    .add-flash.show { opacity:1; transform:translateX(-50%) translateY(0); }
 
-    .add-flash {
-      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(16px);
-      background: var(--off); border: 1px solid var(--border); border-left: 3px solid var(--green);
-      font-family: var(--font-c); font-size: .75rem; font-weight: 700; letter-spacing: .08em;
-      color: var(--text); padding: 12px 22px; border-radius: 2px;
-      opacity: 0; transition: all .26s; pointer-events: none; white-space: nowrap; z-index: 100;
-    }
-    .add-flash.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    /* ── Skeleton ─────────────────────────────────────── */
+    .skeleton-card { background:var(--card); border:1px solid var(--border); }
+    .skeleton-thumb { height:200px; background:var(--card-2); }
+    .skeleton-info  { padding:15px 16px 16px; }
+    .skeleton-line  { border-radius:2px; background:var(--card-2); margin-bottom:8px; }
+    .skeleton-pulse { animation:skelPulse 1.4s ease-in-out infinite; }
+    @keyframes skelPulse { 0%,100%{opacity:1} 50%{opacity:.3} }
 
-    /* skeleton */
-    .skeleton-card { background: var(--card); border: 1px solid var(--border); }
-    .skeleton-thumb { height: 210px; background: var(--card-2); }
-    .skeleton-info  { padding: 16px 18px 18px; }
-    .skeleton-line  { border-radius: 2px; background: var(--card-2); }
-    .skeleton-pulse { animation: skeletonPulse 1.4s ease-in-out infinite; }
-    @keyframes skeletonPulse { 0%,100%{opacity:1} 50%{opacity:.35} }
-
-    .container { max-width: 1140px; margin: 0 auto; padding: 0 16px; }
-    @media (max-width: 700px) { .products-grid { grid-template-columns: 1fr 1fr; gap: 10px; } }
-    @media (max-width: 420px) { .products-grid { grid-template-columns: 1fr; } }
+    /* ── Responsive ───────────────────────────────────── */
+    @media (max-width:700px) { .products-grid { grid-template-columns:1fr 1fr; gap:10px; } }
+    @media (max-width:400px) { .products-grid { grid-template-columns:1fr; } }
   </style>
 </head>
 <body>
@@ -190,7 +105,7 @@
     <div class="container">
       <div class="shop-eyebrow">All Products</div>
       <div class="shop-title">The Research <em>Catalog</em></div>
-      <p class="shop-desc">Premium research peptides serving the Rio Grande Valley — McAllen, Edinburg, Harlingen, Brownsville, and beyond. For research purposes only.</p>
+      <p class="shop-desc">Premium research peptides serving McAllen, Edinburg, Harlingen, Brownsville, and the entire Rio Grande Valley. For research purposes only.</p>
     </div>
   </div>
 
@@ -209,15 +124,7 @@
   <div class="products-section">
     <div class="container">
       <div class="products-grid" id="products-grid">
-        ${[1,2,3,4,5,6].map(()=>`
-          <div class="skeleton-card">
-            <div class="skeleton-thumb skeleton-pulse"></div>
-            <div class="skeleton-info">
-              <div class="skeleton-line skeleton-pulse" style="width:40%;height:.5rem;margin-bottom:10px"></div>
-              <div class="skeleton-line skeleton-pulse" style="width:78%;height:.75rem;margin-bottom:8px"></div>
-              <div class="skeleton-line skeleton-pulse" style="width:95%;height:.65rem;margin-bottom:6px"></div>
-            </div>
-          </div>`).join('')}
+        ${[1,2,3,4,5,6].map(()=>`<div class="skeleton-card"><div class="skeleton-thumb skeleton-pulse"></div><div class="skeleton-info"><div class="skeleton-line skeleton-pulse" style="width:40%;height:.5rem"></div><div class="skeleton-line skeleton-pulse" style="width:78%;height:.75rem"></div><div class="skeleton-line skeleton-pulse" style="width:95%;height:.65rem"></div></div></div>`).join('')}
       </div>
     </div>
   </div>
@@ -225,125 +132,117 @@
   <div id="footer-mount"></div>
   <div class="add-flash" id="add-flash"></div>
 
+  <!-- Checkout overlay — required by cart.js openCheckout() -->
+  <div class="checkout-overlay" id="checkout-overlay" onclick="if(event.target===this)closeCheckout()">
+    <div class="checkout-modal" id="checkout-modal"></div>
+  </div>
+
   <script type="module">
     import '../js/supabase.js';
     import '../js/auth.js?v=15';
     import '../js/cart.js?v=18';
-    import { loadProducts, allProducts, getProduct, pepperSVG, heatPips } from '../js/products.js?v=15';
+    import './site.js';
+    import { loadProducts, allProducts, getProduct, pepperSVG } from '../js/products.js?v=15';
 
     await Promise.all([window.initPage('shop'), loadProducts()]);
 
     function thumbHTML(p) {
-      if (p.images) return '<img src="../pdct img/' + p.images + '" alt="' + p.name + '" />';
-      return pepperSVG(p);
+      return p.images
+        ? '<img src="../pdct img/' + p.images + '" alt="' + p.name + '"/>'
+        : pepperSVG(p);
     }
 
     function buildBundleCard(p) {
-      return '<div class="product-card">'
+      return '<div class="product-card" onclick="event.stopPropagation()">'
         + '<div class="product-thumb"><div class="thumb-glow"></div>' + thumbHTML(p) + '</div>'
         + '<div class="product-info">'
         + '<div class="bundle-badge">◈ Bundle of 10</div>'
         + '<div class="product-name">' + p.name + '</div>'
         + '<div class="product-desc">' + p.description + '</div>'
         + '<div class="product-footer">'
-        + '<div class="product-price-row"><div class="product-price">$' + Number(p.bundle_price).toFixed(2) + '</div></div>'
-        + '<div style="font-size:.7rem;color:var(--smoke);margin-bottom:4px">$' + (p.bundle_price/10).toFixed(2) + ' per vial · 10 vials</div>'
-        + '<button class="bundle-btn" onclick="addBundleToCart(' + p.id + ')">+ Add Bundle</button>'
+        + '<div class="product-price">$' + Number(p.bundle_price).toFixed(2) + '</div>'
+        + '<div style="font-size:.7rem;color:var(--smoke);margin-bottom:2px">$' + (p.bundle_price/10).toFixed(2) + ' per vial · 10 vials</div>'
+        + '<button class="bundle-btn" onclick="event.stopPropagation();addBundle(' + p.id + ')">+ Add Bundle</button>'
         + '</div></div></div>';
     }
 
     function buildCard(p) {
-      var badge = p.badge ? '<span class="product-badge' + (p.badge.includes('🔥') ? ' badge-hot' : '') + '">' + p.badge + '</span>' : '';
-      return (p.inventory <= 0
-          ? '<div class="product-card out-of-stock" onclick="goToProduct(' + p.id + ')" style="cursor:pointer">'
-          : '<div class="product-card" onclick="goToProduct(' + p.id + ')" style="cursor:pointer">')
+      const oos   = p.inventory <= 0;
+      const badge = p.badge ? '<span class="product-badge' + (p.badge.includes('🔥') ? ' badge-hot' : '') + '">' + p.badge + '</span>' : '';
+      return '<div class="product-card' + (oos ? ' out-of-stock' : '') + '" onclick="goProduct(' + p.id + ')">'
         + '<div class="product-thumb"><div class="thumb-glow"></div>' + badge + thumbHTML(p)
-        + (p.inventory <= 0 ? '<div class="out-of-stock-banner">Out of Stock</div>' : '')
+        + (oos ? '<div class="oos-banner">Out of Stock</div>' : '')
         + '</div>'
         + '<div class="product-info">'
         + '<div class="product-cat">' + p.category + '</div>'
         + '<div class="product-name">' + p.name + '</div>'
         + '<div class="product-desc">' + p.description + '</div>'
-        + (p.inventory <= 0 ? '' : p.inventory <= 10
-            ? '<div class="low-stock-label">Low Stock — ' + p.inventory + ' left</div>'
-            : '<div class="in-stock-label">In Stock</div>')
+        + (!oos ? (p.inventory <= 10 ? '<div class="low-stock">Low Stock — ' + p.inventory + ' left</div>' : '<div class="in-stock">In Stock</div>') : '')
         + '<div class="product-footer">'
-        + '<div class="product-price-row"><div class="product-price">$' + Number(p.price).toFixed(2) + '</div></div>'
-        + (p.inventory <= 0
-          ? '<button class="waitlist-btn" onclick="event.stopPropagation();joinWaitlistShop(' + p.id + ',\'' + p.name + '\')">🔔 Notify When Available</button>'
+        + '<div class="product-price">$' + Number(p.price).toFixed(2) + '</div>'
+        + (oos
+          ? '<button class="waitlist-btn" onclick="event.stopPropagation();joinWL(' + p.id + ',\'' + p.name.replace(/'/g,"\\'") + '\')">🔔 Notify When Available</button>'
           : '<button class="add-btn" onclick="event.stopPropagation();addToCart(' + p.id + ')">+ Add to Cart</button>')
         + '</div></div></div>';
     }
 
-    function sortProducts(list) {
-      var inStock = list.filter(p => p.inventory > 0).sort((a,b) => a.id - b.id);
-      var oos     = list.filter(p => p.inventory <= 0).sort((a,b) => a.id - b.id);
-      return inStock.concat(oos);
+    function sorted(list) {
+      return list.filter(p=>p.inventory>0).sort((a,b)=>a.id-b.id)
+        .concat(list.filter(p=>p.inventory<=0).sort((a,b)=>a.id-b.id));
     }
 
     function renderProducts(cat) {
-      var all  = allProducts();
-      var grid = document.getElementById('products-grid');
-      var list, html;
+      const all  = allProducts();
+      const grid = document.getElementById('products-grid');
+      let list;
       if (cat === 'Bundles') {
-        list = all.filter(p => p.bundle_price != null && p.inventory >= 10).sort((a,b) => a.id - b.id);
-        html = list.length ? list.map(buildBundleCard).join('') : '<div style="grid-column:1/-1;padding:48px 0;text-align:center"><p style="font-family:var(--font-c);font-size:.72rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--smoke)">No bundles available</p></div>';
+        list = all.filter(p=>p.bundle_price!=null&&p.inventory>=10).sort((a,b)=>a.id-b.id);
+        grid.innerHTML = list.length ? list.map(buildBundleCard).join('') : empty('No bundles available');
       } else {
-        list = cat === 'In Stock' ? all.filter(p => p.inventory > 0).sort((a,b) => a.id - b.id)
-             : cat === 'All'     ? sortProducts(all)
-             : sortProducts(all.filter(p => p.category === cat));
-        html = list.length ? list.map(buildCard).join('') : '<div style="grid-column:1/-1;padding:48px 0;text-align:center"><p style="font-family:var(--font-c);font-size:.72rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--smoke)">No products in this category</p></div>';
+        list = cat === 'In Stock' ? all.filter(p=>p.inventory>0).sort((a,b)=>a.id-b.id)
+             : cat === 'All'      ? sorted(all)
+             : sorted(all.filter(p=>p.category===cat));
+        grid.innerHTML = list.length ? list.map(buildCard).join('')
+          : empty(all.length ? 'No products in this category' : 'No products loaded — check console');
       }
-      grid.innerHTML = html;
     }
 
-    window.joinWaitlistShop = async (id, name) => {
-      const result = await Auth.joinWaitlist(id, name);
+    function empty(msg) {
+      return '<div style="grid-column:1/-1;padding:60px 0;text-align:center"><p style="font-family:var(--font-c);font-size:.72rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--smoke)">' + msg + '</p></div>';
+    }
+
+    function flash(msg, ok) {
       const f = document.getElementById('add-flash');
-      f.textContent = result.ok ? '🔔 Added to waitlist for ' + name
-                    : result.err === 'already_on_waitlist' ? 'Already on waitlist for ' + name
-                    : 'Could not join waitlist';
-      f.style.borderLeftColor = result.ok ? 'var(--green)' : 'var(--red)';
+      f.textContent = msg;
+      f.style.borderLeftColor = ok ? 'var(--green)' : 'var(--red)';
       f.classList.add('show');
       clearTimeout(f._t);
-      f._t = setTimeout(() => f.classList.remove('show'), 3000);
-    };
+      f._t = setTimeout(() => f.classList.remove('show'), 2800);
+    }
 
-    window.goToProduct = id => { window.location.href = 'product.html?id=' + id; };
-
-    window.addBundleToCart = id => {
-      var p = getProduct(id);
-      if (!p || !p.bundle_price) return;
-      var f = document.getElementById('add-flash');
-      if (p.inventory < 10) {
-        f.textContent = 'Not enough stock for a bundle';
-        f.style.borderLeftColor = 'var(--red)';
-      } else {
-        Cart.addBundle({ id: p.id, name: p.name, price: p.bundle_price, bundleQty: 10 });
-        f.textContent = p.name + ' bundle added to cart';
-        f.style.borderLeftColor = 'var(--red)';
-      }
-      f.classList.add('show');
-      clearTimeout(f._t);
-      f._t = setTimeout(() => f.classList.remove('show'), 2500);
-    };
+    window.goProduct = id => { window.location.href = 'product.html?id=' + id; };
 
     window.addToCart = id => {
-      var p = getProduct(id);
+      const p = getProduct(id);
       if (!p) return;
-      var result = Cart.add(p);
-      var f = document.getElementById('add-flash');
-      f.textContent = !result.ok
-        ? (result.err === 'out_of_stock' ? p.name + ' is out of stock' : 'Only ' + result.available + ' left in stock')
-        : p.name + ' added to cart';
-      f.style.borderLeftColor = result.ok ? 'var(--green)' : 'var(--red)';
-      f.classList.add('show');
-      clearTimeout(f._t);
-      f._t = setTimeout(() => f.classList.remove('show'), 2200);
+      const r = Cart.add(p);
+      flash(r.ok ? p.name + ' added to cart' : (r.err === 'out_of_stock' ? p.name + ' is out of stock' : 'Only ' + r.available + ' left in stock'), r.ok);
+    };
+
+    window.addBundle = id => {
+      const p = getProduct(id);
+      if (!p || !p.bundle_price) return;
+      const r = Cart.addBundle({ id: p.id, name: p.name, price: p.bundle_price, bundleQty: 10 });
+      flash(r.ok ? p.name + ' bundle added to cart' : 'Not enough stock for a bundle', r.ok);
+    };
+
+    window.joinWL = async (id, name) => {
+      const r = await Auth.joinWaitlist(id, name);
+      flash(r.ok ? '🔔 Added to waitlist for ' + name : r.err === 'already_on_waitlist' ? 'Already on the waitlist for ' + name : 'Could not join waitlist', r.ok);
     };
 
     document.getElementById('filters').addEventListener('click', e => {
-      var btn = e.target.closest('.filter-btn');
+      const btn = e.target.closest('.filter-btn');
       if (!btn) return;
       document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
@@ -352,8 +251,8 @@
 
     renderProducts('All');
 
-    var hasBundles = allProducts().some(p => p.bundle_price != null && p.inventory >= 10);
-    var bundleTab  = document.querySelector('.filter-btn[data-cat="Bundles"]');
+    const hasBundles = allProducts().some(p => p.bundle_price != null && p.inventory >= 10);
+    const bundleTab  = document.querySelector('.filter-btn[data-cat="Bundles"]');
     if (bundleTab && hasBundles) bundleTab.classList.add('filter-btn-bundle');
   </script>
 </body>

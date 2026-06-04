@@ -386,3 +386,116 @@ footer {
 /* ── Scroll reveal ───────────────────────────────────────── */
 .reveal { opacity: 0; transform: translateY(16px); transition: opacity .45s var(--ease), transform .45s var(--ease); }
 .reveal.visible { opacity: 1; transform: none; }
+
+/* ═══════════════════════════════════════════════════════
+   MOBILE NAV
+   ═══════════════════════════════════════════════════════ */
+.mobile-nav {
+  display: none;
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  background: var(--off);
+  border-top: 1px solid var(--border);
+  z-index: 100;
+  height: 56px;
+  align-items: stretch;
+}
+.mobile-nav-tab {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-c);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  text-decoration: none;
+  position: relative;
+  transition: color var(--dur) var(--ease), background var(--dur) var(--ease);
+  border: none;
+  cursor: pointer;
+}
+.mobile-nav-tab.active { color: var(--green-hi); background: rgba(0,104,71,.08); }
+.mobile-nav-tab:hover  { color: var(--text); }
+
+/* ═══════════════════════════════════════════════════════
+   RESPONSIVE — shared breakpoints
+   ═══════════════════════════════════════════════════════ */
+@media (max-width: 860px) {
+  /* Nav */
+  .nav-links   { display: none; }
+  .nav-signout { display: none; }
+  .mobile-nav  { display: flex; }
+
+  /* Push page content above mobile nav */
+  body { padding-bottom: 56px; }
+
+  /* Page padding */
+  .page, .page-wide { padding: 20px 14px 80px; }
+}
+
+@media (max-width: 600px) {
+  /* Cart nav btn — smaller */
+  .cart-nav-btn { padding: 6px 10px; font-size: 12px; }
+
+  /* Modal full-screen on mobile */
+  .checkout-overlay { padding: 0; align-items: flex-end; }
+  .checkout-modal   { max-width: 100%; border-radius: 12px 12px 0 0; max-height: 92vh; overflow-y: auto; }
+
+  /* Forms */
+  .form-row { flex-direction: column; gap: 0; }
+}
+
+/* ═══════════════════════════════════════════════════════
+   CHECKOUT MODAL — full override to match 956 palette
+   ═══════════════════════════════════════════════════════ */
+/* The checkout modal is injected by cart.js with BBP colors.
+   These overrides force 956 palette on all injected elements. */
+#checkout-modal input:focus,
+#checkout-modal select:focus {
+  border-color: var(--green) !important;
+  box-shadow: 0 0 0 3px rgba(0,104,71,.15) !important;
+}
+#checkout-modal input[type="checkbox"] {
+  accent-color: var(--green) !important;
+}
+#checkout-modal .modal-total-val {
+  color: var(--green-hi) !important;
+}
+/* PayPal button container — no override needed, PayPal renders its own */
+/* Cash App button — keep green */
+#cashapp-container button {
+  border-radius: 3px !important;
+}
+/* Discount apply button */
+#checkout-modal button[onclick="applyDiscountInModal()"] {
+  background: var(--green) !important;
+}
+#checkout-modal button[onclick="applyDiscountInModal()"]:hover {
+  background: var(--green-hi) !important;
+}
+/* Discount applied color */
+#modal-discount-ok { color: var(--ok) !important; }
+#modal-discount-err { color: var(--err) !important; }
+
+/* Order success back button */
+.order-success a {
+  background: var(--green) !important;
+  clip-path: none !important;
+  border-radius: 3px !important;
+}
+.order-success a:hover { background: var(--green-hi) !important; }
+
+/* Shipping select */
+#co-shipping-method {
+  background: var(--card) !important;
+  color: var(--white) !important;
+  border: 1px solid var(--border) !important;
+}
+
+/* Secure payment panel */
+.checkout-modal [style*="border-top:2px solid var(--red)"] {
+  border-top-color: var(--green) !important;
+}
