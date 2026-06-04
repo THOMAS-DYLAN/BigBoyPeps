@@ -16,8 +16,8 @@
   <link rel="modulepreload" href="js/auth.js?v=15">
   <link rel="modulepreload" href="js/cart.js?v=18">
   <link rel="modulepreload" href="js/products.js?v=15">
-  <link rel="stylesheet" href="css/global.css?v=2" />
-  <link rel="stylesheet" href="css/shared.css?v=2" />
+  <link rel="stylesheet" href="css/global.css" />
+  <link rel="stylesheet" href="css/shared.css" />
   <style>
     body { display: flex; flex-direction: column; min-height: 100vh; }
 
@@ -67,8 +67,8 @@
       position: absolute; top: 16px; left: 16px; z-index: 2;
       font-family: var(--font-c); font-size: .65rem; font-weight: 700;
       letter-spacing: .18em; text-transform: uppercase;
-      padding: 5px 14px; border: 1px solid rgba(184,137,42,.4);
-      background: rgba(184,137,42,.15); color: var(--red);
+      padding: 5px 14px; border: 1px solid rgba(204,31,31,.4);
+      background: rgba(204,31,31,.15); color: var(--red);
     }
 
     /* research tag */
@@ -267,8 +267,8 @@
       letter-spacing: .14em; text-transform: uppercase;
       color: #5BC75B; display: none;
     }
-    .review-write-btn { font-family:var(--font-c);font-size:.63rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;background:none;color:var(--red);padding:6px 12px;border:1px solid rgba(184,137,42,.32);cursor:pointer;margin-left:8px;transition:all .18s; }
-    .review-write-btn:hover { background:rgba(184,137,42,.12); }
+    .review-write-btn { font-family:var(--font-c);font-size:.63rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;background:none;color:var(--red);padding:6px 12px;border:1px solid rgba(204,31,31,.32);cursor:pointer;margin-left:8px;transition:all .18s; }
+    .review-write-btn:hover { background:rgba(204,31,31,.12); }
     .rating-saved.show { display: block; }
     .review-card { background:var(--off);border:1px solid var(--border);padding:16px 20px;margin-bottom:10px; }
     .review-card-header { display:flex;align-items:center;gap:10px;margin-bottom:8px;flex-wrap:wrap; }
@@ -280,7 +280,7 @@
     .review-card-actions { display:flex;gap:10px;margin-top:10px; }
     .review-action-btn { font-family:var(--font-c);font-size:.6rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;background:none;color:var(--smoke);padding:4px 10px;border:1px solid var(--border);cursor:pointer;transition:all .18s; }
     .review-action-btn:hover { color:var(--light);border-color:var(--ash); }
-    .review-action-btn.del:hover { color:#D4A843;border-color:#D4A843; }
+    .review-action-btn.del:hover { color:#FF3030;border-color:#FF3030; }
 
     /* ── loading / error ─────────────────────────── */
     .loading-state, .error-state {
@@ -304,7 +304,7 @@
       background: rgba(0,0,0,.45);
     }
     .product-oos-banner {
-      background: rgba(184,137,42,.92); color: #fff;
+      background: rgba(204,31,31,.92); color: #fff;
       font-family: var(--font-c); font-size: .8rem; font-weight: 700;
       letter-spacing: .22em; text-transform: uppercase;
       padding: 10px 28px;
@@ -447,7 +447,7 @@
         <div style="display:flex;gap:10px;margin-top:10px;align-items:center">
           <button onclick="submitReviewWithComment()" style="font-family:var(--font-c);font-size:.68rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;background:var(--red);color:#fff;padding:9px 20px;border:none;cursor:pointer;transition:background .18s" onmouseover="this.style.background='var(--red-hot)'" onmouseout="this.style.background='var(--red)'">Post Review</button>
           <button onclick="document.getElementById('review-form-wrap').style.display='none'" style="font-family:var(--font-c);font-size:.65rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;background:none;color:var(--smoke);padding:9px 14px;border:1px solid var(--border);cursor:pointer">Cancel</button>
-          <span id="review-err" style="font-size:.72rem;color:#D4A843"></span>
+          <span id="review-err" style="font-size:.72rem;color:#FF3030"></span>
         </div>
       </div>
 
@@ -573,7 +573,7 @@
               </div>
               <button class="add-to-cart-btn" id="add-btn"
                 onclick="${p.inventory > 0 ? 'addToCart(' + p.id + ')' : 'joinWaitlist(' + p.id + ',\'' + p.name.replace(/'/g, "\\'") + '\')'}"
-                style="${p.inventory <= 0 ? 'background:var(--border);border:1px solid rgba(184,137,42,.4);color:var(--red);cursor:pointer;clip-path:none' : ''}">
+                style="${p.inventory <= 0 ? 'background:var(--border);border:1px solid rgba(204,31,31,.4);color:var(--red);cursor:pointer;clip-path:none' : ''}">
                 ${p.inventory <= 0 ? '🔔 Notify Me When In Stock' : 'Add to Cart — $' + Number(p.price).toFixed(2)}
               </button>
               <div id="waitlist-msg" style="font-family:var(--font-c);font-size:.63rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#5BC75B;margin-top:8px;display:none">✓ You're on the waitlist — we'll email you when it's back.</div>
@@ -594,7 +594,7 @@
               </div>
               <div class="detail-row">
                 <div class="detail-key">Status</div>
-                <div class="detail-val" style="color:${p.inventory <= 0 ? '#D4A843' : p.inventory <= 10 ? '#D4A843' : '#5BC75B'}">
+                <div class="detail-val" style="color:${p.inventory <= 0 ? '#FF3030' : p.inventory <= 10 ? '#FF3030' : '#5BC75B'}">
                   ${p.inventory <= 0 ? 'Out of Stock' : p.inventory <= 10 ? 'Low Stock — ' + p.inventory + ' left' : 'In Stock'}
                 </div>
               </div>
