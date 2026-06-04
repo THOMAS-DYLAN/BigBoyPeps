@@ -16,8 +16,8 @@
   <link rel="modulepreload" href="js/auth.js?v=15">
   <link rel="modulepreload" href="js/cart.js?v=18">
   <link rel="modulepreload" href="js/products.js?v=15">
-  <link rel="stylesheet" href="css/global.css" />
-  <link rel="stylesheet" href="css/shared.css" />
+  <link rel="stylesheet" href="css/global.css?v=2" />
+  <link rel="stylesheet" href="css/shared.css?v=2" />
   <style>
     body { display: flex; flex-direction: column; min-height: 100vh; }
 
@@ -62,9 +62,9 @@
     }
     .filter-btn:hover  { border-color: var(--ash); color: var(--light); }
     .filter-btn.active { background: var(--red); color: var(--white); border-color: var(--red); }
-    .filter-btn-bundle { color: #FF3030; border-color: rgba(232,184,75,.4); letter-spacing: .14em; }
-    .filter-btn-bundle:hover { border-color: #FF3030; color: #f5c842; background: rgba(232,184,75,.06); }
-    .filter-btn-bundle.active { background: #FF3030; color: #0C0C0C; border-color: #FF3030; }
+    .filter-btn-bundle { color: #D4A843; border-color: rgba(212,170,50,.4); letter-spacing: .14em; }
+    .filter-btn-bundle:hover { border-color: #D4A843; color: #f5c842; background: rgba(212,170,50,.06); }
+    .filter-btn-bundle.active { background: #D4A843; color: #04090F; border-color: #D4A843; }
 
     .products-section { padding: 48px 0 80px; flex: 1; }
     .products-grid {
@@ -80,7 +80,7 @@
       border-color: var(--red); transform: translateY(-4px); box-shadow: 0 12px 36px rgba(0,0,0,.5);
     }
 
-    .thumb-glow { position: absolute; inset: 0; background: rgba(204,31,31,.07); opacity: 0; transition: opacity .22s; z-index: 1; }
+    .thumb-glow { position: absolute; inset: 0; background: rgba(184,137,42,.07); opacity: 0; transition: opacity .22s; z-index: 1; }
     .product-card:hover .thumb-glow { opacity: 1; }
     .product-badge {
       position: absolute; top: 12px; left: 12px; z-index: 2;
@@ -88,7 +88,7 @@
       letter-spacing: .18em; text-transform: uppercase;
       padding: 4px 10px; border: 1px solid var(--border); background: rgba(12,12,12,.8); color: var(--smoke);
     }
-    .product-badge.badge-hot { background: rgba(204,31,31,.15); color: var(--red); border-color: rgba(204,31,31,.32); }
+    .product-badge.badge-hot { background: rgba(184,137,42,.15); color: var(--red); border-color: rgba(184,137,42,.32); }
 
     .product-info { padding: 18px 20px 20px; display: flex; flex-direction: column; flex: 1; }
     .product-cat {
@@ -120,9 +120,9 @@
       font-family: var(--font-c); font-size: .72rem; font-weight: 700;
       letter-spacing: .16em; text-transform: uppercase;
       display: flex; align-items: center; justify-content: center; gap: 6px;
-      border: 1px solid rgba(204,31,31,.4); transition: all .18s;
+      border: 1px solid rgba(184,137,42,.4); transition: all .18s;
     }
-    .waitlist-btn:hover { background: rgba(204,31,31,.1); }
+    .waitlist-btn:hover { background: rgba(184,137,42,.1); }
 
     .add-flash {
       position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(16px);
@@ -143,8 +143,8 @@
       display: inline-flex; align-items: center; gap: 5px;
       font-family: var(--font-c); font-size: .58rem; font-weight: 700;
       letter-spacing: .14em; text-transform: uppercase;
-      background: rgba(232,184,75,.12); color: #FF3030;
-      border: 1px solid rgba(232,184,75,.3); padding: 3px 9px; margin-bottom: 8px;
+      background: rgba(212,170,50,.12); color: #D4A843;
+      border: 1px solid rgba(212,170,50,.3); padding: 3px 9px; margin-bottom: 8px;
     }
     .bundle-qty-note {
       font-family: var(--font-c); font-size: .62rem; font-weight: 700;
@@ -156,7 +156,7 @@
     }
     .bundle-btn {
       width: 100%; padding: 12px 16px;
-      background: #FF3030; color: #0C0C0C;
+      background: #D4A843; color: #04090F;
       font-family: var(--font-c); font-size: .74rem; font-weight: 700;
       letter-spacing: .18em; text-transform: uppercase;
       display: flex; align-items: center; justify-content: center; gap: 8px;
@@ -174,12 +174,12 @@
     .out-of-stock-banner {
       position: absolute; top: 50%; left: 50%;
       transform: translate(-50%, -50%);
-      background: rgba(204,31,31,.92); color: #fff; z-index: 10;
+      background: rgba(184,137,42,.92); color: #fff; z-index: 10;
       font-family: var(--font-c); font-size: .72rem; font-weight: 700;
       letter-spacing: .2em; text-transform: uppercase;
       padding: 8px 20px; white-space: nowrap; pointer-events: none;
     }
-    .low-stock-label { font-family:var(--font-c);font-size:.6rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#FF3030;margin-bottom:8px; }
+    .low-stock-label { font-family:var(--font-c);font-size:.6rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#D4A843;margin-bottom:8px; }
     .in-stock-label  { font-family:var(--font-c);font-size:.6rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#5BC75B;margin-bottom:8px; }
     @media (max-width: 700px) { .products-grid { grid-template-columns: 1fr 1fr; gap: 12px; } .nav-links { display: none; } }
     @media (max-width: 420px) { .products-grid { grid-template-columns: 1fr; } }
@@ -360,7 +360,7 @@
         f.style.borderLeftColor = 'var(--smoke)';
       } else {
         f.textContent = 'Could not join waitlist — please try again';
-        f.style.borderLeftColor = '#FF3030';
+        f.style.borderLeftColor = '#D4A843';
       }
       f.classList.add('show');
       clearTimeout(f._t);
@@ -377,7 +377,7 @@
       if (p.inventory < 10) {
         var f = document.getElementById('add-flash');
         f.textContent = 'Not enough stock for a bundle of ' + p.name;
-        f.style.borderLeftColor = '#FF3030';
+        f.style.borderLeftColor = '#D4A843';
         f.classList.add('show');
         clearTimeout(f._t);
         f._t = setTimeout(function() { f.classList.remove('show'); }, 2500);
@@ -387,7 +387,7 @@
       Cart.addBundle({ id: p.id, name: p.name, price: p.bundle_price, bundleQty: 10 });
       var f = document.getElementById('add-flash');
       f.textContent = p.name + ' bundle added to cart';
-      f.style.borderLeftColor = '#FF3030';
+      f.style.borderLeftColor = '#D4A843';
       f.classList.add('show');
       clearTimeout(f._t);
       f._t = setTimeout(function() { f.classList.remove('show'); }, 2200);
@@ -402,7 +402,7 @@
         f.textContent = result.err === 'out_of_stock'
           ? p.name + ' is out of stock'
           : 'Only ' + result.available + ' left in stock';
-        f.style.borderLeftColor = '#FF3030';
+        f.style.borderLeftColor = '#D4A843';
       } else {
         f.textContent = p.name + ' added to cart';
         f.style.borderLeftColor = 'var(--red)';
