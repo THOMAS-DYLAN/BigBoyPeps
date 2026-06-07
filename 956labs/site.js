@@ -84,16 +84,16 @@ window.initPage = async function(activePage) {
   if (window.Cart) window.Cart._key = 'bbp_cart_' + session.user.id;
   if (navEl)    navEl.innerHTML    = buildNav(activePage);
   if (footerEl) footerEl.innerHTML = buildFooter();
-  if (window.Cart) window.Cart.updateBadge();
 
-  // Keep both badges in sync
-  const _orig = window.Cart?.updateBadge?.bind(window.Cart);
-  if (window.Cart && _orig) {
+  // Patch updateBadge BEFORE calling it so mobile badge also updates
+  if (window.Cart) {
+    const _orig = window.Cart.updateBadge.bind(window.Cart);
     window.Cart.updateBadge = function() {
       _orig();
       const n  = this.count();
       const bm = document.getElementById('cart-badge-m');
       if (bm) { bm.textContent = n; bm.style.display = n > 0 ? 'flex' : 'none'; }
     };
+    window.Cart.updateBadge();
   }
 };

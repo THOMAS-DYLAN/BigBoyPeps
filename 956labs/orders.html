@@ -85,7 +85,7 @@
   <script type="module">
     import '../js/auth.js?v=15';
     import '../js/cart.js?v=18';
-    import './site.js';
+    await import('./site.js');
     import { loadProducts, getProduct, miniPepperSVG } from '../js/products.js?v=15';
 
     const [,,orders] = await Promise.all([

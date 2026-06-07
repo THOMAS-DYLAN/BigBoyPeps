@@ -15,6 +15,7 @@
 
   --red:        #CE1126;
   --red-hi:     #e01328;
+  --red-hot:    #e01328;
   --red-lo:     #a50d1e;
   --red-bg:     #1a0004;
 
@@ -26,14 +27,16 @@
   --off:        #071009;
   --card:       #0B1A0D;
   --card-2:     #0F2010;
-  --border:     #163320;
-  --border-hi:  #1E4528;
+  --border:     #1a3d22;
+  --border-hi:  #234d2c;
 
   /* ── Text ── */
-  --text:       #C8DCC9;
-  --text-2:     #7EA880;
-  --text-3:     #4A7550;
-  --smoke:      #3A6040;
+  --text:       #D4E8D5;
+  --text-2:     #96BC98;
+  --text-3:     #5E8A62;
+  --smoke:      #4E7A54;
+  --light:      #D4E8D5;
+  --ash:        #5E8A62;
 
   /* ── Utility ── */
   --ok:         #4CAF50;
@@ -267,8 +270,8 @@ nav {
 
 /* ── Research banner ─────────────────────────────────────── */
 .research-banner {
-  background: var(--green-bg);
-  border-bottom: 1px solid var(--green-lo);
+  background: #040A06;
+  border-bottom: 1px solid var(--border);
   text-align: center;
   padding: 7px 16px;
   font-family: var(--font-c);
@@ -485,8 +488,18 @@ footer {
   background: var(--green) !important;
   clip-path: none !important;
   border-radius: 3px !important;
+  display: inline-block !important;
+  padding: 12px 28px !important;
+  color: #fff !important;
+  font-family: var(--font-c) !important;
+  font-size: .75rem !important;
+  font-weight: 700 !important;
+  letter-spacing: .14em !important;
+  text-transform: uppercase !important;
+  text-decoration: none !important;
+  margin-top: 24px !important;
 }
-.order-success a:hover { background: var(--green-hi) !important; }
+.order-success a:hover { background: var(--green-hi) !important; color: #fff !important; }
 
 /* Shipping select */
 #co-shipping-method {
@@ -498,4 +511,36 @@ footer {
 /* Secure payment panel */
 .checkout-modal [style*="border-top:2px solid var(--red)"] {
   border-top-color: var(--green) !important;
+}
+
+/* ── Additional cart.js compatibility overrides ─────── */
+/* cart.js hardcodes onfocus border to var(--red) — override in CSS */
+#modal-discount-input:focus {
+  border-color: var(--green) !important;
+  box-shadow: 0 0 0 2px rgba(0,104,71,.2) !important;
+  outline: none !important;
+}
+/* Hosted card fields border on focus */
+#ppcard-number, #ppcard-expiry, #ppcard-cvv {
+  border-color: var(--border) !important;
+  transition: border-color .18s !important;
+}
+/* cart.js success screen */
+.order-success .order-success-icon { color: var(--green); }
+/* Ensure nav-brand text-decoration is none */
+a.nav-brand, .nav-brand { text-decoration: none; }
+/* Zelle button border radius consistency */
+#zelle-container button, #bitcoin-container button { border-radius: 3px !important; }
+/* Make sure cart badge on mobile nav shows */
+.mobile-nav .cart-badge {
+  background: var(--red) !important;
+  color: #fff !important;
+  font-size: 9px !important;
+  width: 16px !important;
+  height: 16px !important;
+  border-radius: 50% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-weight: 700 !important;
 }

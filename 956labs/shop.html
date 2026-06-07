@@ -141,7 +141,7 @@
     import '../js/supabase.js';
     import '../js/auth.js?v=15';
     import '../js/cart.js?v=18';
-    import './site.js';
+    await import('./site.js');
     import { loadProducts, allProducts, getProduct, pepperSVG } from '../js/products.js?v=15';
 
     await Promise.all([window.initPage('shop'), loadProducts()]);
