@@ -64,6 +64,7 @@ window.Cart = {
     else items.push({ id: product.id, name: product.name, price: product.price, qty: 1 });
     this.save(items);
     this.updateBadge();
+    trackCartUpdate();
     return { ok: true };
   },
 
@@ -91,6 +92,7 @@ window.Cart = {
     }
     this.save(items);
     this.updateBadge();
+    trackCartUpdate();
     return { ok: true };
   },
 

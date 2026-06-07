@@ -258,7 +258,7 @@
           </div>
           ${items.map(item => `
             <div class="cart-item" id="item-${item.id}">
-              <div class="cart-item-thumb" style="background:${getProduct(item.id)?.thumb_color || '#F0F0F0'}">
+              <div class="cart-item-thumb" style="background:#F0F0F0">
                 ${getProduct(item.id) ? miniPepperSVG(getProduct(item.id)) : ''}
               </div>
               <div class="cart-item-info">
