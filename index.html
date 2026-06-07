@@ -222,6 +222,22 @@
       max-width:380px;width:100%;padding:28px 24px;text-align:center;
       box-shadow:0 16px 48px rgba(0,0,0,.12);
     }
+
+    @media (max-width: 480px) {
+      .products-grid { grid-template-columns: 1fr 1fr !important; gap: 8px !important; }
+      .add-btn {
+        font-size: .66rem !important;
+        padding: 12px 6px !important;
+        letter-spacing: .08em !important;
+        min-height: 44px !important;
+      }
+      .product-thumb { height: 130px !important; }
+      .product-info { padding: 10px 10px 12px !important; }
+    }
+    @media (max-width: 360px) {
+      .products-grid { grid-template-columns: 1fr !important; }
+      .add-btn { font-size: .74rem !important; padding: 14px !important; letter-spacing: .14em !important; }
+    }
   </style>
 </head>
 <body>

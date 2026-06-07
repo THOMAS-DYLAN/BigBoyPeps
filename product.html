@@ -551,6 +551,7 @@
       } else {
         const rating = await Auth.getProductRating(productId);
         renderProduct(p, rating);
+        injectHint(p);
         renderLabReport(p);
         renderRelated(p);
         renderReviews(productId, rating);
@@ -613,6 +614,7 @@
             </div>
 
             <div class="product-description">${p.description}</div>
+              <div id="hint-mount" style="display:none"></div>
 
             <!-- Research Hint -->
             \${(function() {
