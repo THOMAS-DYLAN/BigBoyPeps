@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <link rel="icon" type="image/webp" href="img/logo.webp">
+  <link rel="icon" type="image/png" href="img/logo.png">
+  <link rel="apple-touch-icon" href="img/logo.png">
+  <link rel="preconnect" href="https://utqviljholfvpfztfuvx.supabase.co" crossorigin>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dashboard — 956 Labs</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="modulepreload" href="../js/supabase.js">
+  <link rel="modulepreload" href="../js/auth.js?v=15">
+  <link rel="modulepreload" href="../js/cart.js?v=19">
+  <link rel="modulepreload" href="./site.js">
+  <link rel="modulepreload" href="../js/products.js?v=15">
+  <link rel="stylesheet" href="css/global.css"/>
+  <link rel="stylesheet" href="css/mobile.css"/>
+  <style>
+    body { display:flex; flex-direction:column; min-height:100vh; }
+    .container { max-width:1140px; margin:0 auto; padding:0 16px; }
+
+    .dash-header { background:#F6F6F6; border-bottom:1px solid var(--border); padding:40px 0 28px; position:relative; overflow:hidden; }
+    .dash-header::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(to right, var(--green) 33.3%, rgba(240,244,239,.15) 33.3% 66.6%, var(--red) 66.6%); }
+    .dash-header-inner { position:relative; z-index:1; display:flex; align-items:flex-end; justify-content:space-between; flex-wrap:wrap; gap:12px; }
+    .dash-greeting { font-family:var(--font-d); font-size:clamp(1.8rem,4vw,2.8rem); line-height:.95; letter-spacing:.03em; color:#111111; }
+    .dash-greeting em { color:var(--green); font-style:normal; }
+    .dash-since { font-family:var(--font-c); font-size:.63rem; font-weight:700; letter-spacing:.18em; text-transform:uppercase; color:#888888; margin-top:5px; }
+    .member-badge { display:inline-flex; align-items:center; gap:5px; font-family:var(--font-c); font-size:.58rem; font-weight:700; letter-spacing:.14em; text-transform:uppercase; background:rgba(0,104,71,.12); color:var(--green-hi); border:1px solid rgba(0,104,71,.22); padding:5px 12px; border-radius:999px; }
+
+    .dash-body { padding:32px 0 80px; flex:1; }
+    .dash-grid { display:grid; grid-template-columns:1fr 340px; gap:24px; align-items:start; }
+
+    .section-title { font-family:var(--font-d); font-size:1.45rem; letter-spacing:.04em; color:#111111; margin-bottom:18px; }
+    .section-title em { color:var(--green); font-style:normal; }
+
+    .account-panel { background:#F6F6F6; border:1px solid #D8D8D8; border-radius:2px; overflow:hidden; }
+    .panel-label { padding:11px 18px 5px; font-family:var(--font-c); font-size:.56rem; font-weight:700; letter-spacing:.2em; text-transform:uppercase; color:#888888; border-bottom:1px solid var(--border); }
+    .info-row { display:flex; align-items:center; gap:12px; padding:11px 18px; border-bottom:1px solid var(--border); min-height:50px; }
+    .info-row:last-child { border-bottom:none; }
+    .info-label { font-family:var(--font-c); font-size:.58rem; font-weight:700; letter-spacing:.16em; text-transform:uppercase; color:#888888; width:100px; flex-shrink:0; }
+    .info-val { font-size:.86rem; color:#1A1A1A; flex:1; }
+    .info-val.empty { color:#888888; font-style:italic; }
+    .info-val.locked { color:#666666; }
+    .edit-btn { font-family:var(--font-c); font-size:.58rem; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:#888888; padding:4px 9px; border:1px solid #D8D8D8; border-radius:2px; transition:all .18s; margin-left:auto; background:none; cursor:pointer; }
+    .edit-btn:hover { border-color:var(--green); color:var(--green-hi); }
+    .edit-wrap { display:none; flex:1; gap:7px; align-items:center; }
+    .edit-wrap.open { display:flex; }
+    .edit-wrap.open ~ div { display:none; }
+    .edit-wrap.open ~ button { display:none; }
+    .edit-input { flex:1; padding:6px 10px; font-size:.84rem; background:#FFFFFF; border:1px solid #D8D8D8; color:#111111; border-radius:2px; outline:none; min-width:0; transition:border-color .18s; font-family:var(--font-b); }
+    .edit-input:focus { border-color:var(--green); box-shadow:0 0 0 2px rgba(0,104,71,.12); }
+    .save-btn { font-family:var(--font-c); font-size:.58rem; font-weight:700; letter-spacing:.12em; text-transform:uppercase; background:var(--green); color:#fff; padding:5px 11px; border-radius:2px; white-space:nowrap; transition:background .18s; border:none; cursor:pointer; }
+    .save-btn:hover { background:var(--green-hi); }
+    .cancel-btn { font-family:var(--font-c); font-size:.58rem; font-weight:700; letter-spacing:.12em; text-transform:uppercase; background:transparent; color:#888888; padding:5px 9px; border:1px solid #D8D8D8; border-radius:2px; white-space:nowrap; cursor:pointer; }
+    .cancel-btn:hover { border-color:var(--red); color:var(--red-hi); }
+    .addr-save-btn { font-family:var(--font-c); font-size:.63rem; font-weight:700; letter-spacing:.12em; text-transform:uppercase; background:var(--green); color:#fff; padding:7px 15px; border-radius:2px; transition:background .18s; border:none; cursor:pointer; margin:10px 18px 14px; }
+    .addr-save-btn:hover { background:var(--green-hi); }
+
+    .order-card { display:flex; gap:10px; align-items:center; background:#FFFFFF; border:1px solid #D8D8D8; padding:12px 14px; margin-bottom:7px; border-radius:2px; transition:border-color .18s; }
+    .order-card:hover { border-color:var(--green-lo); }
+    .order-thumb { width:46px; height:46px; background:#F6F6F6; border:1px solid #D8D8D8; flex-shrink:0; display:flex; align-items:center; justify-content:center; overflow:hidden; }
+    .order-thumb img { width:36px; height:36px; object-fit:contain; }
+    .order-body { flex:1; min-width:0; }
+    .order-name { font-family:var(--font-c); font-size:.83rem; font-weight:700; letter-spacing:.04em; text-transform:uppercase; color:#111111; margin-bottom:4px; }
+    .order-meta { display:flex; gap:12px; flex-wrap:wrap; }
+    .meta-item { display:flex; flex-direction:column; gap:1px; }
+    .meta-label { font-family:var(--font-c); font-size:.54rem; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:#888888; }
+    .meta-val { font-family:var(--font-c); font-size:.7rem; font-weight:600; color:#1A1A1A; }
+    .order-total { font-family:var(--font-d); font-size:1.1rem; letter-spacing:.04em; color:#111111; flex-shrink:0; }
+    .orders-empty { font-size:.83rem; color:#888888; padding:16px 0; line-height:1.7; }
+    .orders-empty a { color:var(--green-hi); }
+    .orders-more { display:block; font-family:var(--font-c); font-size:.62rem; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:#888888; text-decoration:underline; text-underline-offset:3px; margin-top:10px; transition:color .18s; }
+    .orders-more:hover { color:var(--green-hi); }
+
+    @media (max-width:900px) { .dash-grid { grid-template-columns:1fr; } }
+    @media (max-width:500px)  { .info-row { flex-wrap:wrap; } .edit-btn { margin-left:0; } }
+  </style>
+  <meta name="robots" content="noindex,nofollow">
+</head>
+<body>
+  <div id="nav-mount"></div>
+  <div id="banner-mount"></div>
+
+  <div class="dash-header">
+    <div class="container">
+      <div class="dash-header-inner">
+        <div>
+          <div class="dash-greeting">Welcome, <em id="dash-name">Researcher.</em></div>
+          <div class="dash-since" id="dash-since">Member since —</div>
+        </div>
+        <div class="member-badge">✦ Active Member</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="dash-body">
+    <div class="container">
+      <div class="dash-grid">
+        <div>
+          <div class="section-title">Account <em>Settings</em></div>
+          <div class="account-panel" id="account-panel"><p style="padding:18px;color:#888888;font-size:.83rem">Loading…</p></div>
+        </div>
+        <div>
+          <div class="section-title">Recent <em>Orders</em></div>
+          <div id="orders-panel"><p style="color:#888888;font-size:.83rem">Loading…</p></div>
+          <a href="orders.html" class="orders-more">View all orders →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="footer-mount"></div>
+
+  <script type="module">
+    import '../js/auth.js?v=15';
+    import '../js/cart.js?v=19';
+    import './site.js';
+    await import('./site.js');
+    import { loadProducts, getProduct, miniPepperSVG } from '../js/products.js?v=15';
+
+    let profile = {}, recentOrders = [], defaultAddr = null;
+    const _r = await Promise.all([
+      window.initPage('home'),
+      loadProducts(),
+      Auth.getProfile(),
+      Auth.getRecentOrders(),
+      Auth.getDefaultAddress(),
+    ]);
+    profile      = _r[2] || {};
+    recentOrders = _r[3] || [];
+    defaultAddr  = _r[4] || null;
+
+    document.getElementById('dash-name').textContent =
+      ((profile.first_name || '') + (profile.last_name ? ' ' + profile.last_name : '') || 'Researcher') + '.';
+    document.getElementById('dash-since').textContent = 'Member since ' + Auth.formatDate(profile.member_since);
+
+    // ── Orders panel ─────────────────────────────────
+    const ordersEl = document.getElementById('orders-panel');
+    if (!recentOrders.length) {
+      ordersEl.innerHTML = '<div class="orders-empty">No orders yet.<br/><a href="dashboard.html">Browse the catalog →</a></div>';
+    } else {
+      ordersEl.innerHTML = recentOrders.map(o => {
+        const p   = getProduct(o.product_id);
+        const img = p?.images ? '<img src="../pdct img/'+p.images+'" alt="'+o.product_name+'"/>' : (p ? miniPepperSVG(p) : '');
+        const date = new Date(o.ordered_at).toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
+        return '<div class="order-card">'
+          + '<div class="order-thumb">' + img + '</div>'
+          + '<div class="order-body"><div class="order-name">' + o.product_name + '</div>'
+          + '<div class="order-meta">'
+          + '<span class="meta-item"><span class="meta-label">Date</span><span class="meta-val">' + date + '</span></span>'
+          + '<span class="meta-item"><span class="meta-label">Qty</span><span class="meta-val">' + o.qty + '</span></span>'
+          + (o.shipping_carrier ? '<span class="meta-item"><span class="meta-label">Via</span><span class="meta-val">' + o.shipping_carrier + '</span></span>' : '')
+          + '</div></div>'
+          + '<div class="order-total">$' + Number(o.total).toFixed(2) + '</div>'
+          + '</div>';
+      }).join('');
+    }
+
+    // ── Account panel ─────────────────────────────────
+    const PROFILE_FIELDS = [
+      { key:'email',      label:'Email',      type:'email', placeholder:'you@example.com' },
+      { key:'first_name', label:'First Name', type:'text',  placeholder:'Jane'  },
+      { key:'last_name',  label:'Last Name',  type:'text',  placeholder:'Smith' },
+      { key:'phone',      label:'Phone',      type:'tel',   placeholder:'+1 555 000 0000' },
+    ];
+    const ADDRESS_FIELDS = [
+      { key:'street_line1', label:'Street',    type:'text', placeholder:'123 Main St' },
+      { key:'street_line2', label:'Apt/Suite', type:'text', placeholder:'Apt 4B'      },
+      { key:'city',         label:'City',      type:'text', placeholder:'McAllen'     },
+      { key:'state',        label:'State',     type:'text', placeholder:'TX'          },
+      { key:'zip',          label:'ZIP',       type:'text', placeholder:'78501'       },
+      { key:'country',      label:'Country',   type:'text', placeholder:'US'          },
+    ];
+
+    function infoRow(key, label, type, placeholder, val) {
+      return '<div class="info-row">'
+        + '<div class="info-label">' + label + '</div>'
+        + '<div class="edit-wrap" id="wrap-' + key + '">'
+        + '<input class="edit-input" id="inp-' + key + '" type="' + type + '" value="' + (val||'') + '" placeholder="' + placeholder + '"/>'
+        + '<button class="save-btn" onclick="saveField(\'' + key + '\')">Save</button>'
+        + '<button class="cancel-btn" onclick="cancelEdit(\'' + key + '\')">Cancel</button>'
+        + '</div>'
+        + '<div><div class="info-val' + (val?'':' empty') + '" id="val-' + key + '">' + (val||'Not set') + '</div></div>'
+        + '<button class="edit-btn" onclick="startEdit(\'' + key + '\')">Edit</button>'
+        + '</div>';
+    }
+
+    let _addrId = defaultAddr?.id || null;
+
+    document.getElementById('account-panel').innerHTML =
+      '<div class="panel-label">Personal Info</div>'
+      + PROFILE_FIELDS.map(f => infoRow(f.key, f.label, f.type, f.placeholder, profile[f.key]||'')).join('')
+      + '<div class="info-row"><div class="info-label">Member Since</div><div class="info-val locked">' + Auth.formatDate(profile.member_since) + '</div><span style="margin-left:auto;font-size:.85rem">🔒</span></div>'
+      + '<div class="panel-label" style="margin-top:8px">Default Shipping Address</div>'
+      + ADDRESS_FIELDS.map(f => infoRow('addr_'+f.key, f.label, f.type, f.placeholder, defaultAddr?.[f.key]||'')).join('')
+      + '<div><button class="addr-save-btn" onclick="saveAddress()">Save Address</button></div>';
+
+    window.startEdit  = k => { document.getElementById('wrap-'+k)?.classList.add('open'); document.getElementById('inp-'+k)?.focus(); };
+    window.cancelEdit = k => { document.getElementById('wrap-'+k)?.classList.remove('open'); };
+
+    window.saveField = async k => {
+      const val = document.getElementById('inp-'+k)?.value.trim() || '';
+      if (k.startsWith('addr_')) {
+        const field   = k.replace('addr_','');
+        const current = await Auth.getDefaultAddress() || {};
+        await Auth.saveAddress({ id: current.id||null, label:'Default', first_name:current.first_name||'', last_name:current.last_name||'', street_line1:current.street_line1||'', street_line2:current.street_line2||'', city:current.city||'', state:current.state||'', zip:current.zip||'', country:current.country||'US', is_default:true, [field]:val });
+      } else {
+        await Auth.updateField(k, val);
+        if (k==='first_name'||k==='last_name') {
+          const p = await Auth.getProfile();
+          document.getElementById('dash-name').textContent = ((p?.first_name||'')+(p?.last_name?' '+p.last_name:'') || 'Researcher') + '.';
+        }
+      }
+      const el = document.getElementById('val-'+k);
+      if (el) { el.textContent = val||'Not set'; el.className = 'info-val' + (val?'':' empty'); }
+      cancelEdit(k);
+    };
+
+    window.saveAddress = async () => {
+      const g = k => document.getElementById('inp-addr_'+k)?.value.trim() || '';
+      const addr = { id:_addrId, label:'Default', first_name:profile.first_name||'', last_name:profile.last_name||'', street_line1:g('street_line1'), street_line2:g('street_line2'), city:g('city'), state:g('state'), zip:g('zip'), country:g('country')||'US', is_default:true };
+      const r = await Auth.saveAddress(addr);
+      if (r.ok) {
+        ADDRESS_FIELDS.forEach(f => {
+          const el  = document.getElementById('val-addr_'+f.key);
+          const val = addr[f.key];
+          if (el) { el.textContent = val||'Not set'; el.className = 'info-val'+(val?'':' empty'); }
+          document.getElementById('wrap-addr_'+f.key)?.classList.remove('open');
+        });
+      }
+    };
+  </script>
+</body>
+</html>

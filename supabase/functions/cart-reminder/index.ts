@@ -33,7 +33,7 @@ serve(async (req) => {
     if (testEmail) {
       reminders = [{
         id: "test", user_id: "test-uid", email: testEmail,
-        reminder_count: 0, last_reminder: null,
+        source: 'bbp', reminder_count: 0, last_reminder: null,
         last_cart_update: new Date(Date.now() - 8 * 24 * 60 * 60 * 1000).toISOString(),
         cart_snapshot: [
           { name: "Semaglutide 10mg", qty: 2, price: 16, isBundle: false },
@@ -132,9 +132,9 @@ serve(async (req) => {
   </div>
 
   <!-- CTA block — full-width background breaks Gmail signature detection -->
-  <div style="background:#111111;padding:28px 32px;text-align:center">
-    <p style="margin:0 0 16px;font-size:13px;color:#aaaaaa;line-height:1.6">Ready to complete your order? Use code <strong style="color:#B8892A">DYLAN10</strong> for 10% off.</p>
-    <a href="${SHOP_URL}" style="display:inline-block;background:#B8892A;color:#ffffff;font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;padding:14px 36px;text-decoration:none;border-radius:3px">
+  <div style="background:${row.source === '956labs' ? '#006847' : '#111111'};padding:28px 32px;text-align:center">
+    <p style="margin:0 0 16px;font-size:13px;color:#cccccc;line-height:1.6">Ready to complete your order? Use code <strong style="color:${row.source === '956labs' ? '#ffffff' : '#B8892A'}">DYLAN10</strong> for 10% off.</p>
+    <a href="${row.source === '956labs' ? 'https://956labs.bigboypeps.com/index.html' : SHOP_URL}" style="display:inline-block;background:#B8892A;color:#ffffff;font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;padding:14px 36px;text-decoration:none;border-radius:3px">
       Complete My Order →
     </a>
   </div>

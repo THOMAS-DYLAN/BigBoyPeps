@@ -14,11 +14,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Research Peptides — BigBoyPeps</title>
   <meta name="description" content="Research-grade peptides from BigBoyPeps. For licensed research purposes only.">
-  <link rel="canonical" href="https://bigboypeps.com/product.html">
   <meta property="og:type" content="product">
   <meta property="og:title" content="Research Peptides — BigBoyPeps">
   <meta property="og:url" content="https://bigboypeps.com/product.html">
   <meta property="og:image" content="https://bigboypeps.com/img/logo.png">
+  <link rel="canonical" href="">
   <meta name="robots" content="index,follow">
   <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Permanent+Marker&family=Barlow:wght@300;400;500;600&family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet" />
@@ -28,6 +28,7 @@
   <link rel="modulepreload" href="js/products.js?v=15">
   <link rel="stylesheet" href="css/global.css?v=2" />
   <link rel="stylesheet" href="css/shared.css?v=2" />
+  <link rel="stylesheet" href="css/mobile.css" />
   <style>
     body { display: flex; flex-direction: column; min-height: 100vh; }
 
@@ -120,6 +121,33 @@
       border-left: 2px solid var(--border); padding-left: 20px;
     }
 
+
+    /* ── Research Hint ───────────────────────────────── */
+    .research-hint {
+      margin-top: 24px;
+      border: 1px solid var(--border);
+      border-left: 2px solid var(--red);
+      overflow: hidden;
+    }
+    .hint-toggle {
+      width: 100%; display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 14px; background: none; border: none; cursor: pointer;
+      font-family: var(--font-c); font-size: .62rem; font-weight: 700;
+      letter-spacing: .14em; text-transform: uppercase; color: var(--red);
+      transition: background .18s;
+    }
+    .hint-toggle:hover { background: rgba(184,137,42,.05); }
+    .hint-arrow { font-size: .7rem; transition: transform .25s; }
+    .hint-arrow.open { transform: rotate(180deg); }
+    .hint-body {
+      max-height: 0; overflow: hidden; transition: max-height .3s ease;
+    }
+    .hint-body.open { max-height: 200px; }
+    .hint-text {
+      padding: 0 14px 14px;
+      font-family: var(--font-b); font-size: .82rem; color: var(--ash);
+      line-height: 1.7;
+    }
     .product-divider { height: 1px; background: var(--border); margin: 28px 0; }
 
     .product-price-row {
@@ -570,6 +598,24 @@
 
             <div class="product-description">${p.description}</div>
 
+            <!-- Research Hint -->
+            \${(function() {
+              const hints = {"sema": ["Semaglutide", "A GLP-1 receptor agonist originally developed for blood sugar regulation. Research focuses on its role in metabolic pathways, appetite signaling, and cellular energy balance."], "tirz": ["Tirzepatide", "A dual GIP/GLP-1 receptor agonist. Research explores its effects on insulin sensitivity, lipid metabolism, and energy homeostasis \u2014 making it one of the most studied compounds in metabolic research."], "bpc": ["BPC-157", "A pentadecapeptide derived from a human gastric protein. Extensively studied for its role in tissue repair, angiogenesis, and gastrointestinal integrity in preclinical models."], "tb500": ["TB-500 / Thymosin Beta-4", "A synthetic peptide fragment of Thymosin Beta-4. Research focuses on actin binding, cell migration, and wound healing mechanisms."], "ghk": ["GHK-Cu", "A naturally occurring copper peptide found in human plasma. Research areas include collagen synthesis stimulation, antioxidant activity, and tissue regeneration signals."], "mots": ["MOTS-c", "A mitochondrial-derived peptide that regulates metabolic homeostasis. Research focuses on insulin sensitivity, exercise response, and cellular aging pathways."], "reta": ["Retatrutide", "A triple agonist targeting GLP-1, GIP, and glucagon receptors. Among the newest compounds in metabolic research, studied for its effects on energy expenditure and adipose tissue."], "tesa": ["Tesamorelin", "A GHRH analogue that stimulates growth hormone release. Research examines its role in visceral adipose reduction and IGF-1 axis regulation."], "ipa": ["Ipamorelin", "A selective GH secretagogue and ghrelin receptor agonist. Research focuses on pulsatile growth hormone release with minimal effect on cortisol and prolactin."], "cjc": ["CJC-1295", "A long-acting GHRH analogue. Research examines its extended half-life through DAC (Drug Affinity Complex) technology and sustained GH/IGF-1 elevation."], "aod": ["AOD-9604", "A modified fragment of human growth hormone (hGH 176-191). Research focuses specifically on lipolytic activity without the growth-promoting effects of full hGH."], "ahk": ["AHK-Cu", "A tripeptide copper complex. Research explores its role in hair follicle biology, scalp circulation, and extracellular matrix remodeling."], "klow": ["KLOW-80", "A proprietary peptide formulation. Research focuses on its metabolic activity profile and receptor binding characteristics across multiple pathways."], "bac": ["BAC Water", "Bacteriostatic water \u2014 sterile water preserved with 0.9% benzyl alcohol. The standard reconstitution solution for lyophilized research peptides."]};
+              const name = p.name.toLowerCase();
+              const match = Object.keys(hints).find(k => name.includes(k));
+              if (!match) return '';
+              const [label, text] = hints[match];
+              return \`<div class="research-hint">
+                <button class="hint-toggle" onclick="this.nextElementSibling.classList.toggle('open');this.querySelector('.hint-arrow').classList.toggle('open')">
+                  <span>What is \${label}?</span>
+                  <span class="hint-arrow">▼</span>
+                </button>
+                <div class="hint-body">
+                  <p class="hint-text">\${text}</p>
+                </div>
+              </div>\`;
+            })()}
+
             <div class="product-divider"></div>
 
             <div class="product-price-row">
@@ -972,6 +1018,10 @@
       Object.entries(metas).forEach(([k,v]) => {
         var el = document.querySelector('meta[property="'+k+'"],meta[name="'+k+'"]');
         if (el) el.setAttribute(el.hasAttribute('property')?'content':'content', v);
+      // Dynamic canonical
+      var canon = document.querySelector('link[rel="canonical"]');
+      if (!canon) { canon = document.createElement('link'); canon.rel = 'canonical'; document.head.appendChild(canon); }
+      canon.href = 'https://bigboypeps.com/product.html?id=' + p.id;
       });
       // JSON-LD structured data
       var ld = {

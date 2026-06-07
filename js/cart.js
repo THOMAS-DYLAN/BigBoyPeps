@@ -316,6 +316,7 @@ async function trackCartUpdate() {
       cart_snapshot:    snapshot,
       last_cart_update: new Date().toISOString(),
       converted:        false,
+      source:           window.CART_SOURCE || 'bbp',
     }, { onConflict: 'user_id' });
   } catch(e) { console.warn('cart track error:', e); }
 }
