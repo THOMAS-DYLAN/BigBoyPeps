@@ -186,6 +186,22 @@
       transition: background .2s, transform .2s;
       display: flex; align-items: center; justify-content: center; gap: 8px;
     }
+
+    /* ── Add to cart — mobile full width ─── */
+    @media (max-width: 600px) {
+      .product-actions {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+      }
+      .qty-control { width: 100%; justify-content: center; }
+      .add-to-cart-btn {
+        width: 100% !important;
+        flex: none !important;
+        min-width: 0 !important;
+        clip-path: none !important;
+      }
+    }
     .add-to-cart-btn:hover { background: var(--red-hot); transform: translateY(-1px); }
     .add-to-cart-btn.added { background: #2a6a2a; clip-path: none; }
 
