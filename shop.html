@@ -2,19 +2,30 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <link rel="icon" href="data:,">
+  <link rel="icon" type="image/png" href="img/logo.png">
+  <link rel="apple-touch-icon" href="img/logo.png">
   <link rel="preconnect" href="https://utqviljholfvpfztfuvx.supabase.co" crossorigin>
   <link rel="dns-prefetch" href="https://utqviljholfvpfztfuvx.supabase.co">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Shop — BigBoyPeps</title>
+    <title>Buy Research Peptides Online | BigBoyPeps</title>
+  <meta name="description" content="Shop research-grade peptides including Semaglutide, Tirzepatide, BPC-157, and more. Fast USPS shipping. For licensed research purposes only.">
+  <meta name="keywords" content="research peptides, buy peptides online, semaglutide research, tirzepatide peptide, BPC-157, GLP peptides, GH peptides">
+  <link rel="canonical" href="https://bigboypeps.com/shop.html">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Research Peptides — BigBoyPeps">
+  <meta property="og:description" content="Shop research-grade peptides. Semaglutide, Tirzepatide, BPC-157 and more. USPS shipping. For research purposes only.">
+  <meta property="og:url" content="https://bigboypeps.com/shop.html">
+  <meta property="og:image" content="https://bigboypeps.com/img/logo.png">
+  <meta name="twitter:card" content="summary">
+  <meta name="robots" content="index,follow">
   <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Permanent+Marker&family=Barlow:wght@300;400;500;600&family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet" />
   <link rel="modulepreload" href="js/supabase.js">
   <link rel="modulepreload" href="js/auth.js?v=15">
-  <link rel="modulepreload" href="js/cart.js?v=18">
+  <link rel="modulepreload" href="js/cart.js?v=19">
   <link rel="modulepreload" href="js/products.js?v=15">
   <link rel="stylesheet" href="css/global.css?v=2" />
   <link rel="stylesheet" href="css/shared.css?v=2" />
@@ -42,10 +53,10 @@
     .shop-eyebrow::before { content: ''; width: 28px; height: 2px; background: var(--red); }
     .shop-title {
       font-family: var(--font-d); font-size: clamp(3rem,7vw,6rem);
-      line-height: .92; letter-spacing: .03em; color: var(--white); margin-bottom: 16px;
+      line-height: .92; letter-spacing: .03em; color: #111111; margin-bottom: 16px;
     }
     .shop-title em { color: var(--red); font-style: normal; }
-    .shop-desc { font-size: .9rem; color: var(--smoke); max-width: 480px; line-height: 1.75; }
+    .shop-desc { font-size: .9rem; color: #888888; max-width: 480px; line-height: 1.75; }
 
     .filters-bar {
       display: flex; align-items: center; gap: 8px;
@@ -53,15 +64,15 @@
     }
     .filters-label {
       font-family: var(--font-c); font-size: .68rem; font-weight: 700;
-      letter-spacing: .2em; text-transform: uppercase; color: var(--smoke); margin-right: 8px;
+      letter-spacing: .2em; text-transform: uppercase; color: #888888; margin-right: 8px;
     }
     .filter-btn {
       padding: 7px 18px; font-family: var(--font-c); font-size: .7rem; font-weight: 700;
       letter-spacing: .14em; text-transform: uppercase;
-      color: var(--smoke); border: 1px solid var(--border); background: transparent; transition: all .18s;
+      color: #888888; border: 1px solid #E0E0E0; background: transparent; transition: all .18s;
     }
-    .filter-btn:hover  { border-color: var(--ash); color: var(--light); }
-    .filter-btn.active { background: var(--red); color: var(--white); border-color: var(--red); }
+    .filter-btn:hover  { border-color: var(--ash); color: #222222; }
+    .filter-btn.active { background: var(--red); color: #111111; border-color: var(--red); }
     .filter-btn-bundle { color: #D4A843; border-color: rgba(212,170,50,.4); letter-spacing: .14em; }
     .filter-btn-bundle:hover { border-color: #D4A843; color: #f5c842; background: rgba(212,170,50,.06); }
     .filter-btn-bundle.active { background: #D4A843; color: #04090F; border-color: #D4A843; }
@@ -72,7 +83,7 @@
     }
 
     .product-card {
-      background: var(--card); border: 1px solid var(--border);
+      background: #FFFFFF; border: 1px solid #E0E0E0;
       transition: border-color .22s, transform .22s, box-shadow .22s;
       display: flex; flex-direction: column;
     }
@@ -86,7 +97,7 @@
       position: absolute; top: 12px; left: 12px; z-index: 2;
       font-family: var(--font-c); font-size: .6rem; font-weight: 700;
       letter-spacing: .18em; text-transform: uppercase;
-      padding: 4px 10px; border: 1px solid var(--border); background: rgba(12,12,12,.8); color: var(--smoke);
+      padding: 4px 10px; border: 1px solid #E0E0E0; background: rgba(12,12,12,.8); color: #888888;
     }
     .product-badge.badge-hot { background: rgba(184,137,42,.15); color: var(--red); border-color: rgba(184,137,42,.32); }
 
@@ -97,16 +108,16 @@
     }
     .product-name {
       font-family: var(--font-c); font-size: 1.05rem; font-weight: 700;
-      letter-spacing: .04em; text-transform: uppercase; color: var(--white); margin-bottom: 4px; line-height: 1.25;
+      letter-spacing: .04em; text-transform: uppercase; color: #111111; margin-bottom: 4px; line-height: 1.25;
     }
-    .product-research { font-size: .67rem; color: var(--smoke); font-style: italic; margin-bottom: 9px; }
-    .product-desc { font-size: .8rem; color: var(--smoke); line-height: 1.6; margin-bottom: 18px; flex: 1; }
+    .product-research { font-size: .67rem; color: #888888; font-style: italic; margin-bottom: 9px; }
+    .product-desc { font-size: .8rem; color: #888888; line-height: 1.6; margin-bottom: 18px; flex: 1; }
     .product-footer { display: flex; flex-direction: column; gap: 10px; }
     .product-price-row { display: flex; align-items: center; justify-content: space-between; }
-    .product-price { font-family: var(--font-d); font-size: 1.6rem; letter-spacing: .04em; color: var(--white); }
+    .product-price { font-family: var(--font-d); font-size: 1.6rem; letter-spacing: .04em; color: #111111; }
     .add-btn {
       width: 100%; padding: 12px 16px;
-      background: var(--red); color: var(--white);
+      background: var(--red); color: #111111;
       font-family: var(--font-c); font-size: .74rem; font-weight: 700;
       letter-spacing: .18em; text-transform: uppercase;
       display: flex; align-items: center; justify-content: center; gap: 8px;
@@ -126,9 +137,9 @@
 
     .add-flash {
       position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(16px);
-      background: var(--off); border: 1px solid var(--border); border-left: 3px solid var(--red);
+      background: #F6F6F6; border: 1px solid #E0E0E0; border-left: 3px solid var(--red);
       font-family: var(--font-c); font-size: .78rem; font-weight: 700; letter-spacing: .08em;
-      color: var(--light); padding: 12px 24px;
+      color: #222222; padding: 12px 24px;
       opacity: 0; transition: all .26s; pointer-events: none; white-space: nowrap; z-index: 100;
     }
     .add-flash.show { opacity: 1; transform: translateX(-50%) translateY(0); }
@@ -148,11 +159,11 @@
     }
     .bundle-qty-note {
       font-family: var(--font-c); font-size: .62rem; font-weight: 700;
-      letter-spacing: .1em; text-transform: uppercase; color: var(--smoke);
+      letter-spacing: .1em; text-transform: uppercase; color: #888888;
       margin-bottom: 4px;
     }
     .bundle-unit-note {
-      font-size: .72rem; color: var(--smoke); margin-top: 3px;
+      font-size: .72rem; color: #888888; margin-top: 3px;
     }
     .bundle-btn {
       width: 100%; padding: 12px 16px;
@@ -166,10 +177,10 @@
     .bundle-btn:hover { background: #f5c842; }
     .bundle-unavail {
       width: 100%; padding: 11px 16px;
-      background: transparent; color: var(--smoke);
+      background: transparent; color: #888888;
       font-family: var(--font-c); font-size: .7rem; font-weight: 700;
       letter-spacing: .14em; text-transform: uppercase;
-      border: 1px solid var(--border); text-align: center;
+      border: 1px solid #E0E0E0; text-align: center;
     }
     .out-of-stock-banner {
       position: absolute; top: 50%; left: 50%;
@@ -186,7 +197,7 @@
 
 
     /* skeleton loading */
-    .skeleton-card { background: var(--card); border: 1px solid var(--border); }
+    .skeleton-card { background: #FFFFFF; border: 1px solid #E0E0E0; }
     .skeleton-thumb { height: 200px; background: var(--charcoal, #222); }
     .skeleton-info  { padding: 18px 20px 20px; }
     .skeleton-line  { border-radius: 2px; background: var(--charcoal, #222); }
@@ -245,7 +256,7 @@
 <script type="module">
     import { supabase } from './js/supabase.js';
     import './js/auth.js?v=15';
-    import './js/cart.js?v=18';
+    import './js/cart.js?v=19';
     import { loadProducts, allProducts, getProduct, pepperSVG, heatPips } from './js/products.js?v=15';
 
     await Promise.all([
@@ -335,7 +346,7 @@
                   .sort(function(a,b) { return a.id - b.id; });
         html = list.length
           ? list.map(buildBundleCard).join('')
-          : '<div style="grid-column:1/-1;padding:48px 0;text-align:center"><p style="font-family:var(--font-c);font-size:.75rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--smoke)">No bundles available</p></div>';
+          : '<div style="grid-column:1/-1;padding:48px 0;text-align:center"><p style="font-family:var(--font-c);font-size:.75rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:#888888">No bundles available</p></div>';
       } else {
         if (cat === 'In Stock') {
           list = all.filter(function(p) { return p.inventory > 0; }).sort(function(a,b) { return a.id - b.id; });
@@ -344,7 +355,7 @@
         }
         html = list.length
           ? list.map(buildCard).join('')
-          : '<div style="grid-column:1/-1;padding:48px 0;text-align:center"><p style="font-family:var(--font-c);font-size:.75rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--smoke)">' + (all.length === 0 ? 'No products loaded — check browser console (F12) for errors' : 'No products in this category') + '</p></div>';
+          : '<div style="grid-column:1/-1;padding:48px 0;text-align:center"><p style="font-family:var(--font-c);font-size:.75rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:#888888">' + (all.length === 0 ? 'No products loaded — check browser console (F12) for errors' : 'No products in this category') + '</p></div>';
       }
       grid.innerHTML = html;
     }

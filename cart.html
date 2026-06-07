@@ -2,7 +2,10 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <link rel="icon" href="data:,">
+  <link rel="icon" type="image/webp" href="/img/logo.webp">
+  <link rel="icon" type="image/webp" href="/img/logo.webp">
+  <link rel="icon" type="image/png" href="/img/logo.png">
+  <link rel="apple-touch-icon" href="/img/logo.png">
   <link rel="preconnect" href="https://utqviljholfvpfztfuvx.supabase.co" crossorigin>
   <link rel="dns-prefetch" href="https://utqviljholfvpfztfuvx.supabase.co">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,7 +17,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Permanent+Marker&family=Barlow:wght@300;400;500;600&family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet" />
   <link rel="modulepreload" href="js/supabase.js">
   <link rel="modulepreload" href="js/auth.js?v=15">
-  <link rel="modulepreload" href="js/cart.js?v=18">
+  <link rel="modulepreload" href="js/cart.js?v=19">
   <link rel="modulepreload" href="js/products.js?v=15">
   <link rel="stylesheet" href="css/global.css?v=2" />
   <link rel="stylesheet" href="css/shared.css?v=2" />
@@ -39,7 +42,7 @@
     .cart-page-eyebrow::before { content: ''; width: 28px; height: 2px; background: var(--red); }
     .cart-page-title {
       font-family: var(--font-d); font-size: clamp(2.5rem,6vw,5rem);
-      line-height: .92; letter-spacing: .03em; color: var(--white);
+      line-height: .92; letter-spacing: .03em; color: #111111;
     }
     .cart-page-title em { color: var(--red); font-style: normal; }
 
@@ -71,29 +74,29 @@
       align-items: center;
     }
     .cart-item-thumb {
-      width: 72px; height: 72px; background: var(--card); border: 1px solid var(--border);
+      width: 72px; height: 72px; background: #FFFFFF; border: 1px solid #E0E0E0;
       display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0;
     }
     .cart-item-info { min-width: 0; }
     .cart-item-name {
       font-family: var(--font-c); font-size: .92rem; font-weight: 700;
-      letter-spacing: .04em; text-transform: uppercase; color: var(--white); margin-bottom: 3px;
+      letter-spacing: .04em; text-transform: uppercase; color: #111111; margin-bottom: 3px;
     }
     .cart-item-research { font-size: .66rem; color: var(--smoke); font-style: italic; margin-bottom: 10px; }
     .cart-item-controls { display: flex; align-items: center; gap: 10px; }
     .qty-btn {
-      width: 26px; height: 26px; border: 1px solid var(--border); color: var(--ash);
+      width: 26px; height: 26px; border: 1px solid #E0E0E0; color: var(--ash);
       font-size: .95rem; display: flex; align-items: center; justify-content: center;
       transition: all .15s;
     }
     .qty-btn:hover { border-color: var(--red); color: var(--red); }
     .qty-val {
       font-family: var(--font-c); font-size: .88rem; font-weight: 700;
-      color: var(--white); min-width: 20px; text-align: center;
+      color: #111111; min-width: 20px; text-align: center;
     }
     .cart-item-right { text-align: right; }
     .cart-item-price {
-      font-family: var(--font-d); font-size: 1.3rem; color: var(--white);
+      font-family: var(--font-d); font-size: 1.3rem; color: #111111;
       letter-spacing: .04em; margin-bottom: 8px;
     }
     .remove-btn {
@@ -112,14 +115,14 @@
     }
     .cart-empty h2 {
       font-family: var(--font-d); font-size: 1.8rem; letter-spacing: .06em;
-      color: var(--white); margin-bottom: 10px;
+      color: #111111; margin-bottom: 10px;
     }
     .cart-empty p { font-size: .85rem; color: var(--smoke); margin-bottom: 28px; }
     .back-to-shop {
       display: inline-flex; align-items: center;
       font-family: var(--font-c); font-size: .75rem; font-weight: 700;
       letter-spacing: .14em; text-transform: uppercase;
-      background: var(--red); color: var(--white); padding: 12px 28px;
+      background: var(--red); color: #111111; padding: 12px 28px;
       clip-path: polygon(0 0,calc(100% - 7px) 0,100% 7px,100% 100%,7px 100%,0 calc(100% - 7px));
       transition: background .18s;
     }
@@ -127,12 +130,12 @@
 
     /* summary panel */
     .summary-panel {
-      background: var(--off); border: 1px solid var(--border); padding: 28px;
+      background: #F6F6F6; border: 1px solid #E0E0E0; padding: 28px;
       position: sticky; top: 82px;
     }
     .summary-title {
       font-family: var(--font-d); font-size: 1.5rem; letter-spacing: .06em;
-      color: var(--white); margin-bottom: 20px;
+      color: #111111; margin-bottom: 20px;
     }
     .summary-row {
       display: flex; justify-content: space-between; align-items: center;
@@ -150,13 +153,13 @@
       letter-spacing: .2em; text-transform: uppercase; color: var(--smoke);
     }
     .summary-total-val {
-      font-family: var(--font-d); font-size: 2rem; color: var(--white); letter-spacing: .04em;
+      font-family: var(--font-d); font-size: 2rem; color: #111111; letter-spacing: .04em;
     }
     .checkout-btn {
       width: 100%; padding: 15px; margin-top: 20px;
       font-family: var(--font-c); font-size: .82rem; font-weight: 700;
       letter-spacing: .18em; text-transform: uppercase;
-      background: var(--red); color: var(--white);
+      background: var(--red); color: #111111;
       clip-path: polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,8px 100%,0 calc(100% - 8px));
       transition: background .2s;
     }
@@ -191,6 +194,7 @@
       .container { padding: 0 16px; }
     }
   </style>
+  <meta name="robots" content="noindex,nofollow">
 </head>
 <body>
   <div id="nav-mount"></div>
@@ -220,7 +224,8 @@
 
   <script type="module">
     import './js/auth.js?v=15';
-    import './js/cart.js?v=18';
+    import './js/cart.js?v=19';
+    import './js/products.js?v=15';
     import { loadProducts, getProduct, miniPepperSVG } from './js/products.js?v=15';
 
     await Promise.all([window.initPage('cart'), loadProducts()]);
@@ -236,7 +241,7 @@
             <div class="cart-empty-icon">🧪</div>
             <h2>Your cart is empty.</h2>
             <p>Looks like you haven't added anything yet.</p>
-            <a href="shop.html" class="back-to-shop">Back to Shop</a>
+            <a href="dashboard.html" class="back-to-shop">Back to Shop</a>
           </div>`;
         return;
       }
@@ -253,7 +258,7 @@
           </div>
           ${items.map(item => `
             <div class="cart-item" id="item-${item.id}">
-              <div class="cart-item-thumb" style="background:${getProduct(item.id)?.thumb_color || '#1e1e1e'}">
+              <div class="cart-item-thumb" style="background:${getProduct(item.id)?.thumb_color || '#F0F0F0'}">
                 ${getProduct(item.id) ? miniPepperSVG(getProduct(item.id)) : ''}
               </div>
               <div class="cart-item-info">
@@ -284,7 +289,7 @@
           </div>
           <button class="checkout-btn" onclick="openCheckout()">Proceed to Checkout</button>
           <p class="summary-disclaimer">All products are for research purposes only and not intended for human consumption.</p>
-          <a href="shop.html" class="continue-link">← Continue Shopping</a>
+          <a href="dashboard.html" class="continue-link">← Continue Shopping</a>
         </div>`;
     }
 

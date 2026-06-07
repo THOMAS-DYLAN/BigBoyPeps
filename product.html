@@ -2,19 +2,29 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <link rel="icon" href="data:,">
+  <link rel="icon" type="image/webp" href="/img/logo.webp">
+  <link rel="icon" type="image/webp" href="/img/logo.webp">
+  <link rel="icon" type="image/png" href="/img/logo.png">
+  <link rel="apple-touch-icon" href="/img/logo.png">
   <link rel="preconnect" href="https://utqviljholfvpfztfuvx.supabase.co" crossorigin>
   <link rel="dns-prefetch" href="https://utqviljholfvpfztfuvx.supabase.co">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Product — BigBoyPeps</title>
+    <title>Research Peptides — BigBoyPeps</title>
+  <meta name="description" content="Research-grade peptides from BigBoyPeps. For licensed research purposes only.">
+  <link rel="canonical" href="https://bigboypeps.com/product.html">
+  <meta property="og:type" content="product">
+  <meta property="og:title" content="Research Peptides — BigBoyPeps">
+  <meta property="og:url" content="https://bigboypeps.com/product.html">
+  <meta property="og:image" content="https://bigboypeps.com/img/logo.png">
+  <meta name="robots" content="index,follow">
   <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Permanent+Marker&family=Barlow:wght@300;400;500;600&family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet" />
   <link rel="modulepreload" href="js/supabase.js">
   <link rel="modulepreload" href="js/auth.js?v=15">
-  <link rel="modulepreload" href="js/cart.js?v=18">
+  <link rel="modulepreload" href="js/cart.js?v=19">
   <link rel="modulepreload" href="js/products.js?v=15">
   <link rel="stylesheet" href="css/global.css?v=2" />
   <link rel="stylesheet" href="css/shared.css?v=2" />
@@ -44,7 +54,7 @@
     .product-main-thumb {
       width: 100%; aspect-ratio: 1 / 1;
       display: flex; align-items: center; justify-content: center;
-      border: 1px solid var(--border); position: relative; overflow: hidden;
+      border: 1px solid #E0E0E0; position: relative; overflow: hidden;
     }
     .product-main-thumb::after {
       content: ''; position: absolute; inset: 0;
@@ -74,7 +84,7 @@
     /* research tag */
     .product-research-tag {
       margin-top: 16px; padding: 12px 16px;
-      border: 1px solid var(--border); background: var(--off);
+      border: 1px solid #E0E0E0; background: #F6F6F6;
       font-size: .7rem; color: var(--smoke); font-style: italic;
       line-height: 1.6; text-align: center;
     }
@@ -92,7 +102,7 @@
 
     .product-title {
       font-family: var(--font-d); font-size: clamp(2.2rem, 4vw, 3.4rem);
-      letter-spacing: .04em; line-height: .95; color: var(--white); margin-bottom: 20px;
+      letter-spacing: .04em; line-height: .95; color: #111111; margin-bottom: 20px;
     }
 
     .product-info-row {
@@ -116,7 +126,7 @@
       display: flex; align-items: baseline; gap: 16px; margin-bottom: 28px;
     }
     .product-price-big {
-      font-family: var(--font-d); font-size: 3rem; letter-spacing: .04em; color: var(--white);
+      font-family: var(--font-d); font-size: 3rem; letter-spacing: .04em; color: #111111;
     }
     .product-price-note {
       font-size: .75rem; color: var(--smoke); font-style: italic;
@@ -126,30 +136,30 @@
     .product-actions { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
     .qty-control {
       display: flex; align-items: center; gap: 0;
-      border: 1px solid var(--border);
+      border: 1px solid #E0E0E0;
     }
     .qty-dec, .qty-inc {
       width: 38px; height: 48px; display: flex; align-items: center; justify-content: center;
-      font-size: 1.1rem; color: var(--ash); transition: all .18s; background: var(--card);
+      font-size: 1.1rem; color: var(--ash); transition: all .18s; background: #FFFFFF;
     }
-    .qty-dec:hover, .qty-inc:hover { color: var(--white); background: var(--charcoal, #2a2a2a); }
+    .qty-dec:hover, .qty-inc:hover { color: #111111; background: var(--charcoal, #2a2a2a); }
     .qty-display {
       width: 52px; height: 48px; display: flex; align-items: center; justify-content: center;
       font-family: var(--font-d); font-size: 1.2rem; letter-spacing: .04em;
-      color: var(--white); background: var(--off); border-left: 1px solid var(--border); border-right: 1px solid var(--border);
+      color: #111111; background: #F6F6F6; border-left: 1px solid var(--border); border-right: 1px solid var(--border);
       user-select: none;
     }
     .add-to-cart-btn {
       flex: 1; min-width: 180px; height: 48px;
       font-family: var(--font-c); font-size: .8rem; font-weight: 700;
       letter-spacing: .18em; text-transform: uppercase;
-      background: var(--red); color: var(--white);
+      background: var(--red); color: #111111;
       clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
       transition: background .2s, transform .2s;
       display: flex; align-items: center; justify-content: center; gap: 8px;
     }
     .add-to-cart-btn:hover { background: var(--red-hot); transform: translateY(-1px); }
-    .add-to-cart-btn.added { background: #1A4A7A; clip-path: none; }
+    .add-to-cart-btn.added { background: #2a6a2a; clip-path: none; }
 
     /* details list */
     .product-details { margin-top: 32px; }
@@ -163,13 +173,13 @@
       letter-spacing: .14em; text-transform: uppercase; color: var(--smoke);
       width: 120px; flex-shrink: 0; padding-top: 2px;
     }
-    .detail-val { color: var(--light); }
+    .detail-val { color: #222222; }
 
     /* related products strip — horizontal scroll row */
     .related-section { padding: 48px 0; border-top: 1px solid var(--border); }
     .related-title {
       font-family: var(--font-d); font-size: 1.8rem; letter-spacing: .04em;
-      color: var(--white); margin-bottom: 24px;
+      color: #111111; margin-bottom: 24px;
     }
     .related-title em { color: var(--red); font-style: normal; }
     .related-row {
@@ -181,7 +191,7 @@
     .related-row::-webkit-scrollbar-track { background: transparent; }
     .related-row::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
     .related-card {
-      background: var(--card); border: 1px solid var(--border);
+      background: #FFFFFF; border: 1px solid #E0E0E0;
       cursor: pointer; transition: border-color .2s, transform .2s;
       display: flex; flex-direction: column;
       flex: 0 0 200px; /* fixed width, never shrinks */
@@ -198,20 +208,20 @@
     .related-info { padding: 14px 16px; }
     .related-name {
       font-family: var(--font-c); font-size: .85rem; font-weight: 700;
-      letter-spacing: .04em; text-transform: uppercase; color: var(--white);
+      letter-spacing: .04em; text-transform: uppercase; color: #111111;
       margin-bottom: 4px; line-height: 1.2;
     }
     .related-price {
-      font-family: var(--font-d); font-size: 1.1rem; color: var(--white); letter-spacing: .04em;
+      font-family: var(--font-d); font-size: 1.1rem; color: #111111; letter-spacing: .04em;
     }
 
     /* toast */
     .add-toast {
       position: fixed; bottom: 28px; left: 50%;
       transform: translateX(-50%) translateY(16px);
-      background: var(--off); border: 1px solid var(--border); border-left: 3px solid var(--red);
+      background: #F6F6F6; border: 1px solid #E0E0E0; border-left: 3px solid var(--red);
       font-family: var(--font-c); font-size: .78rem; font-weight: 700; letter-spacing: .08em;
-      color: var(--light); padding: 13px 26px;
+      color: #222222; padding: 13px 26px;
       opacity: 0; transition: all .26s; pointer-events: none; white-space: nowrap; z-index: 100;
     }
     .add-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
@@ -226,13 +236,13 @@
       flex-wrap: wrap; gap: 16px; margin-bottom: 32px;
     }
     .reviews-title {
-      font-family: var(--font-d); font-size: 1.8rem; letter-spacing: .04em; color: var(--white);
+      font-family: var(--font-d); font-size: 1.8rem; letter-spacing: .04em; color: #111111;
     }
     .reviews-summary {
       display: flex; align-items: center; gap: 12px;
     }
     .review-avg {
-      font-family: var(--font-d); font-size: 2.4rem; letter-spacing: .04em; color: var(--white);
+      font-family: var(--font-d); font-size: 2.4rem; letter-spacing: .04em; color: #111111;
     }
     .review-stars-display { display: flex; gap: 3px; }
     .star {
@@ -246,7 +256,7 @@
 
     /* your rating */
     .your-rating-panel {
-      background: var(--off); border: 1px solid var(--border);
+      background: #F6F6F6; border: 1px solid #E0E0E0;
       padding: 22px 24px; margin-bottom: 32px;
       display: flex; align-items: center; gap: 20px; flex-wrap: wrap;
     }
@@ -270,16 +280,16 @@
     .review-write-btn { font-family:var(--font-c);font-size:.63rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;background:none;color:var(--red);padding:6px 12px;border:1px solid rgba(184,137,42,.32);cursor:pointer;margin-left:8px;transition:all .18s; }
     .review-write-btn:hover { background:rgba(184,137,42,.12); }
     .rating-saved.show { display: block; }
-    .review-card { background:var(--off);border:1px solid var(--border);padding:16px 20px;margin-bottom:10px; }
+    .review-card { background:#F6F6F6;border:1px solid #E0E0E0;padding:16px 20px;margin-bottom:10px; }
     .review-card-header { display:flex;align-items:center;gap:10px;margin-bottom:8px;flex-wrap:wrap; }
-    .review-card-username { font-family:var(--font-c);font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--white); }
+    .review-card-username { font-family:var(--font-c);font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#111111; }
     .review-card-stars { display:flex;gap:2px; }
     .review-card-stars svg { width:13px;height:13px; }
     .review-card-date { font-size:.68rem;color:var(--smoke);margin-left:auto; }
-    .review-card-comment { font-size:.85rem;color:var(--light);line-height:1.65; }
+    .review-card-comment { font-size:.85rem;color:#222222;line-height:1.65; }
     .review-card-actions { display:flex;gap:10px;margin-top:10px; }
-    .review-action-btn { font-family:var(--font-c);font-size:.6rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;background:none;color:var(--smoke);padding:4px 10px;border:1px solid var(--border);cursor:pointer;transition:all .18s; }
-    .review-action-btn:hover { color:var(--light);border-color:var(--ash); }
+    .review-action-btn { font-family:var(--font-c);font-size:.6rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;background:none;color:var(--smoke);padding:4px 10px;border:1px solid #E0E0E0;cursor:pointer;transition:all .18s; }
+    .review-action-btn:hover { color:#222222;border-color:var(--ash); }
     .review-action-btn.del:hover { color:#D4A843;border-color:#D4A843; }
 
     /* ── loading / error ─────────────────────────── */
@@ -324,7 +334,7 @@
     .lab-report-eyebrow::before { content: ''; width: 20px; height: 2px; background: var(--red); }
     .lab-report-title {
       font-family: var(--font-d); font-size: 1.4rem; letter-spacing: .04em;
-      color: var(--white); margin-bottom: 8px;
+      color: #111111; margin-bottom: 8px;
     }
     .lab-report-subtitle {
       font-size: .78rem; color: var(--smoke); line-height: 1.65;
@@ -341,7 +351,7 @@
     .lab-report-verify a:hover { opacity: .75; }
     .lab-report-doc {
       flex-shrink: 0; width: 220px;
-      border: 1px solid var(--border);
+      border: 1px solid #E0E0E0;
       box-shadow: 0 8px 32px rgba(4,9,15,.55);
       overflow: hidden; position: relative;
       transition: box-shadow .22s, transform .22s;
@@ -376,7 +386,7 @@
   <!-- BREADCRUMB -->
   <div class="container">
     <div class="breadcrumb">
-      <a href="shop.html">Shop</a>
+      <a href="dashboard.html">Shop</a>
       <span class="breadcrumb-sep">›</span>
       <span id="breadcrumb-name">Loading…</span>
     </div>
@@ -403,7 +413,7 @@
       <div class="your-rating-panel" id="your-rating-panel"></div>
 
       <!-- WRITE / EDIT REVIEW -->
-      <div id="review-form-wrap" style="margin-top:16px;display:none;background:var(--off);border:1px solid var(--border);padding:20px">
+      <div id="review-form-wrap" style="margin-top:16px;display:none;background:#F6F6F6;border:1px solid #E0E0E0;padding:20px">
         <div style="font-family:var(--font-c);font-size:.63rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--smoke);margin-bottom:12px">Write a Review</div>
         <!-- Star picker inside form -->
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
@@ -439,14 +449,14 @@
           <span id="form-star-label" style="font-family:var(--font-c);font-size:.6rem;color:var(--smoke)"></span>
         </div>
         <input id="review-username" type="text" placeholder="Display name (e.g. ResearcherJane)" maxlength="40"
-          style="width:100%;padding:10px 14px;background:var(--card);border:1px solid var(--border);color:var(--light);font-size:.87rem;outline:none;box-sizing:border-box;margin-bottom:8px;transition:border-color .2s"
+          style="width:100%;padding:10px 14px;background:#FFFFFF;border:1px solid #E0E0E0;color:#222222;font-size:.87rem;outline:none;box-sizing:border-box;margin-bottom:8px;transition:border-color .2s"
           onfocus="this.style.borderColor='var(--red)'" onblur="this.style.borderColor='var(--border)'"/>
         <textarea id="review-comment" placeholder="Share your experience with this compound..." maxlength="500" rows="3"
-          style="width:100%;padding:10px 14px;background:var(--card);border:1px solid var(--border);color:var(--light);font-size:.87rem;outline:none;box-sizing:border-box;resize:vertical;font-family:inherit;transition:border-color .2s"
+          style="width:100%;padding:10px 14px;background:#FFFFFF;border:1px solid #E0E0E0;color:#222222;font-size:.87rem;outline:none;box-sizing:border-box;resize:vertical;font-family:inherit;transition:border-color .2s"
           onfocus="this.style.borderColor='var(--red)'" onblur="this.style.borderColor='var(--border)'"></textarea>
         <div style="display:flex;gap:10px;margin-top:10px;align-items:center">
           <button onclick="submitReviewWithComment()" style="font-family:var(--font-c);font-size:.68rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;background:var(--red);color:#fff;padding:9px 20px;border:none;cursor:pointer;transition:background .18s" onmouseover="this.style.background='var(--red-hot)'" onmouseout="this.style.background='var(--red)'">Post Review</button>
-          <button onclick="document.getElementById('review-form-wrap').style.display='none'" style="font-family:var(--font-c);font-size:.65rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;background:none;color:var(--smoke);padding:9px 14px;border:1px solid var(--border);cursor:pointer">Cancel</button>
+          <button onclick="document.getElementById('review-form-wrap').style.display='none'" style="font-family:var(--font-c);font-size:.65rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;background:none;color:var(--smoke);padding:9px 14px;border:1px solid #E0E0E0;cursor:pointer">Cancel</button>
           <span id="review-err" style="font-size:.72rem;color:#D4A843"></span>
         </div>
       </div>
@@ -454,7 +464,7 @@
       <!-- REVIEWS LIST -->
       <div style="display:flex;align-items:center;justify-content:space-between;margin-top:28px;margin-bottom:12px" id="reviews-list-header" style="display:none">
         <div style="font-family:var(--font-c);font-size:.63rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--smoke)">Community Reviews</div>
-        <select id="reviews-sort" onchange="sortAndRenderList()" style="background:var(--card);color:var(--light);border:1px solid var(--border);padding:5px 10px;font-size:.75rem;outline:none;cursor:pointer">
+        <select id="reviews-sort" onchange="sortAndRenderList()" style="background:#FFFFFF;color:#222222;border:1px solid #E0E0E0;padding:5px 10px;font-size:.75rem;outline:none;cursor:pointer">
           <option value="desc">Highest Rated</option>
           <option value="asc">Lowest Rated</option>
         </select>
@@ -476,7 +486,8 @@
 
   <script type="module">
     import './js/auth.js?v=15';
-    import './js/cart.js?v=18';
+    import './js/cart.js?v=19';
+    import './js/products.js?v=15';
     import { loadProducts, allProducts, getProduct, pepperSVG, miniPepperSVG, heatPips } from './js/products.js?v=15';
 
     await Promise.all([window.initPage('product'), loadProducts()]);
@@ -488,11 +499,11 @@
     const content = document.getElementById('product-content');
 
     if (!productId || isNaN(productId)) {
-      content.innerHTML = `<div class="error-state"><p>No product specified.</p><a href="shop.html">← Back to Shop</a></div>`;
+      content.innerHTML = `<div class="error-state"><p>No product specified.</p><a href="dashboard.html">← Back to Shop</a></div>`;
     } else {
       const p = getProduct(productId);
       if (!p) {
-        content.innerHTML = `<div class="error-state"><p>Product not found.</p><a href="shop.html">← Back to Shop</a></div>`;
+        content.innerHTML = `<div class="error-state"><p>Product not found.</p><a href="dashboard.html">← Back to Shop</a></div>`;
       } else {
         const rating = await Auth.getProductRating(productId);
         renderProduct(p, rating);
@@ -505,6 +516,7 @@
     /* ── Render full product ── */
     function renderProduct(p, rating = { average: 0, count: 0, userStars: 0 }) {
       document.title = `${p.name} — BigBoyPeps`;
+      if (typeof updateProductMeta !== "undefined") updateProductMeta(p);
       document.getElementById('breadcrumb-name').textContent = p.name;
 
       function inlineStars(avg) {
@@ -945,6 +957,45 @@
       if (inlineCount) inlineCount.textContent = rating.count === 0 ? 'No reviews' : rating.count + ' review' + (rating.count!==1?'s':'');
     }
 
-  </script>
+  
+    // ── Dynamic SEO meta from product data ───────────────
+    function updateProductMeta(p) {
+      var title = p.name + ' Research Peptide — BigBoyPeps';
+      document.title = title;
+      var metas = {
+        'og:title':       title,
+        'og:description': p.name + ': Research-grade peptide for licensed research. For research purposes only.',
+        'og:url':         'https://bigboypeps.com/product.html?id=' + p.id,
+        'og:image':       p.images ? 'https://bigboypeps.com/pdct%20img/' + p.images : 'https://bigboypeps.com/img/logo.png',
+        'description':    p.name + ' research peptide from BigBoyPeps. ' + (p.description||'').slice(0,120),
+      };
+      Object.entries(metas).forEach(([k,v]) => {
+        var el = document.querySelector('meta[property="'+k+'"],meta[name="'+k+'"]');
+        if (el) el.setAttribute(el.hasAttribute('property')?'content':'content', v);
+      });
+      // JSON-LD structured data
+      var ld = {
+        "@context": "https://schema.org",
+        "@type": "Product",
+        "name": p.name,
+        "description": (p.description||'').slice(0,200),
+        "url": "https://bigboypeps.com/product.html?id=" + p.id,
+        "brand": { "@type": "Brand", "name": "BigBoyPeps" },
+        "offers": {
+          "@type": "Offer",
+          "price": p.price,
+          "priceCurrency": "USD",
+          "availability": p.inventory > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+          "seller": { "@type": "Organization", "name": "BigBoyPeps" }
+        }
+      };
+      var existing = document.getElementById('product-ld');
+      if (existing) existing.remove();
+      var s = document.createElement('script');
+      s.id = 'product-ld'; s.type = 'application/ld+json';
+      s.textContent = JSON.stringify(ld);
+      document.head.appendChild(s);
+    }
+</script>
 </body>
 </html>

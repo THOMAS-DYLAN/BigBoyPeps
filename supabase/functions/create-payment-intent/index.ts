@@ -1,7 +1,3 @@
-// ═══════════════════════════════════════════════════════════════
-// BigBoyPeps — Stripe PaymentIntent Edge Function
-// ═══════════════════════════════════════════════════════════════
-
 import Stripe from 'https://esm.sh/stripe@14?target=deno';
 
 const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY') ?? '', {
@@ -10,7 +6,6 @@ const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY') ?? '', {
 });
 
 Deno.serve(async (req) => {
-  // Handle CORS preflight — must return 200 with headers
   if (req.method === 'OPTIONS') {
     return new Response('ok', {
       status: 200,
@@ -23,7 +18,6 @@ Deno.serve(async (req) => {
     });
   }
 
-  // All responses include CORS headers
   const headers = {
     'Content-Type': 'application/json',
     'Access-Control-Allow-Origin':  '*',
