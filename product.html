@@ -2,38 +2,37 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
-  <link rel="icon" type="image/webp" href="img/logo.webp">
-  <link rel="icon" type="image/png" href="img/logo.png">
-  <link rel="apple-touch-icon" href="img/logo.png">
+  <link rel="icon" type="image/webp" href="/img/logo.webp">
+  <link rel="icon" type="image/png" href="/img/logo.png">
+  <link rel="apple-touch-icon" href="/img/logo.png">
   <link rel="preconnect" href="https://utqviljholfvpfztfuvx.supabase.co" crossorigin>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Research Peptides — 956 Labs | Rio Grande Valley TX</title>
-  <meta name="description" content="Research-grade peptides from 956 Labs serving the Rio Grande Valley. For licensed research purposes only.">
+    <title>Research Peptides — BigBoyPeps | Rio Grande Valley TX</title>
+  <meta name="description" content="Research-grade peptides from BigBoyPeps serving the Rio Grande Valley. For licensed research purposes only.">
   <meta property="og:type" content="product">
-  <meta property="og:title" content="Research Peptides — 956 Labs">
-  <meta property="og:url" content="https://bigboypeps.com/956labs/product.html">
-  <meta property="og:image" content="https://bigboypeps.com/956labs/img/logo.png">
+  <meta property="og:title" content="Research Peptides — BigBoyPeps">
+  <meta property="og:url" content="https://bigboypeps.com/product.html">
+  <meta property="og:image" content="https://bigboypeps.com/img/logo.png">
   <link rel="canonical" href="">
   <meta name="robots" content="index,follow">
   <meta name="description" content="Research-grade peptides for the Rio Grande Valley — McAllen, Edinburg, Harlingen, Brownsville. For research purposes only."/>
   <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet"/>
-  <link rel="modulepreload" href="../js/supabase.js">
-  <link rel="modulepreload" href="../js/auth.js?v=15">
-  <link rel="modulepreload" href="../js/cart.js?v=19">
-  <link rel="modulepreload" href="./site.js">
-  <link rel="modulepreload" href="../js/products.js?v=15">
-  <link rel="stylesheet" href="css/global.css"/>
-  <link rel="stylesheet" href="css/mobile.css"/>
+  <link rel="modulepreload" href="./js/supabase.js">
+  <link rel="modulepreload" href="./js/auth.js?v=15">
+  <link rel="modulepreload" href="./js/cart.js?v=19">
+  <link rel="modulepreload" href="./js/products.js?v=15">
+  <link rel="stylesheet" href="./css/global.css"/>
+  <link rel="stylesheet" href="./css/mobile.css"/>
   <style>
     body { display:flex; flex-direction:column; min-height:100vh; }
     .container { max-width:1140px; margin:0 auto; padding:0 16px; }
 
     .breadcrumb { padding:14px 0; border-bottom:1px solid var(--border); font-family:var(--font-c); font-size:.62rem; font-weight:600; letter-spacing:.14em; text-transform:uppercase; color:#888888; display:flex; align-items:center; gap:8px; }
     .breadcrumb a { color:#888888; transition:color .18s; }
-    .breadcrumb a:hover { color:var(--green-hi); }
+    .breadcrumb a:hover { color:var(--red-hot); }
 
     .product-page { flex:1; padding:44px 0 80px; }
     .product-layout { display:grid; grid-template-columns:1fr 1fr; gap:52px; align-items:start; }
@@ -41,13 +40,13 @@
     .product-visual { position:sticky; top:72px; }
     .product-main-thumb { width:100%; aspect-ratio:1/1; display:flex; align-items:center; justify-content:center; border:1px solid #D8D8D8; position:relative; overflow:hidden; background:#FFFFFF; }
     .product-main-thumb img { height:70%; width:auto; object-fit:contain; display:block; margin:auto; position:relative; z-index:1; }
-    .product-visual-badge { position:absolute; top:12px; left:12px; z-index:2; font-family:var(--font-c); font-size:.58rem; font-weight:700; letter-spacing:.18em; text-transform:uppercase; padding:4px 11px; border:1px solid rgba(0,104,71,.4); background:rgba(0,104,71,.15); color:var(--green-hi); border-radius:2px; }
+    .product-visual-badge { position:absolute; top:12px; left:12px; z-index:2; font-family:var(--font-c); font-size:.58rem; font-weight:700; letter-spacing:.18em; text-transform:uppercase; padding:4px 11px; border:1px solid rgba(184,137,42,.4); background:rgba(184,137,42,.15); color:var(--red-hot); border-radius:2px; }
     .oos-overlay { position:absolute; inset:0; background:rgba(4,10,6,.7); z-index:5; display:flex; align-items:center; justify-content:center; }
     .oos-label { font-family:var(--font-c); font-size:.7rem; font-weight:700; letter-spacing:.2em; text-transform:uppercase; background:rgba(206,17,38,.88); color:#fff; padding:7px 18px; border-radius:2px; }
     .research-tag { margin-top:12px; padding:10px 14px; border:1px solid #D8D8D8; background:#F6F6F6; font-size:.67rem; color:#888888; font-style:italic; line-height:1.6; text-align:center; border-radius:2px; }
 
-    .product-cat-tag { display:inline-flex; align-items:center; gap:7px; font-family:var(--font-c); font-size:.62rem; font-weight:700; letter-spacing:.22em; text-transform:uppercase; color:var(--green-hi); margin-bottom:11px; }
-    .product-cat-tag::before { content:''; width:16px; height:2px; background:var(--green); }
+    .product-cat-tag { display:inline-flex; align-items:center; gap:7px; font-family:var(--font-c); font-size:.62rem; font-weight:700; letter-spacing:.22em; text-transform:uppercase; color:var(--red-hot); margin-bottom:11px; }
+    .product-cat-tag::before { content:''; width:16px; height:2px; background:var(--red); }
     .product-title { font-family:var(--font-d); font-size:clamp(1.9rem,4vw,3rem); letter-spacing:.04em; line-height:.95; color:#111111; margin-bottom:16px; }
     .product-info-row { display:flex; align-items:center; gap:10px; margin-bottom:18px; flex-wrap:wrap; }
     .info-label { font-family:var(--font-c); font-size:.58rem; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:#888888; }
@@ -89,8 +88,9 @@
     .qty-dec, .qty-inc { width:36px; height:46px; display:flex; align-items:center; justify-content:center; font-size:1.05rem; color:#444444; background:#FFFFFF; transition:all .18s; border:none; cursor:pointer; }
     .qty-dec:hover, .qty-inc:hover { color:#111111; background:var(--border); }
     .qty-display { width:48px; height:46px; display:flex; align-items:center; justify-content:center; font-family:var(--font-d); font-size:1.15rem; letter-spacing:.04em; color:#111111; background:#F6F6F6; border-left:1px solid var(--border); border-right:1px solid var(--border); user-select:none; }
-    .add-to-cart-btn { flex:1; min-width:160px; height:46px; font-family:var(--font-c); font-size:.76rem; font-weight:700; letter-spacing:.18em; text-transform:uppercase; background:var(--green); color:#fff; border-radius:2px; display:flex; align-items:center; justify-content:center; gap:7px; transition:background .2s, transform .2s; border:none; cursor:pointer; }
-    .add-to-cart-btn:hover { background:var(--green-hi); transform:translateY(-1px); }
+    .add-to-cart-btn { flex:1; min-width:160px; height:46px; font-family:var(--font-c); font-size:.76rem; font-weight:700; letter-spacing:.18em; text-transform:uppercase; background:var(--red); color:#111; clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,8px 100%,0 calc(100% - 8px)); display:flex; align-items:center; justify-content:center; gap:7px; transition:background .2s, transform .2s; border:none; cursor:pointer; }
+    .add-to-cart-btn:hover { background:var(--red-hot); transform:translateY(-1px); }
+    .add-to-cart-btn.oos { clip-path:none; background:#E0E0E0; color:#666; cursor:not-allowed; }
     .add-to-cart-btn.oos { background:var(--border); color:#666666; cursor:not-allowed; }
     .add-to-cart-btn.added { background:#FFFFFF; color:var(--ok); }
     .waitlist-msg { font-family:var(--font-c); font-size:.6rem; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--ok); margin-top:6px; display:none; }
@@ -103,10 +103,10 @@
     /* ── Related ──────────────────────────────────────── */
     .related-section { padding:44px 0; border-top:1px solid var(--border); }
     .related-title { font-family:var(--font-d); font-size:1.6rem; letter-spacing:.04em; color:#111111; margin-bottom:20px; }
-    .related-title em { color:var(--green); font-style:normal; }
+    .related-title em { color:var(--red); font-style:normal; }
     .related-row { display:flex; gap:12px; overflow-x:auto; padding-bottom:8px; scrollbar-width:thin; scrollbar-color:var(--border) transparent; }
     .related-card { background:#FFFFFF; border:1px solid #D8D8D8; cursor:pointer; transition:border-color .2s, transform .2s; flex:0 0 180px; border-radius:2px; }
-    .related-card:hover { border-color:var(--green); transform:translateY(-3px); }
+    .related-card:hover { border-color:var(--red); transform:translateY(-3px); }
     .related-thumb { height:110px; display:flex; align-items:center; justify-content:center; border-bottom:1px solid var(--border); overflow:hidden; }
     .related-thumb img { height:76px; width:auto; object-fit:contain; }
     .related-info { padding:10px 12px; }
@@ -121,20 +121,20 @@
     /* ── Reviews ──────────────────────────────────────── */
     .reviews-area { padding:52px 0; border-top:1px solid var(--border); }
     .reviews-head { font-family:var(--font-d); font-size:1.6rem; letter-spacing:.04em; color:#111111; margin-bottom:22px; }
-    .reviews-head em { color:var(--green); font-style:normal; }
+    .reviews-head em { color:var(--red); font-style:normal; }
     .your-rating-panel { background:#F6F6F6; border:1px solid #D8D8D8; padding:18px 20px; margin-bottom:26px; display:flex; align-items:center; gap:16px; flex-wrap:wrap; border-radius:2px; }
     .rating-label { font-family:var(--font-c); font-size:.63rem; font-weight:700; letter-spacing:.18em; text-transform:uppercase; color:#888888; flex-shrink:0; }
     .star-btn { width:30px; height:30px; background:none; border:none; cursor:pointer; padding:0; transition:transform .12s; display:inline-flex; }
     .star-btn:hover { transform:scale(1.15); }
     .star-btn svg { width:26px; height:26px; display:block; }
     .rating-saved { font-family:var(--font-c); font-size:.63rem; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--ok); display:none; }
-    .review-write-btn { font-family:var(--font-c); font-size:.6rem; font-weight:700; letter-spacing:.12em; text-transform:uppercase; background:none; color:var(--green-hi); padding:5px 11px; border:1px solid rgba(0,104,71,.32); cursor:pointer; margin-left:8px; transition:all .18s; border-radius:2px; }
-    .review-write-btn:hover { background:rgba(0,104,71,.1); }
+    .review-write-btn { font-family:var(--font-c); font-size:.6rem; font-weight:700; letter-spacing:.12em; text-transform:uppercase; background:none; color:var(--red-hot); padding:5px 11px; border:1px solid rgba(184,137,42,.32); cursor:pointer; margin-left:8px; transition:all .18s; border-radius:2px; }
+    .review-write-btn:hover { background:rgba(184,137,42,.1); }
     .review-form-wrap { display:none; background:#F6F6F6; border:1px solid #D8D8D8; padding:18px; margin-bottom:20px; border-radius:2px; }
     .review-form-wrap.open { display:block; }
     .review-form-label { font-family:var(--font-c); font-size:.6rem; font-weight:700; letter-spacing:.18em; text-transform:uppercase; color:#888888; margin-bottom:10px; }
     .review-input { width:100%; padding:9px 12px; background:#FFFFFF; border:1px solid #D8D8D8; color:#111111; font-size:.85rem; outline:none; box-sizing:border-box; margin-bottom:8px; transition:border-color .2s; font-family:var(--font-b); border-radius:2px; }
-    .review-input:focus { border-color:var(--green); box-shadow:0 0 0 2px rgba(0,104,71,.12); }
+    .review-input:focus { border-color:var(--red); box-shadow:0 0 0 2px rgba(184,137,42,.12); }
     .review-card { background:#FFFFFF; border:1px solid #D8D8D8; padding:14px 16px; margin-bottom:8px; border-radius:2px; }
     .review-header { display:flex; align-items:center; gap:9px; margin-bottom:7px; flex-wrap:wrap; }
     .review-username { font-family:var(--font-c); font-size:.68rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:#111111; }
@@ -144,7 +144,7 @@
     .review-comment { font-size:.83rem; color:#1A1A1A; line-height:1.65; }
 
     /* ── Toast ────────────────────────────────────────── */
-    .add-toast { position:fixed; bottom:72px; left:50%; transform:translateX(-50%) translateY(16px); background:#F6F6F6; border:1px solid #D8D8D8; border-left:3px solid var(--green); font-family:var(--font-c); font-size:.73rem; font-weight:700; letter-spacing:.08em; color:#1A1A1A; padding:11px 20px; border-radius:2px; opacity:0; transition:all .26s; pointer-events:none; white-space:nowrap; z-index:99; }
+    .add-toast { position:fixed; bottom:72px; left:50%; transform:translateX(-50%) translateY(16px); background:#F6F6F6; border:1px solid #D8D8D8; border-left:3px solid var(--red); font-family:var(--font-c); font-size:.73rem; font-weight:700; letter-spacing:.08em; color:#1A1A1A; padding:11px 20px; border-radius:2px; opacity:0; transition:all .26s; pointer-events:none; white-space:nowrap; z-index:99; }
     .add-toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
 
     /* ── Responsive ───────────────────────────────────── */
@@ -185,7 +185,7 @@
         <input id="review-username" class="review-input" type="text" placeholder="Display name (e.g. ResearcherJane)" maxlength="40"/>
         <textarea id="review-comment" class="review-input" placeholder="Share your experience…" maxlength="500" rows="3" style="resize:vertical"></textarea>
         <div style="display:flex;gap:10px;margin-top:8px;align-items:center">
-          <button onclick="submitReview()" style="font-family:var(--font-c);font-size:.66rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;background:var(--green);color:#fff;padding:8px 18px;border:none;cursor:pointer;transition:background .18s;border-radius:2px" onmouseover="this.style.background='var(--green-hi)'" onmouseout="this.style.background='var(--green)'">Post Review</button>
+          <button onclick="submitReview()" style="font-family:var(--font-c);font-size:.66rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;background:var(--red);color:#fff;padding:8px 18px;border:none;cursor:pointer;transition:background .18s;border-radius:2px" onmouseover="this.style.background='var(--red-hot)'" onmouseout="this.style.background='var(--red)'">Post Review</button>
           <button onclick="document.getElementById('review-form-wrap').classList.remove('open')" style="font-family:var(--font-c);font-size:.63rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;background:none;color:#888888;padding:8px 12px;border:1px solid #D8D8D8;cursor:pointer;border-radius:2px">Cancel</button>
           <span id="review-err" style="font-size:.7rem;color:var(--err)"></span>
         </div>
@@ -203,11 +203,9 @@
   </div>
 
   <script type="module">
-    import '../js/auth.js?v=15';
-    import '../js/cart.js?v=19';
-    import './site.js';
-    await import('./site.js');
-    import { loadProducts, allProducts, getProduct, pepperSVG, miniPepperSVG } from '../js/products.js?v=15';
+    import './js/auth.js?v=15';
+    import './js/cart.js?v=19';
+    import { loadProducts, allProducts, getProduct, pepperSVG, miniPepperSVG } from './js/products.js?v=15';
 
     await Promise.all([window.initPage('product'), loadProducts()]);
 
@@ -216,7 +214,7 @@
     const content   = document.getElementById('product-content');
 
     if (!productId || isNaN(productId)) {
-      content.innerHTML = '<p style="color:#888888">No product specified. <a href="dashboard.html">← Back to Shop</a></p>';
+      content.innerHTML = '<p style="color:#888888">No product specified. <a href="index.html">← Back to Shop</a></p>';
     } else {
       const p = getProduct(productId);
       if (!p) {
@@ -233,11 +231,11 @@
 
     function star(filled, size) {
       size = size || 20;
-      return '<svg viewBox="0 0 24 24" fill="' + (filled ? 'var(--green)' : 'var(--border)') + '" width="' + size + '" height="' + size + '"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>';
+      return '<svg viewBox="0 0 24 24" fill="' + (filled ? 'var(--red)' : 'var(--border)') + '" width="' + size + '" height="' + size + '"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>';
     }
 
     function renderProduct(p, rating) {
-      document.title = p.name + ' — 956 Labs';
+      document.title = p.name + ' — BigBoyPeps';
       if (typeof updateProductMeta !== "undefined") updateProductMeta(p);
       document.getElementById('breadcrumb-name').textContent = p.name;
       const avg = Math.round(rating.average || 0);
@@ -248,7 +246,7 @@
         + '<div class="product-main-thumb">'
         + (p.inventory <= 0 ? '<div class="oos-overlay"><div class="oos-label">Out of Stock</div></div>' : '')
         + (p.badge ? '<div class="product-visual-badge">' + p.badge + '</div>' : '')
-        + (p.images ? '<img src="../pdct img/' + p.images + '" alt="' + p.name + '"/>' : pepperSVG(p))
+        + (p.images ? '<img src="./pdct img/' + p.images + '" alt="' + p.name + '"/>' : pepperSVG(p))
         + '</div>'
         + '<div class="research-tag">⚠️ For research purposes only · Not intended for human consumption · Handle with care</div>'
         + '</div>'
@@ -304,7 +302,7 @@
       } else {
         if (btn) { btn.textContent = '✓ Added'; btn.classList.add('added'); setTimeout(() => { btn.textContent = 'Add to Cart — $' + Number(p.price).toFixed(2); btn.classList.remove('added'); }, 1800); }
         toast.textContent = added + '× ' + p.name + ' added to cart';
-        toast.style.borderLeftColor = 'var(--green)';
+        toast.style.borderLeftColor = 'var(--red)';
       }
       toast.classList.add('show');
       clearTimeout(toast._t);
@@ -324,7 +322,7 @@
       if (!p.lab_report) return;
       const m = document.getElementById('lab-mount');
       m.style.display = '';
-      m.innerHTML = '<div class="lab-section"><div class="lab-title">Lab Report</div><img src="../report img/' + p.lab_report + '" alt="Lab Report" class="lab-img"/></div>';
+      m.innerHTML = '<div class="lab-section"><div class="lab-title">Lab Report</div><img src="./report img/' + p.lab_report + '" alt="Lab Report" class="lab-img"/></div>';
     }
 
     function renderRelated(p) {
@@ -334,7 +332,7 @@
       m.style.display = '';
       m.innerHTML = '<div class="related-section"><div class="related-title">More <em>Research</em></div><div class="related-row">'
         + others.map(r => '<div class="related-card" onclick="location.href=\'product.html?id='+r.id+'\'">'
-            + '<div class="related-thumb">' + (r.images ? '<img src="../pdct img/'+r.images+'" alt="'+r.name+'"/>' : miniPepperSVG(r)) + '</div>'
+            + '<div class="related-thumb">' + (r.images ? '<img src="./pdct img/'+r.images+'" alt="'+r.name+'"/>' : miniPepperSVG(r)) + '</div>'
             + '<div class="related-info"><div class="related-name">'+r.name+'</div><div class="related-price">$'+Number(r.price).toFixed(2)+'</div></div>'
             + '</div>').join('')
         + '</div></div>';
@@ -415,11 +413,11 @@
     };
   
     function updateProductMeta(p) {
-      var title = p.name + ' — 956 Labs | Rio Grande Valley TX';
+      var title = p.name + ' — BigBoyPeps | Rio Grande Valley TX';
       document.title = title;
       var og = {'og:title': title, 'og:description': p.name + ': Research-grade peptide serving the Rio Grande Valley. For research purposes only.', 'og:url': 'https://bigboypeps.com/956labs/product.html?id=' + p.id};
       Object.entries(og).forEach(([k,v]) => { var el = document.querySelector('meta[property="'+k+'"]'); if(el) el.setAttribute('content',v); });
-      var ld = {"@context":"https://schema.org","@type":"Product","name":p.name,"brand":{"@type":"Brand","name":"956 Labs"},"offers":{"@type":"Offer","price":p.price,"priceCurrency":"USD","availability":p.inventory>0?"https://schema.org/InStock":"https://schema.org/OutOfStock","seller":{"@type":"Organization","name":"956 Labs","areaServed":"Rio Grande Valley, TX"}}};
+      var ld = {"@context":"https://schema.org","@type":"Product","name":p.name,"brand":{"@type":"Brand","name":"BigBoyPeps"},"offers":{"@type":"Offer","price":p.price,"priceCurrency":"USD","availability":p.inventory>0?"https://schema.org/InStock":"https://schema.org/OutOfStock","seller":{"@type":"Organization","name":"BigBoyPeps","areaServed":"Rio Grande Valley, TX"}}};
       var s = document.getElementById('product-ld'); if(s) s.remove();
       s = document.createElement('script'); s.id='product-ld'; s.type='application/ld+json'; s.textContent = JSON.stringify(ld); document.head.appendChild(s);
     }
