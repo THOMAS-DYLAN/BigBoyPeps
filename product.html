@@ -90,7 +90,18 @@
     .qty-display { width:48px; height:46px; display:flex; align-items:center; justify-content:center; font-family:var(--font-d); font-size:1.15rem; letter-spacing:.04em; color:#111111; background:#F6F6F6; border-left:1px solid var(--border); border-right:1px solid var(--border); user-select:none; }
     .add-to-cart-btn { flex:1; min-width:160px; height:46px; font-family:var(--font-c); font-size:.76rem; font-weight:700; letter-spacing:.18em; text-transform:uppercase; background:var(--red); color:#111; clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,8px 100%,0 calc(100% - 8px)); display:flex; align-items:center; justify-content:center; gap:7px; transition:background .2s, transform .2s; border:none; cursor:pointer; }
     .add-to-cart-btn:hover { background:var(--red-hot); transform:translateY(-1px); }
-    .add-to-cart-btn.oos { clip-path:none; background:#E0E0E0; color:#666; cursor:not-allowed; }
+    /* OOS button — looks clickable, not disabled */
+    .add-to-cart-btn.oos {
+      clip-path: none !important;
+      background: transparent !important;
+      color: var(--red) !important;
+      border: 1px solid var(--red) !important;
+      cursor: pointer !important;
+      opacity: 1 !important;
+    }
+    .add-to-cart-btn.oos:hover {
+      background: rgba(184,137,42,.08) !important;
+    }
     .add-to-cart-btn.oos { background:var(--border); color:#666666; cursor:not-allowed; }
     .add-to-cart-btn.added { background:#FFFFFF; color:var(--ok); }
     .waitlist-msg { font-family:var(--font-c); font-size:.6rem; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--ok); margin-top:6px; display:none; }
