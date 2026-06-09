@@ -716,9 +716,10 @@ async function mountPayPal() {
     container.innerHTML = '';
 
     var items    = Cart.get();
-    var subtotal = items.reduce(function(s,i) { return s + i.price * i.qty; }, 0);
-    var ship     = getSelectedShipping().price;
-    var total    = (subtotal + ship).toFixed(2);
+    var subtotal = items.reduce(function(s,i) { return s + (Number(i.price)||0) * (Number(i.qty)||1); }, 0);
+    var ship     = getSelectedShipping().price || 0;
+    var discount = Cart.getDiscount ? Cart.getDiscount(subtotal) : 0;
+    var total    = Math.max(0.01, subtotal + ship - discount).toFixed(2);
 
     var buttons = window.paypal.Buttons({
       style: { layout:'vertical', color:'blue', shape:'rect', label:'pay', height:48 },
