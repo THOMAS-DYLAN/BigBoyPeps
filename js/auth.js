@@ -216,6 +216,7 @@ window.Auth = {
       qty
     });
     return error ? { ok: false } : { ok: true };
+    return orderRow?.id || null;
   },
 
   async incrementInventory(productId, qty) {
@@ -241,7 +242,7 @@ window.Auth = {
     const user = await this.getUser();
     if (!user) return;
 
-    await supabase.from('orders').insert({
+    const { data: orderRow } = await supabase.from('orders').insert({
       user_id: user.id,
       product_id: order.productId,
       product_name: order.name,
@@ -252,12 +253,31 @@ window.Auth = {
       shipping_method: order.shipping_method || 'USPS Standard Shipping',
       shipping_carrier: order.shipping_carrier || 'USPS',
       shipping_price: order.shipping_price || 30.00,
-    });
+      confirm_token:   order.confirm_token   || null,
+      order_number:    order.order_number    || null,
+      order_subtotal:  order.order_subtotal  || null,
+      order_shipping:  order.order_shipping  || null,
+      order_total:     order.order_total     || null,
+      customer_email:  order.customer_email  || null,
+      customer_phone:  order.customer_phone  || null,
+      shipping_name:   order.shipping_name   || null,
+      shipping_street: order.shipping_street || null,
+      shipping_city:   order.shipping_city   || null,
+      shipping_state:  order.shipping_state  || null,
+      shipping_zip:    order.shipping_zip    || null,
+      payment_method:  order.payment_method  || null,
+      cashapp_cashtag: order.cashapp_cashtag || null,
+      paypal_email:    order.paypal_email    || null,
+      paypal_name:     order.paypal_name     || null,
+    }).select('id').single();
 
-    await supabase.rpc('decrement_inventory', {
-      product_id: order.productId,
-      qty: order.qty,
-    });
+    if (!order.skipInventory) {
+      await supabase.rpc('decrement_inventory', {
+        product_id: order.productId,
+        qty: order.qty,
+      });
+    }
+    return orderRow?.id || null;
   },
 
   async getRecentOrders() {

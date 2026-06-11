@@ -517,6 +517,7 @@ const SHIP_RULES = [
   { id:'co-city',    err:'err-city',    test: v => v.length >= 1,               msg:'Required'        },
   { id:'co-zip',     err:'err-zip',     test: v => /^\d{5}(-\d{4})?$/.test(v),  msg:'Enter valid ZIP' },
   { id:'co-state',   err:'err-state',   test: v => v !== '',                    msg:'Select a state'  },
+  { id:'co-phone',   err:'err-phone',   test: v => /^[+]?[\d\s\-\(\)]{7,}$/.test(v), msg:'Enter valid phone number' },
 ];
 
 function shippingValid() {
@@ -596,7 +597,7 @@ function renderCheckoutModal(items, profile, addr) {
     + '<div class="form-field"><label>State *</label><select id="co-state" onchange="validateShipping()"><option value="">— Select —</option>' + stateOptions + '</select><div class="field-err" id="err-state"></div></div>'
     + '<div class="form-field"><label>Country</label><select id="co-country"><option>United States</option><option>Canada</option><option>Other</option></select></div>'
     + '</div>'
-    + '<div class="form-field" style="margin-top:8px"><label>Phone Number <span style="font-weight:400;color:var(--smoke);font-size:.6rem;letter-spacing:.06em;text-transform:none">(optional)</span></label><input id="co-phone" type="tel" placeholder="(555) 000-0000" value="' + (profile.phone||'') + '" style="width:100%" /></div>'
+    + '<div class="form-field" style="margin-top:8px"><label>Phone Number <span style="font-weight:400;color:var(--smoke);font-size:.6rem;letter-spacing:.06em;text-transform:none"> *</span></label><input id="co-phone" type="tel" placeholder="(555) 000-0000" value="' + (profile.phone||'') + '" style="width:100%" /></div><div id=\"err-phone\" style=\"font-size:.62rem;color:#D4A843;font-family:var(--font-c);letter-spacing:.06em;min-height:14px\"></div>'
     + '<label style="display:flex;align-items:center;gap:8px;margin-top:12px;font-family:var(--font-c);font-size:.65rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--smoke);cursor:pointer"><input type="checkbox" id="co-save-addr" checked style="width:14px;height:14px;accent-color:var(--red)"/> Save address to my account</label>'
     + '</div>'
 
@@ -746,7 +747,11 @@ async function mountPayPal() {
       onApprove: async function(data, actions) {
         var shippingData = captureShipping();
         container.innerHTML = '<p style="font-family:var(--font-c);font-size:.68rem;text-align:center;color:var(--smoke);padding:12px 0">Processing payment…</p>';
-        await actions.order.capture();
+        var captureResult = await actions.order.capture();
+        var payerEmail = captureResult?.payer?.email_address || '';
+        var payerName  = (captureResult?.payer?.name?.given_name || '') + ' ' + (captureResult?.payer?.name?.surname || '');
+        shippingData.paypal_email = payerEmail.trim();
+        shippingData.paypal_name  = payerName.trim();
         await finishOrder(shippingData);
       },
 
@@ -781,12 +786,32 @@ function mountCashApp() {
   var total    = (subtotal + ship).toFixed(2);
 
   container.innerHTML =
-    '<button id="cashapp-btn" onclick="payCashApp()" style="width:100%;height:48px;background:#00D632;color:#000;border:none;border-radius:4px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;font-family:var(--font-c);font-size:.78rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;transition:opacity .18s" onmouseover="this.style.opacity=\'.85\'" onmouseout="this.style.opacity=\'1\'">'
+    '<button id="cashapp-btn" onclick="showCashAppInput()" style="width:100%;height:48px;background:#00D632;color:#000;border:none;border-radius:4px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;font-family:var(--font-c);font-size:.78rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;transition:opacity .18s" onmouseover="this.style.opacity=\'.85\'" onmouseout="this.style.opacity=\'1\'">'
     + '<svg width="20" height="20" viewBox="0 0 32 32" fill="none"><rect width="32" height="32" rx="8" fill="#00D632"/><path d="M22.5 9.5L16 16m0 0L9.5 9.5M16 16l6.5 6.5M16 16l-6.5 6.5" stroke="#000" stroke-width="2.5" stroke-linecap="round"/></svg>'
     + 'Pay $' + total + ' with Cash App'
     + '</button>'
-    + '<p style="font-size:.62rem;color:var(--smoke);text-align:center;margin-top:6px;font-style:italic;font-family:var(--font-c);letter-spacing:.06em">Send $' + total + ' to ' + CASHAPP_USERNAME + ' in Cash App &middot; Order saves automatically</p>';
+    + '<div id="cashapp-input-wrap" style="display:none;margin-top:10px">'
+    + '<label style="font-family:var(--font-c);font-size:.6rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:#888;display:block;margin-bottom:4px">Your $Cashtag <span style="color:#D4A843">*</span></label>'
+    + '<input id="cashapp-cashtag" type="text" placeholder="$YourCashTag" style="width:100%;background:#FFFFFF;border:1px solid #D8D8D8;color:#111;padding:10px 12px;font-size:16px;font-family:var(--font-b);outline:none;box-sizing:border-box;margin-bottom:6px" />'
+    + '<div id="err-cashtag" style="font-size:.62rem;color:#D4A843;font-family:var(--font-c);min-height:14px;margin-bottom:6px"></div>'
+    + '<button onclick="payCashApp()" style="width:100%;height:46px;background:#00D632;color:#000;border:none;border-radius:4px;cursor:pointer;font-family:var(--font-c);font-size:.76rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase">Confirm & Send to Cash App →</button>'
+    + '<p style="font-size:.62rem;color:var(--smoke);text-align:center;margin-top:6px;font-style:italic;font-family:var(--font-c);letter-spacing:.06em">Send $' + total + ' to ' + CASHAPP_USERNAME + ' in Cash App</p>'
+    + '</div>';
 }
+
+
+window.showCashAppInput = function() {
+  var wrap = document.getElementById('cashapp-input-wrap');
+  var btn  = document.getElementById('cashapp-btn');
+  if (wrap) wrap.style.display = 'block';
+  if (btn)  btn.style.display  = 'none';
+  setTimeout(function() {
+    var input = document.getElementById('cashapp-cashtag');
+    if (input) input.focus();
+  }, 50);
+};
+
+
 
 window.payCashApp = async function() {
   if (!shippingValid()) {
@@ -798,11 +823,21 @@ window.payCashApp = async function() {
     return;
   }
 
+  var cashtag    = (document.getElementById('cashapp-cashtag')?.value.trim() || '');
+  var cashtagErr = document.getElementById('err-cashtag');
+  if (!cashtag) {
+    if (cashtagErr) cashtagErr.textContent = 'Please enter your $Cashtag.';
+    return;
+  }
+  if (cashtagErr) cashtagErr.textContent = '';
+  if (!cashtag.startsWith('$')) cashtag = '$' + cashtag;
+
   var items    = Cart.get();
   var subtotal = items.reduce(function(s,i) { return s + i.price * i.qty; }, 0);
   var ship     = getSelectedShipping().price;
   var total    = (subtotal + ship).toFixed(2);
   var shippingData = captureShipping();
+  shippingData.cashapp_cashtag = cashtag;
 
   if (!shippingValid()) {
     SHIP_RULES.forEach(function(r) {
@@ -812,12 +847,24 @@ window.payCashApp = async function() {
     });
     return;
   }
+  // Open Cash App but DON'T auto-confirm — mark as pending
   window.open('https://cash.app/' + CASHAPP_USERNAME, '_blank');
-  await finishOrder(shippingData);
+
+  // Save order as pending verification
+  var btn = document.getElementById('cashapp-btn');
+  if (btn) {
+    btn.disabled = true;
+    btn.textContent = 'Awaiting Payment Verification…';
+    btn.style.background = '#888';
+  }
+  await finishOrder(shippingData, 'pending_cashapp');
 };
 
 // ── Order notification (shared by finishOrder + test button) ──
-async function sendOrderNotification(items, shipping, profile) {
+async function sendOrderNotification(items, shipping, profile, paymentStatus, confirmToken) {
+  paymentStatus = paymentStatus || 'paid';
+  var isPending = paymentStatus === 'pending_cashapp';
+  var confirmUrl = 'https://utqviljholfvpfztfuvx.supabase.co/functions/v1/confirm-order?token=' + (confirmToken || '');
   var discount   = _appliedDiscount;
   var subtotal   = items.reduce(function(s,i) { return s + i.price * i.qty; }, 0);
   var discountAmt = discount ? Math.round(subtotal * discount.pct) / 100 : 0;
@@ -833,16 +880,19 @@ async function sendOrderNotification(items, shipping, profile) {
     headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
     body: JSON.stringify({
       access_key:  '8eec27a9-6e50-4206-a71a-a2c6f0c4c8bb',
-      subject:     'New Order — BigBoyPeps',
+      subject:     isPending ? '⚠ CASH APP ORDER — AWAITING VERIFICATION' : '✅ New Order — BigBoyPeps',
       from_name:   'BigBoyPeps Store',
       name:        (shipping.first_name || '') + ' ' + (shipping.last_name || ''),
       email:       profile?.email || 'unknown',
       message:
-        '=== NEW ORDER ===\n\n' +
+        '=== NEW ORDER ===\n' + (isPending ? '⚠ PAYMENT UNVERIFIED — Cash App. Verify $' + orderTotal.toFixed(2) + ' received at ' + CASHAPP_USERNAME + ' before shipping.\n' : '') + '\n' +
         'CUSTOMER\n' +
         'Name: '  + (shipping.first_name || '') + ' ' + (shipping.last_name || '') + '\n' +
         'Email: ' + (profile?.email || 'unknown') + '\n' +
-        (shipping.phone ? 'Phone: ' + shipping.phone + '\n' : '') + '\n' +
+        (shipping.phone ? 'Phone: ' + shipping.phone + '\n' : '') +
+        (shipping.paypal_email ? 'PayPal: ' + shipping.paypal_name + ' <' + shipping.paypal_email + '>\n' : '') +
+        (shipping.cashapp_cashtag ? 'CashApp $Cashtag: ' + shipping.cashapp_cashtag + '\n' : '') +
+        '\n' +
         'SHIPPING ADDRESS\n' +
         (shipping.street_line1 || '') + '\n' +
         (shipping.city || '') + ', ' + (shipping.state || '') + ' ' + (shipping.zip || '') + '\n' +
@@ -852,16 +902,23 @@ async function sendOrderNotification(items, shipping, profile) {
         'Shipping Cost: $' + Number(shipPrice).toFixed(2) + '\n\n' +
         'ITEMS ORDERED\n' + itemList + '\n\n' +
         'Subtotal: $' + subtotal.toFixed(2) + '\n' +
+        (shipping.paypal_email ? 'PayPal: ' + shipping.paypal_name + ' (' + shipping.paypal_email + ')\n' : '') +
+        (shipping.cashapp_cashtag ? 'Customer $Cashtag: ' + shipping.cashapp_cashtag + '\n' : '') +
         (discount ? 'Discount (' + discount.code + ' ' + discount.pct + '%): -$' + discountAmt.toFixed(2) + '\n' : '') +
         'Shipping: $' + Number(shipPrice).toFixed(2) + '\n' +
-        'TOTAL: $'    + orderTotal.toFixed(2),
+        'TOTAL: $'    + orderTotal.toFixed(2) + '\n\n' +
+        '——————————————————\n' +
+        '✅ CONFIRM PAYMENT: ' + confirmUrl + '\n' +
+        '(Click to mark as Payment Processed)\n',
     }),
   });
 }
 
 // ── Finish order ──────────────────────────────────────────
-async function finishOrder(shipping) {
+async function finishOrder(shipping, paymentStatus, skipInventory) {
   if (!shipping) shipping = {};
+  paymentStatus = paymentStatus || 'paid';
+  skipInventory = skipInventory || false;
   var items = Cart.get();
 
   if (shipping.saveAddr && shipping.street_line1) {
@@ -885,13 +942,18 @@ async function finishOrder(shipping) {
   var orderTotal  = subtotal - discountAmt + shipPrice;
 
   // ── Save orders + decrement inventory ─────────────────────
+  // Generate shared identifiers for this entire checkout
+  var confirmToken = Math.random().toString(36).slice(2) + Math.random().toString(36).slice(2);
+  var orderNumber  = crypto.randomUUID ? crypto.randomUUID() : (Math.random().toString(36).slice(2) + Date.now().toString(36));
+  var orderIds = [];
+
   try {
     for (var i = 0; i < items.length; i++) {
       var item         = items[i];
       var isBundle     = !!item.isBundle;
       var actualQty    = isBundle ? item.qty * (item.bundleQty || 10) : item.qty;
       var unitPrice    = isBundle ? item.price / (item.bundleQty || 10) : item.price;
-      await Auth.createOrder({
+      var orderId = await Auth.createOrder({
         productId:        item.id,
         name:             item.name,
         qty:              actualQty,
@@ -899,9 +961,26 @@ async function finishOrder(shipping) {
         total:            item.price * item.qty,
         shipping_method:  shipping.shipping_method,
         shipping_carrier: shipping.shipping_carrier,
+        confirm_token:    confirmToken,
+        order_number:     orderNumber,
+        skipInventory:    skipInventory,
+        order_subtotal:   subtotal,
+        order_shipping:   shipPrice,
+        order_total:      orderTotal,
         shipping_price:   shipping.shipping_price,
+        customer_email:   profile ? profile.email : null,
+        customer_phone:   shipping.phone || null,
+        shipping_name:    (shipping.first_name || '') + ' ' + (shipping.last_name || ''),
+        shipping_street:  shipping.street_line1 || null,
+        shipping_city:    shipping.city || null,
+        shipping_state:   shipping.state || null,
+        shipping_zip:     shipping.zip || null,
+        payment_method:   paymentStatus === 'pending_cashapp' ? 'cashapp' : 'paypal',
+        cashapp_cashtag:  shipping.cashapp_cashtag || null,
+        paypal_email:     shipping.paypal_email || null,
+        paypal_name:      shipping.paypal_name  || null,
       });
-      await Auth.decrementInventory(item.id, actualQty);
+      if (orderId) orderIds.push(orderId);
     }
   } catch(e) {
     console.error('Order save failed:', e);
@@ -910,7 +989,7 @@ async function finishOrder(shipping) {
   // ── Send notification via shared function ──────────────────
   try {
     var profile = await Auth.getProfile();
-    await sendOrderNotification(items, shipping, profile);
+    await sendOrderNotification(items, shipping, profile, paymentStatus, confirmToken);
   } catch(e) {
     console.error('Order notification failed:', e);
   }
