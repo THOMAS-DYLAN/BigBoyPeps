@@ -2,22 +2,12 @@ User-agent: *
 Allow: /
 Allow: /index.html
 Allow: /product.html
-Allow: /956labs/
-Allow: /956labs/index.html
-Allow: /956labs/product.html
 
-Disallow: /index.html
+Disallow: /dashboard.html
 Disallow: /cart.html
 Disallow: /orders.html
 Disallow: /reset.html
-Disallow: /956labs/index.html
-Disallow: /956labs/cart.html
-Disallow: /956labs/orders.html
-Disallow: /956labs/reset.html
-Disallow: /shop2.html
-Disallow: /dashboard.html
-Disallow: /orders.html
-Disallow: /956labs/dashboard.html
-Disallow: /956labs/orders.html
+Disallow: /admin.html
+Disallow: /*?wc-ajax=*
 
 Sitemap: https://bigboypeps.com/sitemap.xml
