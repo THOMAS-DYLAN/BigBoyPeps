@@ -218,6 +218,8 @@
     import './js/cart.js?v=19';
     import { loadProducts, allProducts, getProduct, pepperSVG, miniPepperSVG } from './js/products.js?v=15';
 
+    let _formStars = 0; // must be before renderReviews is called
+
     await Promise.all([window.initPage('product'), loadProducts()]);
 
     const params    = new URLSearchParams(window.location.search);
@@ -371,7 +373,6 @@
     }
 
     // ── Reviews — uses Auth.getReviews() and Auth.submitReview() ──
-    let _formStars = 0;
     async function renderReviews(productId, rating) {
       const panel    = document.getElementById('your-rating-panel');
       const listEl   = document.getElementById('reviews-list');
