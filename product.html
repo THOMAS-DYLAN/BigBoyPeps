@@ -232,6 +232,26 @@
         content.innerHTML = '<p style="color:#888888">Product not found. <a href="dashboard.html">← Back to Shop</a></p>';
       } else {
         const rating = await Auth.getProductRating(productId);
+
+    // ── Research Hint ─────────────────────────────────────
+    const HINTS_DATA = {"sema": ["Semaglutide", "A GLP-1 receptor agonist originally developed for blood sugar regulation. Research focuses on its role in metabolic pathways, appetite signaling, and cellular energy balance."], "tirz": ["Tirzepatide", "A dual GIP/GLP-1 receptor agonist. Research explores its effects on insulin sensitivity, lipid metabolism, and energy homeostasis."], "bpc": ["BPC-157", "A pentadecapeptide derived from a human gastric protein. Extensively studied for tissue repair, angiogenesis, and gastrointestinal integrity in preclinical models."], "tb500": ["TB-500", "A synthetic peptide fragment of Thymosin Beta-4. Research focuses on actin binding, cell migration, and wound healing mechanisms."], "ghk": ["GHK-Cu", "A naturally occurring copper peptide. Research areas include collagen synthesis stimulation, antioxidant activity, and tissue regeneration signals."], "mots": ["MOTS-c", "A mitochondrial-derived peptide that regulates metabolic homeostasis. Research focuses on insulin sensitivity, exercise response, and cellular aging pathways."], "reta": ["Retatrutide", "A triple GLP-1/GIP/glucagon receptor agonist. Among the newest compounds in metabolic research, studied for energy expenditure and adipose tissue effects."], "tesa": ["Tesamorelin", "A GHRH analogue that stimulates growth hormone release. Research examines its role in visceral adipose reduction and IGF-1 axis regulation."], "ipa": ["Ipamorelin", "A selective GH secretagogue and ghrelin receptor agonist. Research focuses on pulsatile GH release with minimal effect on cortisol and prolactin."], "cjc": ["CJC-1295", "A long-acting GHRH analogue studied for extended half-life via DAC technology and sustained GH/IGF-1 elevation."], "aod": ["AOD-9604", "A modified hGH fragment (176-191). Research focuses specifically on lipolytic activity without the growth-promoting effects of full hGH."], "ahk": ["AHK-Cu", "A tripeptide copper complex. Research explores its role in hair follicle biology, scalp circulation, and extracellular matrix remodeling."], "klow": ["KLOW-80", "A proprietary peptide formulation studied for its metabolic activity profile and receptor binding characteristics across multiple pathways."], "bac": ["BAC Water", "Bacteriostatic water preserved with 0.9% benzyl alcohol \u2014 the standard reconstitution solution for lyophilized research peptides."], "thymalin": ["Thymalin", "A naturally derived thymic peptide complex. Research focuses on immune system modulation, T-lymphocyte activity, and restoration of thymic function."], "nad": ["NAD+", "Nicotinamide Adenine Dinucleotide \u2014 a coenzyme critical for cellular energy metabolism. Research areas include mitochondrial function, sirtuin activation, and cellular aging pathways."], "b12": ["Vitamin B12", "An essential coenzyme involved in DNA synthesis, red blood cell formation, and neurological function. Research-grade injectable form."], "lipo": ["Lipo-C", "A lipotropic injection combining methionine, inositol, and choline with Vitamin B12. Research focuses on hepatic lipid metabolism and fat mobilization pathways."], "fat blast": ["Lipo-C Fat Blaster", "A high-strength lipotropic complex at 526mg. Comprehensive MIC + vitamin formula for lipid metabolism research."], "hgh": ["HGH", "Human Growth Hormone \u2014 a 191 amino acid protein produced by the anterior pituitary. Research examines body composition, cellular repair, IGF-1 axis regulation, and metabolic function."]};
+    function injectHint(p) {
+      var mount = document.getElementById('hint-mount');
+      if (!mount) return;
+      var name = (p.name || '').toLowerCase();
+      var match = Object.keys(HINTS_DATA).find(function(k) { return name.indexOf(k) !== -1; });
+      if (!match) { mount.style.display = 'none'; return; }
+      var label = HINTS_DATA[match][0];
+      var text  = HINTS_DATA[match][1];
+      mount.innerHTML =
+        '<div class="research-hint">' +
+        '<button class="hint-toggle" onclick="this.nextElementSibling.classList.toggle(\'open\');this.querySelector(\'.hint-arrow\').classList.toggle(\'open\')">' +
+        '<span>What is ' + label + '?</span><span class="hint-arrow">&#9660;</span>' +
+        '</button>' +
+        '<div class="hint-body"><p class="hint-text">' + text + '</p></div>' +
+        '</div>';
+      mount.style.display = 'block';
+    }
         renderProduct(p, rating);
         injectHint(p);
         renderLabReport(p);
@@ -437,26 +457,6 @@
       s = document.createElement('script'); s.id='product-ld'; s.type='application/ld+json'; s.textContent = JSON.stringify(ld); document.head.appendChild(s);
     }
 
-    // ── Research Hint ─────────────────────────────────────
-    const HINTS_DATA = {"sema": ["Semaglutide", "A GLP-1 receptor agonist originally developed for blood sugar regulation. Research focuses on its role in metabolic pathways, appetite signaling, and cellular energy balance."], "tirz": ["Tirzepatide", "A dual GIP/GLP-1 receptor agonist. Research explores its effects on insulin sensitivity, lipid metabolism, and energy homeostasis."], "bpc": ["BPC-157", "A pentadecapeptide derived from a human gastric protein. Extensively studied for tissue repair, angiogenesis, and gastrointestinal integrity in preclinical models."], "tb500": ["TB-500", "A synthetic peptide fragment of Thymosin Beta-4. Research focuses on actin binding, cell migration, and wound healing mechanisms."], "ghk": ["GHK-Cu", "A naturally occurring copper peptide. Research areas include collagen synthesis stimulation, antioxidant activity, and tissue regeneration signals."], "mots": ["MOTS-c", "A mitochondrial-derived peptide that regulates metabolic homeostasis. Research focuses on insulin sensitivity, exercise response, and cellular aging pathways."], "reta": ["Retatrutide", "A triple GLP-1/GIP/glucagon receptor agonist. Among the newest compounds in metabolic research, studied for energy expenditure and adipose tissue effects."], "tesa": ["Tesamorelin", "A GHRH analogue that stimulates growth hormone release. Research examines its role in visceral adipose reduction and IGF-1 axis regulation."], "ipa": ["Ipamorelin", "A selective GH secretagogue and ghrelin receptor agonist. Research focuses on pulsatile GH release with minimal effect on cortisol and prolactin."], "cjc": ["CJC-1295", "A long-acting GHRH analogue studied for extended half-life via DAC technology and sustained GH/IGF-1 elevation."], "aod": ["AOD-9604", "A modified hGH fragment (176-191). Research focuses specifically on lipolytic activity without the growth-promoting effects of full hGH."], "ahk": ["AHK-Cu", "A tripeptide copper complex. Research explores its role in hair follicle biology, scalp circulation, and extracellular matrix remodeling."], "klow": ["KLOW-80", "A proprietary peptide formulation studied for its metabolic activity profile and receptor binding characteristics across multiple pathways."], "bac": ["BAC Water", "Bacteriostatic water preserved with 0.9% benzyl alcohol \u2014 the standard reconstitution solution for lyophilized research peptides."], "thymalin": ["Thymalin", "A naturally derived thymic peptide complex. Research focuses on immune system modulation, T-lymphocyte activity, and restoration of thymic function in preclinical models."], "nad": ["NAD+", "Nicotinamide Adenine Dinucleotide \u2014 a coenzyme critical for cellular energy metabolism. Research areas include mitochondrial function, sirtuin activation, and cellular aging pathways."], "b12": ["Vitamin B12", "An essential coenzyme involved in DNA synthesis, red blood cell formation, and neurological function. Research-grade injectable cyanocobalamin/methylcobalamin."], "lipo": ["Lipo-C", "A lipotropic injection combining methionine, inositol, and choline with Vitamin B12. Research focuses on hepatic lipid metabolism and fat mobilization pathways."], "fat blast": ["Lipo-C Fat Blaster", "A high-strength lipotropic complex at 526mg. Comprehensive MIC + vitamin formula studied for lipid metabolism and metabolic support in research settings."], "hgh": ["HGH", "Human Growth Hormone \u2014 a 191 amino acid protein produced by the anterior pituitary. Research examines body composition, cellular repair, IGF-1 axis regulation, and metabolic function."]};
-    window.injectHint = function injectHint(p) {
-      var mount = document.getElementById('hint-mount');
-      if (!mount) return;
-      var name = (p.name || '').toLowerCase();
-      var match = Object.keys(HINTS_DATA).find(function(k) { return name.indexOf(k) !== -1; });
-      if (!match) { mount.style.display = 'none'; return; }
-      var label = HINTS_DATA[match][0];
-      var text  = HINTS_DATA[match][1];
-      mount.innerHTML =
-        '<div class="research-hint">' +
-        '<button class="hint-toggle" onclick="this.nextElementSibling.classList.toggle(\'open\');this.querySelector(\'.hint-arrow\').classList.toggle(\'open\')">' +
-        '<span>What is ' + label + '?</span>' +
-        '<span class="hint-arrow">▼</span>' +
-        '</button>' +
-        '<div class="hint-body"><p class="hint-text">' + text + '</p></div>' +
-        '</div>';
-      mount.style.display = 'block';
-    }
 </script>
 </body>
 </html>
