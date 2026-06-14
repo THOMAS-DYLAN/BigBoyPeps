@@ -188,7 +188,83 @@ create table if not exists orders (
   -- optional: snapshot of which address/payment was used
   shipping_address_id uuid        references shipping_addresses(id) on delete set null,
   payment_method_id   uuid        references payment_methods(id)    on delete set null,
-  ordered_at        timestamptz   not null default now()
+  ordered_at        timestamptz   not null default now(),
+
+  -- shipping snapshot
+  shipping_method   text,
+  shipping_carrier  text,
+  shipping_price    numeric(10,2),
+  shipping_name     text,
+  shipping_street   text,
+  shipping_city     text,
+  shipping_state    text,
+  shipping_zip      text,
+
+  -- customer contact snapshot
+  customer_email    text,
+  customer_phone    text,
+
+  -- payment details
+  payment_method    text,          -- 'paypal' | 'cashapp'
+  paypal_email      text,
+  paypal_name       text,
+  cashapp_cashtag   text,
+
+  -- order grouping + confirmation
+  order_number      text,          -- groups line items from one checkout
+  order_subtotal    numeric(10,2),
+  order_shipping    numeric(10,2),
+  order_total       numeric(10,2),
+  confirm_token     text,          -- used by admin "Confirm Payment" button
+  confirmed_at      timestamptz,
+
+  -- which storefront the order was placed from
+  source_site       text          default 'bbp'   -- 'bbp' | '956labs'
+);
+
+create index if not exists idx_orders_confirm_token  on orders(confirm_token);
+create index if not exists idx_orders_order_number   on orders(order_number);
+
+
+-- ════════════════════════════════════════════════
+-- cart_reminders — abandoned cart drip tracking
+-- ════════════════════════════════════════════════
+create table if not exists cart_reminders (
+  id                uuid        primary key default gen_random_uuid(),
+  user_id           uuid        references auth.users(id) on delete cascade,
+  email             text        not null,
+  cart_snapshot     jsonb,
+  last_cart_update  timestamptz default now(),
+  last_reminder     timestamptz,
+  reminder_count    int         default 0,
+  converted         boolean     default false,
+  source            text        default 'bbp',  -- 'bbp' | '956labs'
+  created_at        timestamptz default now()
+);
+
+create unique index if not exists idx_cart_reminders_user on cart_reminders(user_id);
+
+alter table cart_reminders enable row level security;
+
+create policy "cart_reminders: own select"
+  on cart_reminders for select using (auth.uid() = user_id);
+
+
+-- ════════════════════════════════════════════════
+-- waitlist — restock notification tracking (additions)
+-- ════════════════════════════════════════════════
+alter table waitlist add column if not exists reminder_count integer default 0;
+alter table waitlist add column if not exists last_reminder  timestamptz;
+
+
+-- ════════════════════════════════════════════════
+-- pg_cron: expire payment_processed → completed after 2 days
+-- ════════════════════════════════════════════════
+select cron.schedule(
+  'expire-payment-processed',
+  '0 * * * *',
+  $$update public.orders set status = 'completed'
+    where status = 'payment_processed' and confirmed_at < now() - interval '2 days';$$
 );
 
 

@@ -200,11 +200,11 @@ window.buildBanner = function() {
 window.buildFooter = async function() {
   const { data } = await supabase.auth.getSession();
   const href = data.session ? 'dashboard.html' : 'index.html';
-  return '<footer><div class="footer-inner"><a href="' + href + '" class="footer-brand" style="text-decoration:none;display:flex;align-items:center"><img src="/img/logo.png" alt="BigBoyPeps" style="height:32px;object-fit:contain"></a><div class="footer-copy">© 2025 BigBoyPeps · For research purposes only</div></div></footer>';
+  return '<footer><div class="footer-inner"><a href="' + href + '" class="footer-brand" style="text-decoration:none;display:flex;align-items:center"><img src="/img/logo.png" alt="BigBoyPeps" style="height:32px;object-fit:contain"></a><div class="footer-copy">© 2025 BigBoyPeps · For research purposes only</div><div class="footer-links"><a href="information.html" class="footer-link" style="font-family:var(--font-c);font-size:.56rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#888;text-decoration:none">Research Info</a></div></div></footer>';
 };
 
 function buildFooterFromSession() {
-  return '<footer><div class="footer-inner"><a href="dashboard.html" class="footer-brand" style="text-decoration:none;display:flex;align-items:center"><picture><source srcset="img/logo.webp" type="image/webp"><img src="/img/logo.png" alt="BigBoyPeps" style="height:32px;object-fit:contain" loading="lazy"></picture></a><div class="footer-copy">© 2025 BigBoyPeps · For research purposes only</div></div></footer>';
+  return '<footer><div class="footer-inner"><a href="dashboard.html" class="footer-brand" style="text-decoration:none;display:flex;align-items:center"><picture><source srcset="img/logo.webp" type="image/webp"><img src="/img/logo.png" alt="BigBoyPeps" style="height:32px;object-fit:contain" loading="lazy"></picture></a><div class="footer-copy">© 2025 BigBoyPeps · For research purposes only</div><div class="footer-links"><a href="information.html" class="footer-link" style="font-family:var(--font-c);font-size:.56rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#888;text-decoration:none">Research Info</a></div></div></footer>';
 }
 
 // ── Placeholder nav — renders instantly before auth ───────
@@ -246,7 +246,7 @@ function buildPublicNav(activePage) {
 }
 
 function buildPublicFooter() {
-  return '<footer style="background:#F6F6F6;border-top:1px solid #E0E0E0"><div class="footer-inner"><a href="index.html" class="footer-brand" style="text-decoration:none;display:flex;align-items:center"><picture><source srcset="img/logo.webp" type="image/webp"><img src="/img/logo.png" alt="BigBoyPeps" style="height:32px;object-fit:contain" loading="lazy"></picture></a><div class="footer-copy">© 2025 BigBoyPeps · For research purposes only</div></div></footer>';
+  return '<footer style="background:#F6F6F6;border-top:1px solid #E0E0E0"><div class="footer-inner"><a href="index.html" class="footer-brand" style="text-decoration:none;display:flex;align-items:center"><picture><source srcset="img/logo.webp" type="image/webp"><img src="/img/logo.png" alt="BigBoyPeps" style="height:32px;object-fit:contain" loading="lazy"></picture></a><div class="footer-copy">© 2025 BigBoyPeps · For research purposes only</div><div class="footer-links"><a href="information.html" class="footer-link" style="font-family:var(--font-c);font-size:.56rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#888;text-decoration:none">Research Info</a></div></div></footer>';
 }
 
 // ── BBP Auth popup ───────────────────────────────────────
@@ -302,22 +302,23 @@ function injectAuthPopup() {
 // ── Cart abandonment tracking ─────────────────────────────
 async function trackCartUpdate() {
   try {
-    var { data: { session } } = await supabase.auth.getSession();
-    if (!session) return; // only track logged-in users
     var items = Cart.get();
     if (!items.length) return; // nothing in cart
-    // Build snapshot
     var snapshot = items.map(function(i) {
       return { id: i.id, name: i.name, qty: i.qty, price: i.price, isBundle: !!i.isBundle };
     });
-    await supabase.from('cart_reminders').upsert({
-      user_id:          session.user.id,
-      email:            session.user.email,
-      cart_snapshot:    snapshot,
-      last_cart_update: new Date().toISOString(),
-      converted:        false,
-      source:           window.CART_SOURCE || 'bbp',
-    }, { onConflict: 'user_id' });
+    // Only upsert to DB if logged in — guest carts can't be emailed
+    var { data: { session } } = await supabase.auth.getSession();
+    if (session) {
+      await supabase.from('cart_reminders').upsert({
+        user_id:          session.user.id,
+        email:            session.user.email,
+        cart_snapshot:    snapshot,
+        last_cart_update: new Date().toISOString(),
+        converted:        false,
+        source:           window.CART_SOURCE || 'bbp',
+      }, { onConflict: 'user_id' });
+    }
   } catch(e) { console.warn('cart track error:', e); }
 }
 
@@ -687,6 +688,9 @@ window.applyDiscountInModal = function() {
   input.value = '';
   input.disabled = true;
   input.style.opacity = '.5';
+
+  // Re-mount payment buttons so the charged total reflects the discount
+  Promise.all([mountPayPal(), mountCashApp()]);
 };
 
 // ── Mount PayPal buttons ──────────────────────────────────
@@ -716,11 +720,12 @@ async function mountPayPal() {
 
     container.innerHTML = '';
 
-    var items    = Cart.get();
-    var subtotal = items.reduce(function(s,i) { return s + (Number(i.price)||0) * (Number(i.qty)||1); }, 0);
-    var ship     = getSelectedShipping().price || 0;
-    var discount = Cart.getDiscount ? Cart.getDiscount(subtotal) : 0;
-    var total    = Math.max(0.01, subtotal + ship - discount).toFixed(2);
+    var items       = Cart.get();
+    var subtotal    = items.reduce(function(s,i) { return s + (Number(i.price)||0) * (Number(i.qty)||1); }, 0);
+    var ship        = getSelectedShipping().price || 0;
+    var discount    = _appliedDiscount;
+    var discountAmt = discount ? Math.round(subtotal * discount.pct) / 100 : 0;
+    var total       = Math.max(0.01, subtotal + ship - discountAmt).toFixed(2);
 
     var buttons = window.paypal.Buttons({
       style: { layout:'vertical', color:'blue', shape:'rect', label:'pay', height:48 },
@@ -780,10 +785,12 @@ function mountCashApp() {
   var container = document.getElementById('cashapp-container');
   if (!container) return;
 
-  var items    = Cart.get();
-  var subtotal = items.reduce(function(s,i) { return s + i.price * i.qty; }, 0);
-  var ship     = getSelectedShipping().price;
-  var total    = (subtotal + ship).toFixed(2);
+  var items       = Cart.get();
+  var subtotal    = items.reduce(function(s,i) { return s + i.price * i.qty; }, 0);
+  var ship        = getSelectedShipping().price;
+  var discount    = _appliedDiscount;
+  var discountAmt = discount ? Math.round(subtotal * discount.pct) / 100 : 0;
+  var total       = Math.max(0.01, subtotal + ship - discountAmt).toFixed(2);
 
   container.innerHTML =
     '<button id="cashapp-btn" onclick="showCashAppInput()" style="width:100%;height:48px;background:#00D632;color:#000;border:none;border-radius:4px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;font-family:var(--font-c);font-size:.78rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;transition:opacity .18s" onmouseover="this.style.opacity=\'.85\'" onmouseout="this.style.opacity=\'1\'">'
@@ -832,10 +839,12 @@ window.payCashApp = async function() {
   if (cashtagErr) cashtagErr.textContent = '';
   if (!cashtag.startsWith('$')) cashtag = '$' + cashtag;
 
-  var items    = Cart.get();
-  var subtotal = items.reduce(function(s,i) { return s + i.price * i.qty; }, 0);
-  var ship     = getSelectedShipping().price;
-  var total    = (subtotal + ship).toFixed(2);
+  var items       = Cart.get();
+  var subtotal    = items.reduce(function(s,i) { return s + i.price * i.qty; }, 0);
+  var ship        = getSelectedShipping().price;
+  var discount    = _appliedDiscount;
+  var discountAmt = discount ? Math.round(subtotal * discount.pct) / 100 : 0;
+  var total       = Math.max(0.01, subtotal + ship - discountAmt).toFixed(2);
   var shippingData = captureShipping();
   shippingData.cashapp_cashtag = cashtag;
 
@@ -979,6 +988,7 @@ async function finishOrder(shipping, paymentStatus, skipInventory) {
         cashapp_cashtag:  shipping.cashapp_cashtag || null,
         paypal_email:     shipping.paypal_email || null,
         paypal_name:      shipping.paypal_name  || null,
+        source_site:      window.CART_SOURCE || 'bbp',
       });
       if (orderId) orderIds.push(orderId);
     }

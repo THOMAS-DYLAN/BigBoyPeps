@@ -242,9 +242,24 @@
       padding: 12px 20px;
       border-bottom: 1px solid #1a1a2e;
       display: flex;
+      align-items: center;
       gap: 32px;
       flex-wrap: wrap;
     }
+    .store-badge {
+      margin-left: auto;
+      font-family: var(--font-c);
+      font-size: .58rem;
+      font-weight: 700;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      padding: 4px 11px;
+      border-radius: 2px;
+      flex-shrink: 0;
+      white-space: nowrap;
+    }
+    .store-badge.bbp     { background: rgba(184,137,42,.12); color: var(--gold);   border: 1px solid rgba(184,137,42,.3); }
+    .store-badge.labs956 { background: rgba(0,104,71,.15);   color: #00C97A; border: 1px solid rgba(0,104,71,.4); }
     .customer-field { }
     .customer-label {
       font-family: var(--font-c);
@@ -615,7 +630,10 @@
         +   '<span class="order-status-badge ' + statusClass + '">' + statusLabel + '</span>'
         + '</div>'
         + '<div class="order-customer">'
-        +   '<div class="customer-field"><div class="customer-label">Customer</div><div class="customer-value">' + (first.customer_phone || first.customer_email || '—') + '</div></div>'
+        +   '<div class="customer-field"><div class="customer-label">Customer</div><div class="customer-value">' + (first.shipping_first_name || '') + ' ' + (first.shipping_last_name || '') + '</div></div>'
+        +   (first.customer_email ? '<div class="customer-field"><div class="customer-label">Email</div><div class="customer-value">' + first.customer_email + '</div></div>' : '')
+        +   (first.shipping_method ? '<div class="customer-field"><div class="customer-label">Ship via</div><div class="customer-value">' + first.shipping_method + '</div></div>' : '')
+        +   '<span class="store-badge ' + (first.source_site === '956labs' ? 'labs956' : 'bbp') + '">' + (first.source_site === '956labs' ? '956 Labs' : 'BigBoyPeps') + '</span>'
         + '</div>'
         + '<div class="order-items">' + itemsHtml + '</div>'
         + '<div class="order-footer">'
@@ -718,24 +736,22 @@
       '<div class="detail-section">'
         + '<div class="detail-section-title">Status</div>'
         + '<span class="order-status-badge ' + statusClass + '">' + statusLabel + '</span>'
+        + '<span class="store-badge ' + (first.source_site === '956labs' ? 'labs956' : 'bbp') + '" style="margin-left:8px">' + (first.source_site === '956labs' ? '956 Labs' : 'BigBoyPeps') + '</span>'
         + '<div class="detail-row" style="margin-top:10px"><div class="detail-key">Date</div><div class="detail-val">' + date + '</div></div>'
       + '</div>'
       + '<div class="detail-section">'
         + '<div class="detail-section-title">Customer</div>'
-        + (!first.shipping_name && !first.customer_email
-            ? '<p style="font-size:.75rem;color:#444;font-style:italic;margin-bottom:8px">Order placed before customer data was saved — check the notification email.</p>'
-            : '')
-        + dr('Phone', first.customer_phone || first.customer_email || null)
-        + dr('Email', first.customer_email || null)
-        + dr('Phone', first.customer_phone || null)
+        + dr('Name',  first.shipping_name  || '—')
+        + dr('Email', first.customer_email || '—')
+        + dr('Phone', first.customer_phone || '—')
       + '</div>'
       + '<div class="detail-section">'
-        + '<div class="detail-section-title">Shipping</div>'
-        + dr('Street', first.shipping_street || null)
-        + dr('City',   first.shipping_city   || null)
-        + dr('State',  first.shipping_state  || null)
-        + dr('ZIP',    first.shipping_zip    || null)
-        + dr('Method', first.shipping_method || null)
+        + '<div class="detail-section-title">Shipping Address</div>'
+        + dr('Street', first.shipping_street || '—')
+        + dr('City',   first.shipping_city   || '—')
+        + dr('State',  first.shipping_state  || '—')
+        + dr('ZIP',    first.shipping_zip    || '—')
+        + dr('Method', first.shipping_method || '—')
       + '</div>'
       + '<div class="detail-section">'
         + '<div class="detail-section-title">Payment</div>'

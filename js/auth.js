@@ -269,6 +269,7 @@ window.Auth = {
       cashapp_cashtag: order.cashapp_cashtag || null,
       paypal_email:    order.paypal_email    || null,
       paypal_name:     order.paypal_name     || null,
+      source_site:     order.source_site     || 'bbp',
     }).select('id').single();
 
     if (!order.skipInventory) {
