@@ -458,6 +458,8 @@ footer {
   .product-desc  { display: none !important; } /* hide on mobile to keep cards tight */
   .product-price { font-size: 1.2rem !important; }
   .add-btn { width: 30px !important; height: 30px !important; font-size: 1.1rem !important; }
+  .product-card .add-btn  { width: 100% !important; height: 48px !important; font-size: .74rem !important; }
+  .product-card .waitlist-btn { width: 100% !important; height: 48px !important; }
 
   /* Add-to-cart flash — keep above bottom nav space */
   .add-flash { bottom: 16px !important; font-size: .7rem !important; padding: 10px 18px !important; }

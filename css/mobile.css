@@ -973,8 +973,13 @@ a, button, [role="button"] {
 }
 
 @keyframes skeleton-shimmer {
-  0%   { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
+  0%   { opacity: 1; }
+  50%  { opacity: .4; }
+  100% { opacity: 1; }
+}
+.skeleton-thumb {
+  animation: skeleton-shimmer 1.4s ease-in-out infinite;
+  will-change: opacity;
 }
 
 /* Page title clamp */

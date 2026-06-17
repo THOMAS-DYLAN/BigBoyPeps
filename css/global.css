@@ -7,7 +7,7 @@
   --off:     #F6F6F6;
   --card:    #FFFFFF;
   --border:  #E0E0E0;
-  --smoke:   #888888;
+  --smoke:   #666666;
   --ash:     #555555;
   --light:   #222222;
   --white:   #111111;
@@ -54,3 +54,6 @@ img    { max-width: 100%; height: auto; display: block; }
   0%, 100% { opacity: 1; }
   50%       { opacity: .4; }
 }
+
+/* Mobile sign out tab — hidden on desktop */
+.nav-signout-tab { display: none; }

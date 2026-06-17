@@ -167,13 +167,7 @@ function buildNavFromSession(activePage, session) {
 
   const cartBadgeHtml = '<span id="cart-badge" class="cart-badge" style="display:' + (count>0?'flex':'none') + '">' + count + '</span>';
 
-  // Mobile-only sign out tab (hidden on desktop via CSS)
-  const mobileSignOut = '<button onclick="Auth.logout()" class="nav-signout-tab">'
-    + '<span class="nav-icon">⏻</span>'
-    + '<span class="nav-label">Sign Out</span>'
-    + '</button>';
-
-  return '<nav>'
+  return '<nav aria-label="Main navigation">'
     + '<div class="nav-inner">'
     + '<a href="dashboard.html" class="nav-brand">' + NAV_LOGO + '</a>'
     + '<div class="nav-links">' + navLinks + '</div>'
@@ -184,7 +178,6 @@ function buildNavFromSession(activePage, session) {
     + '<span class="nav-label">Cart</span>'
     + cartBadgeHtml
     + '</a>'
-    + mobileSignOut
     + '</div>'
     + '</div>'
     + '</nav>';
@@ -209,7 +202,7 @@ function buildFooterFromSession() {
 
 // ── Placeholder nav — renders instantly before auth ───────
 function buildPlaceholderNav() {
-  return '<nav>'
+  return '<nav aria-label="Main navigation">'
     + '<div class="nav-inner">'
     + '<a href="dashboard.html" class="nav-brand">' + NAV_LOGO + '</a>'
     + '<div class="nav-links" style="opacity:.25;pointer-events:none">'
@@ -228,7 +221,7 @@ function buildPlaceholderNav() {
 function buildPublicNav(activePage) {
   var gc = Cart.count();
   var badgeStyle = 'display:' + (gc > 0 ? 'flex' : 'none');
-  return '<nav>'
+  return '<nav aria-label="Main navigation">'
     + '<div class="nav-inner">'
     + '<a href="index.html" class="nav-brand" style="text-decoration:none">' + NAV_LOGO + '</a>'
     + '<div class="nav-links">'

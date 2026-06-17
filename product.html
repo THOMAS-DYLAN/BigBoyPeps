@@ -19,12 +19,14 @@
   <meta name="robots" content="index,follow">
   <meta name="description" content="Research-grade peptides for the Rio Grande Valley — McAllen, Edinburg, Harlingen, Brownsville. For research purposes only."/>
   <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700&family=Barlow:wght@300;400;500;600&display=swap" onload="this.rel='stylesheet'" />
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700&family=Barlow:wght@300;400;500;600&display=swap"></noscript>
   <link rel="modulepreload" href="./js/supabase.js">
   <link rel="modulepreload" href="./js/auth.js?v=15">
   <link rel="modulepreload" href="./js/cart.js?v=19">
   <link rel="modulepreload" href="./js/products.js?v=15">
   <link rel="stylesheet" href="./css/global.css"/>
+  <link rel="stylesheet" href="./css/shared.css"/>
   <link rel="stylesheet" href="./css/mobile.css"/>
   <style>
     body { display:flex; flex-direction:column; min-height:100vh; }
@@ -164,6 +166,7 @@
   </style>
 </head>
 <body>
+<a href="#main-content" class="skip-link" style="position:absolute;top:-40px;left:0;padding:8px 16px;background:var(--red);color:#fff;font-family:var(--font-c);font-size:.7rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;z-index:999;transition:top .2s" onfocus="this.style.top='0'" onblur="this.style.top='-40px'">Skip to content</a>
   <div id="nav-mount"></div>
   <div id="banner-mount"></div>
 
@@ -173,6 +176,7 @@
     </div>
   </div>
 
+  <main id="main-content">
   <div class="product-page">
     <div class="container">
       <div id="product-content"><p style="color:#888888">Loading…</p></div>
@@ -205,6 +209,7 @@
     </div>
   </div>
 
+  </main>
   <div id="footer-mount"></div>
   <div class="add-toast" id="add-toast"></div>
 

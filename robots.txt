@@ -1,13 +1,9 @@
 User-agent: *
-Allow: /
-Allow: /index.html
-Allow: /product.html
-
-Disallow: /dashboard.html
+Disallow: /admin.html
 Disallow: /cart.html
+Disallow: /dashboard.html
 Disallow: /orders.html
 Disallow: /reset.html
-Disallow: /admin.html
 Disallow: /*?wc-ajax=*
 
 Sitemap: https://bigboypeps.com/sitemap.xml
