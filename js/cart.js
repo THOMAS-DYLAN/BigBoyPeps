@@ -969,6 +969,8 @@ async function finishOrder(shipping, paymentStatus, skipInventory) {
         order_subtotal:   subtotal,
         order_shipping:   shipPrice,
         order_total:      orderTotal,
+        discount_code:    _appliedDiscount ? _appliedDiscount.label : null,
+        discount_pct:     _appliedDiscount ? _appliedDiscount.pct   : null,
         shipping_price:   shipping.shipping_price,
         customer_email:   profile ? profile.email : null,
         customer_phone:   shipping.phone || null,
@@ -982,6 +984,7 @@ async function finishOrder(shipping, paymentStatus, skipInventory) {
         paypal_email:     shipping.paypal_email || null,
         paypal_name:      shipping.paypal_name  || null,
         source_site:      window.CART_SOURCE || 'bbp',
+        discount_code:    _appliedDiscount ? _appliedDiscount.label : null,
       });
       if (orderId) orderIds.push(orderId);
     }

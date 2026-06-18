@@ -492,10 +492,13 @@
   <div class="filter-bar">
     <span class="filter-label">Filter</span>
     <button class="filter-btn active" onclick="setFilter('all',this)">All</button>
+    <button class="filter-btn" onclick="setFilter('discount',this)">🏷 Discounts</button>
     <button class="filter-btn" onclick="setFilter('processing',this)">Processing</button>
     <button class="filter-btn" onclick="setFilter('pending_cashapp',this)">⚠ Cash App</button>
     <button class="filter-btn" onclick="setFilter('payment_processed',this)">Confirmed</button>
     <button class="filter-btn" onclick="setFilter('completed',this)">Completed</button>
+    <button class="filter-btn" onclick="setFilter('discount',this)">🏷 Discounts</button>
+    <button class="filter-btn" onclick="setFilter('discount',this)">🏷 Discount Codes</button>
   </div>
 
   <div class="orders-body" id="orders-body">
@@ -758,6 +761,7 @@
         + '<div class="detail-section-title">Payment</div>'
         + dr('Method', pm.toUpperCase())
         + (pmDetail ? dr('Account', pmDetail) : '')
+        + (first.discount_code ? dr('Discount Code', '🏷 ' + first.discount_code + ' — ' + (first.discount_pct||0) + '% off') : '')
       + '</div>'
       + '<div class="detail-section">'
         + '<div class="detail-section-title">Items</div>'
