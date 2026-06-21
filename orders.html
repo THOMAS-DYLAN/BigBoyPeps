@@ -21,9 +21,7 @@
   <link rel="modulepreload" href="js/auth.js?v=15">
   <link rel="modulepreload" href="js/cart.js?v=19">
   <link rel="modulepreload" href="js/products.js?v=15">
-  <link rel="stylesheet" href="css/global.css?v=2" />
-  <link rel="stylesheet" href="css/shared.css?v=2" />
-  <link rel="stylesheet" href="css/mobile.css" />
+  <link rel="stylesheet" href="css/site.css?v=3" />
   <style>
     body { display: flex; flex-direction: column; min-height: 100vh; }
 
@@ -190,7 +188,7 @@
   <meta name="robots" content="noindex,nofollow">
 </head>
 <body>
-<a href="#main-content" class="skip-link" style="position:absolute;top:-40px;left:0;padding:8px 16px;background:var(--red);color:#fff;font-family:var(--font-c);font-size:.7rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;z-index:999;transition:top .2s" onfocus="this.style.top='0'" onblur="this.style.top='-40px'">Skip to content</a>
+<a href="#main-content" class="skip-link" style="position:absolute;top:0;left:0;padding:8px 16px;background:var(--red);color:#fff;font-family:var(--font-c);font-size:.7rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;z-index:999;transform:translateY(-100%);transition:transform .2s;will-change:transform" onfocus="this.style.transform='translateY(0)'" onblur="this.style.transform='translateY(-100%)'">Skip to content</a>
   <div id="nav-mount"></div>
   <div id="banner-mount"></div>
 
@@ -215,7 +213,6 @@
   <script type="module">
     import './js/auth.js?v=15';
     import './js/cart.js?v=19';
-    import './js/products.js?v=15';
     import { loadProducts, getProduct, miniPepperSVG } from './js/products.js?v=15';
 
     const [, , orders] = await Promise.all([

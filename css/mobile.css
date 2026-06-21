@@ -106,7 +106,7 @@ nav {
   letter-spacing: .12em;
   text-transform: uppercase;
   background: transparent;
-  color: #888;
+  color: #666;
   padding: 6px 10px;
   border: 1px solid #E0E0E0;
   cursor: pointer;
@@ -274,7 +274,7 @@ nav {
 }
 
 .research-banner p span {
-  color: #888;
+  color: #666;
   font-weight: 400;
   letter-spacing: .04em;
   text-transform: none;
@@ -315,7 +315,7 @@ footer {
   font-weight: 700;
   letter-spacing: .12em;
   text-transform: uppercase;
-  color: #888;
+  color: #666;
 }
 
 @media (max-width: 480px) {

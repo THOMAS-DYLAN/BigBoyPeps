@@ -18,6 +18,14 @@ nav {
 }
 @media (min-width: 768px) { nav { height: 62px; } }
 
+/* Reserve space for nav + banner before JS populates them — prevents CLS */
+#nav-mount    { min-height: 56px; }
+#banner-mount { min-height: 30px; }
+@media (min-width: 768px) {
+  #nav-mount    { min-height: 62px; }
+  #banner-mount { min-height: 34px; }
+}
+
 .nav-inner {
   max-width: 1200px; margin: 0 auto;
   padding: 0 16px;

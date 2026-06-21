@@ -13,8 +13,11 @@
   <link rel="apple-touch-icon" href="/img/logo.png">
   <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700&family=Barlow:wght@300;400;500;600&display=swap" onload="this.rel='stylesheet'" />
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700&family=Barlow:wght@300;400;500;600&display=swap"></noscript>
-  <link rel="stylesheet" href="css/global.css"/>
-  <link rel="stylesheet" href="css/mobile.css"/>
+  <link rel="modulepreload" href="js/supabase.js">
+  <link rel="modulepreload" href="js/auth.js?v=15">
+  <link rel="modulepreload" href="js/cart.js?v=19">
+  <link rel="modulepreload" href="js/products.js?v=15">
+  <link rel="stylesheet" href="css/site.css?v=3"/>
   <style>
     body { background: #FFFFFF; color: #111; min-height: 100vh; display: flex; flex-direction: column; }
 
@@ -103,7 +106,7 @@
     }
     .info-card.general .card-tag  { color: #B8892A; }
     .info-card.general .card-name { color: #F0F0F0; }
-    .info-card.general .card-preview { color: #888; }
+    .info-card.general .card-preview { color: #666; }
     .info-card.general .see-more-btn { color: #B8892A; border-color: rgba(184,137,42,.3); }
     .info-card.general .see-more-btn:hover { background: rgba(184,137,42,.1); border-color: #B8892A; }
     .info-card.general:hover { border-color: #B8892A; box-shadow: 0 6px 24px rgba(0,0,0,.4); }
@@ -153,7 +156,7 @@
     }
     .panel-close {
       background: none; border: none; cursor: pointer;
-      font-size: 1.1rem; color: #888; padding: 4px 8px;
+      font-size: 1.1rem; color: #666; padding: 4px 8px;
       flex-shrink: 0; margin-left: 12px; margin-top: 2px;
       transition: color .18s;
     }
@@ -185,7 +188,7 @@
     .panel-disclaimer {
       margin-top: 28px; padding: 12px 16px;
       background: #F6F6F6; border-left: 2px solid #D0D0D0;
-      font-size: .72rem; color: #888; font-style: italic; line-height: 1.6;
+      font-size: .72rem; color: #666; font-style: italic; line-height: 1.6;
     }
 
     /* ── Footer ── */
@@ -200,12 +203,12 @@
     }
     .footer-copy {
       font-family: var(--font-c); font-size: .58rem; font-weight: 700;
-      letter-spacing: .12em; text-transform: uppercase; color: #888;
+      letter-spacing: .12em; text-transform: uppercase; color: #666;
     }
     .footer-links { display: flex; gap: 16px; }
     .footer-link {
       font-family: var(--font-c); font-size: .58rem; font-weight: 700;
-      letter-spacing: .12em; text-transform: uppercase; color: #888;
+      letter-spacing: .12em; text-transform: uppercase; color: #666;
       text-decoration: none; transition: color .18s;
     }
     .footer-link:hover { color: #B8892A; }
@@ -530,6 +533,13 @@
     </div>
   </div>
 
+  <script type="module">
+    import './js/auth.js?v=15';
+    import './js/cart.js?v=19';
+    import { loadProducts } from './js/products.js?v=15';
+    await Promise.all([window.initPage('information'), loadProducts()]);
+  </script>
+
   <script>
     const CARDS = {
       'what-is-peptide': {
@@ -729,7 +739,7 @@
           { title: 'Usage in Research', text: 'Using a sterile syringe, draw the desired volume of BAC water and inject slowly into the peptide vial, allowing it to dissolve naturally. Do not shake. Label reconstituted vials with the date and concentration. Refrigerate reconstituted peptides at 2–8°C.' },
         ],
         pills: ['0.9% Benzyl Alcohol', 'Multi-Dose Use', 'Bacteriostatic', 'Reconstitution Vehicle']
-      }
+      },
 
       'b12': { tag: 'Essential Vitamin', name: 'Vitamin B12', sections: [
         { title: 'Overview', text: 'Vitamin B12 (cobalamin) is an essential water-soluble vitamin that cannot be synthesized by the human body. The two main bioactive forms are methylcobalamin and cyanocobalamin. Injectable B12 bypasses gastrointestinal absorption, making it the most direct delivery method for research purposes.' },

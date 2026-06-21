@@ -26,15 +26,13 @@
   <link rel="modulepreload" href="./js/auth.js?v=15">
   <link rel="modulepreload" href="./js/cart.js?v=19">
   <link rel="modulepreload" href="./js/products.js?v=15">
-  <link rel="stylesheet" href="./css/global.css"/>
-  <link rel="stylesheet" href="./css/shared.css"/>
-  <link rel="stylesheet" href="./css/mobile.css"/>
+  <link rel="stylesheet" href="./css/site.css?v=3"/>
   <style>
     body { display:flex; flex-direction:column; min-height:100vh; }
     .container { max-width:1140px; margin:0 auto; padding:0 16px; }
 
-    .breadcrumb { padding:14px 0; border-bottom:1px solid var(--border); font-family:var(--font-c); font-size:.62rem; font-weight:600; letter-spacing:.14em; text-transform:uppercase; color:#888888; display:flex; align-items:center; gap:8px; }
-    .breadcrumb a { color:#888888; transition:color .18s; }
+    .breadcrumb { padding:14px 0; border-bottom:1px solid var(--border); font-family:var(--font-c); font-size:.62rem; font-weight:600; letter-spacing:.14em; text-transform:uppercase; color: #666666; display:flex; align-items:center; gap:8px; }
+    .breadcrumb a { color: #666666; transition:color .18s; }
     .breadcrumb a:hover { color:var(--red-hot); }
 
     .product-page { flex:1; padding:44px 0 80px; }
@@ -46,14 +44,14 @@
     .product-visual-badge { position:absolute; top:12px; left:12px; z-index:2; font-family:var(--font-c); font-size:.58rem; font-weight:700; letter-spacing:.18em; text-transform:uppercase; padding:4px 11px; border:1px solid rgba(184,137,42,.4); background:rgba(184,137,42,.15); color:var(--red-hot); border-radius:2px; }
     .oos-overlay { position:absolute; inset:0; background:rgba(4,10,6,.7); z-index:5; display:flex; align-items:center; justify-content:center; }
     .oos-label { font-family:var(--font-c); font-size:.7rem; font-weight:700; letter-spacing:.2em; text-transform:uppercase; background:rgba(206,17,38,.88); color:#fff; padding:7px 18px; border-radius:2px; }
-    .research-tag { margin-top:12px; padding:10px 14px; border:1px solid #D8D8D8; background:#F6F6F6; font-size:.67rem; color:#888888; font-style:italic; line-height:1.6; text-align:center; border-radius:2px; }
+    .research-tag { margin-top:12px; padding:10px 14px; border:1px solid #D8D8D8; background:#F6F6F6; font-size:.67rem; color: #666666; font-style:italic; line-height:1.6; text-align:center; border-radius:2px; }
 
     .product-cat-tag { display:inline-flex; align-items:center; gap:7px; font-family:var(--font-c); font-size:.62rem; font-weight:700; letter-spacing:.22em; text-transform:uppercase; color:var(--red-hot); margin-bottom:11px; }
     .product-cat-tag::before { content:''; width:16px; height:2px; background:var(--red); }
     .product-title { font-family:var(--font-d); font-size:clamp(1.9rem,4vw,3rem); letter-spacing:.04em; line-height:.95; color:#111111; margin-bottom:16px; }
     .product-info-row { display:flex; align-items:center; gap:10px; margin-bottom:18px; flex-wrap:wrap; }
-    .info-label { font-family:var(--font-c); font-size:.58rem; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:#888888; }
-    .product-description { font-size:.86rem; color:#888888; line-height:1.75; margin-bottom:22px; }
+    .info-label { font-family:var(--font-c); font-size:.58rem; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color: #666666; }
+    .product-description { font-size:.86rem; color: #666666; line-height:1.75; margin-bottom:22px; }
 
     /* ── Research Hint ───────────────────────────────── */
     .research-hint {
@@ -84,7 +82,7 @@
     .product-divider { height:1px; background:var(--border); margin:22px 0; }
     .price-row { display:flex; align-items:baseline; gap:10px; margin-bottom:18px; }
     .price-big { font-family:var(--font-d); font-size:2.2rem; letter-spacing:.04em; color:#111111; }
-    .price-note { font-family:var(--font-c); font-size:.63rem; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:#888888; }
+    .price-note { font-family:var(--font-c); font-size:.63rem; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color: #666666; }
 
     .product-actions { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:24px; align-items:center; }
     .qty-control { display:flex; border:1px solid #D8D8D8; }
@@ -111,7 +109,7 @@
 
     .detail-row { display:flex; padding:10px 0; border-bottom:1px solid var(--border); font-size:.83rem; }
     .detail-row:first-child { border-top:1px solid var(--border); }
-    .detail-key { font-family:var(--font-c); font-size:.6rem; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:#888888; width:110px; flex-shrink:0; padding-top:2px; }
+    .detail-key { font-family:var(--font-c); font-size:.6rem; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color: #666666; width:110px; flex-shrink:0; padding-top:2px; }
     .detail-val { color:#1A1A1A; }
 
     /* ── Related ──────────────────────────────────────── */
@@ -137,7 +135,7 @@
     .reviews-head { font-family:var(--font-d); font-size:1.6rem; letter-spacing:.04em; color:#111111; margin-bottom:22px; }
     .reviews-head em { color:var(--red); font-style:normal; }
     .your-rating-panel { background:#F6F6F6; border:1px solid #D8D8D8; padding:18px 20px; margin-bottom:26px; display:flex; align-items:center; gap:16px; flex-wrap:wrap; border-radius:2px; }
-    .rating-label { font-family:var(--font-c); font-size:.63rem; font-weight:700; letter-spacing:.18em; text-transform:uppercase; color:#888888; flex-shrink:0; }
+    .rating-label { font-family:var(--font-c); font-size:.63rem; font-weight:700; letter-spacing:.18em; text-transform:uppercase; color: #666666; flex-shrink:0; }
     .star-btn { width:30px; height:30px; background:none; border:none; cursor:pointer; padding:0; transition:transform .12s; display:inline-flex; }
     .star-btn:hover { transform:scale(1.15); }
     .star-btn svg { width:26px; height:26px; display:block; }
@@ -146,7 +144,7 @@
     .review-write-btn:hover { background:rgba(184,137,42,.1); }
     .review-form-wrap { display:none; background:#F6F6F6; border:1px solid #D8D8D8; padding:18px; margin-bottom:20px; border-radius:2px; }
     .review-form-wrap.open { display:block; }
-    .review-form-label { font-family:var(--font-c); font-size:.6rem; font-weight:700; letter-spacing:.18em; text-transform:uppercase; color:#888888; margin-bottom:10px; }
+    .review-form-label { font-family:var(--font-c); font-size:.6rem; font-weight:700; letter-spacing:.18em; text-transform:uppercase; color: #666666; margin-bottom:10px; }
     .review-input { width:100%; padding:9px 12px; background:#FFFFFF; border:1px solid #D8D8D8; color:#111111; font-size:.85rem; outline:none; box-sizing:border-box; margin-bottom:8px; transition:border-color .2s; font-family:var(--font-b); border-radius:2px; }
     .review-input:focus { border-color:var(--red); box-shadow:0 0 0 2px rgba(184,137,42,.12); }
     .review-card { background:#FFFFFF; border:1px solid #D8D8D8; padding:14px 16px; margin-bottom:8px; border-radius:2px; }
@@ -154,7 +152,7 @@
     .review-username { font-family:var(--font-c); font-size:.68rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:#111111; }
     .review-stars { display:flex; gap:2px; }
     .review-stars svg { width:12px; height:12px; }
-    .review-date { font-size:.65rem; color:#888888; margin-left:auto; }
+    .review-date { font-size:.65rem; color: #666666; margin-left:auto; }
     .review-comment { font-size:.83rem; color:#1A1A1A; line-height:1.65; }
 
     /* ── Toast ────────────────────────────────────────── */
@@ -167,7 +165,7 @@
   </style>
 </head>
 <body>
-<a href="#main-content" class="skip-link" style="position:absolute;top:-40px;left:0;padding:8px 16px;background:var(--red);color:#fff;font-family:var(--font-c);font-size:.7rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;z-index:999;transition:top .2s" onfocus="this.style.top='0'" onblur="this.style.top='-40px'">Skip to content</a>
+<a href="#main-content" class="skip-link" style="position:absolute;top:0;left:0;padding:8px 16px;background:var(--red);color:#fff;font-family:var(--font-c);font-size:.7rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;z-index:999;transform:translateY(-100%);transition:transform .2s;will-change:transform" onfocus="this.style.transform='translateY(0)'" onblur="this.style.transform='translateY(-100%)'">Skip to content</a>
   <div id="nav-mount"></div>
   <div id="banner-mount"></div>
 
@@ -180,7 +178,7 @@
   <main id="main-content">
   <div class="product-page">
     <div class="container">
-      <div id="product-content"><p style="color:#888888">Loading…</p></div>
+      <div id="product-content"><p style="color: #666666">Loading…</p></div>
     </div>
   </div>
 
@@ -196,13 +194,13 @@
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
           <span class="rating-label">Your Rating</span>
           <div id="form-star-picker" style="display:flex;gap:4px"></div>
-          <span id="form-star-label" style="font-family:var(--font-c);font-size:.58rem;color:#888888"></span>
+          <span id="form-star-label" style="font-family:var(--font-c);font-size:.58rem;color: #666666"></span>
         </div>
         <input id="review-username" class="review-input" type="text" placeholder="Display name (e.g. ResearcherJane)" maxlength="40"/>
         <textarea id="review-comment" class="review-input" placeholder="Share your experience…" maxlength="500" rows="3" style="resize:vertical"></textarea>
         <div style="display:flex;gap:10px;margin-top:8px;align-items:center">
           <button onclick="submitReview()" style="font-family:var(--font-c);font-size:.66rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;background:var(--red);color:#fff;padding:8px 18px;border:none;cursor:pointer;transition:background .18s;border-radius:2px" onmouseover="this.style.background='var(--red-hot)'" onmouseout="this.style.background='var(--red)'">Post Review</button>
-          <button onclick="document.getElementById('review-form-wrap').classList.remove('open')" style="font-family:var(--font-c);font-size:.63rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;background:none;color:#888888;padding:8px 12px;border:1px solid #D8D8D8;cursor:pointer;border-radius:2px">Cancel</button>
+          <button onclick="document.getElementById('review-form-wrap').classList.remove('open')" style="font-family:var(--font-c);font-size:.63rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;background:none;color: #666666;padding:8px 12px;border:1px solid #D8D8D8;cursor:pointer;border-radius:2px">Cancel</button>
           <span id="review-err" style="font-size:.7rem;color:var(--err)"></span>
         </div>
       </div>
@@ -233,11 +231,11 @@
     const content   = document.getElementById('product-content');
 
     if (!productId || isNaN(productId)) {
-      content.innerHTML = '<p style="color:#888888">No product specified. <a href="index.html">← Back to Shop</a></p>';
+      content.innerHTML = '<p style="color: #666666">No product specified. <a href="index.html">← Back to Shop</a></p>';
     } else {
       const p = getProduct(productId);
       if (!p) {
-        content.innerHTML = '<p style="color:#888888">Product not found. <a href="dashboard.html">← Back to Shop</a></p>';
+        content.innerHTML = '<p style="color: #666666">Product not found. <a href="dashboard.html">← Back to Shop</a></p>';
       } else {
         const rating = await Auth.getProductRating(productId);
 
@@ -284,7 +282,7 @@
         + '<div class="product-main-thumb">'
         + (p.inventory <= 0 ? '<div class="oos-overlay"><div class="oos-label">Out of Stock</div></div>' : '')
         + (p.badge ? '<div class="product-visual-badge">' + p.badge + '</div>' : '')
-        + (p.images ? '<img src="./pdct img/' + p.images + '" alt="' + p.name + '"/>' : pepperSVG(p))
+        + (p.images ? '<img src="./pdct img/' + p.images + '" alt="' + p.name + '" width="280" height="280"/>' : pepperSVG(p))
         + '</div>'
         + '<div class="research-tag">⚠️ For research purposes only · Not intended for human consumption · Handle with care</div>'
         + '</div>'
@@ -294,7 +292,7 @@
         + '<h1 class="product-title">' + p.name + '</h1>'
         + '<div class="product-info-row"><span class="info-label">Rating</span>'
         + '<div style="display:flex;gap:3px">' + Array.from({length:5},(_,i)=>star(i<avg)).join('') + '</div>'
-        + '<span style="font-family:var(--font-c);font-size:.62rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#888888">'
+        + '<span style="font-family:var(--font-c);font-size:.62rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color: #666666">'
         + (rating.count === 0 ? 'No reviews' : rating.count + ' review' + (rating.count!==1?'s':'')) + '</span>'
         + '</div>'
         + '<div class="product-description">' + p.description + '</div>'
@@ -361,7 +359,7 @@
       if (!p.lab_report) return;
       const m = document.getElementById('lab-mount');
       m.style.display = '';
-      m.innerHTML = '<div class="lab-section"><div class="lab-title">Lab Report</div><img src="./report img/' + p.lab_report + '" alt="Lab Report" class="lab-img"/></div>';
+      m.innerHTML = '<div class="lab-section"><div class="lab-title">Lab Report</div><picture><source srcset="./report img/' + p.lab_report.replace(/\.png$/, '.webp') + '" type="image/webp"><img src="./report img/' + p.lab_report + '" alt="Lab Report" class="lab-img" width="700" height="1000" loading="lazy" decoding="async"/></picture></div>';
     }
 
     function renderRelated(p) {
@@ -371,7 +369,7 @@
       m.style.display = '';
       m.innerHTML = '<div class="related-section"><div class="related-title">More <em>Research</em></div><div class="related-row">'
         + others.map(r => '<div class="related-card" onclick="location.href=\'product.html?id='+r.id+'\'">'
-            + '<div class="related-thumb">' + (r.images ? '<img src="./pdct img/'+r.images+'" alt="'+r.name+'"/>' : miniPepperSVG(r)) + '</div>'
+            + '<div class="related-thumb">' + (r.images ? '<img src="./pdct img/'+r.images+'" alt="'+r.name+'" width="76" height="76"/>' : miniPepperSVG(r)) + '</div>'
             + '<div class="related-info"><div class="related-name">'+r.name+'</div><div class="related-price">$'+Number(r.price).toFixed(2)+'</div></div>'
             + '</div>').join('')
         + '</div></div>';
@@ -421,7 +419,7 @@
       // Reviews list — Auth.getReviews returns { rows, currentUserId }
       const { rows } = await Auth.getReviews(productId);
       if (!rows.length) {
-        listEl.innerHTML = '<p style="color:#888888;font-size:.83rem;padding:16px 0">No written reviews yet. Be the first!</p>';
+        listEl.innerHTML = '<p style="color: #666666;font-size:.83rem;padding:16px 0">No written reviews yet. Be the first!</p>';
       } else {
         listEl.innerHTML = rows.map(r =>
           '<div class="review-card">'

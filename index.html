@@ -31,9 +31,7 @@
   <link rel="modulepreload" href="js/auth.js?v=15">
   <link rel="modulepreload" href="js/cart.js?v=19">
   <link rel="modulepreload" href="js/products.js?v=15">
-  <link rel="stylesheet" href="css/global.css?v=2" />
-  <link rel="stylesheet" href="css/shared.css?v=2" />
-  <link rel="stylesheet" href="css/mobile.css" />
+  <link rel="stylesheet" href="css/site.css?v=3" />
   <style>
     body { display: flex; flex-direction: column; min-height: 100vh; }
 
@@ -100,12 +98,12 @@
     }
     .filters-label {
       font-family: var(--font-c); font-size: .68rem; font-weight: 700;
-      letter-spacing: .2em; text-transform: uppercase; color: #888888; margin-right: 8px;
+      letter-spacing: .2em; text-transform: uppercase; color: #666666; margin-right: 8px;
     }
     .filter-btn {
       padding: 7px 18px; font-family: var(--font-c); font-size: .7rem; font-weight: 700;
       letter-spacing: .14em; text-transform: uppercase;
-      color: #888888; border: 1px solid #E0E0E0; background: transparent; transition: all .18s;
+      color: #666666; border: 1px solid #E0E0E0; background: transparent; transition: all .18s;
     }
     .filter-btn:hover  { border-color: var(--ash); color: #222222; }
     .filter-btn.active { background: var(--red); color: #111111; border-color: var(--red); }
@@ -133,7 +131,7 @@
       position: absolute; top: 12px; left: 12px; z-index: 2;
       font-family: var(--font-c); font-size: .6rem; font-weight: 700;
       letter-spacing: .18em; text-transform: uppercase;
-      padding: 4px 10px; border: 1px solid #E0E0E0; background: rgba(12,12,12,.8); color: #888888;
+      padding: 4px 10px; border: 1px solid #E0E0E0; background: rgba(12,12,12,.8); color: #666666;
     }
     .product-badge.badge-hot { background: rgba(184,137,42,.15); color: var(--red); border-color: rgba(184,137,42,.32); }
 
@@ -146,8 +144,8 @@
       font-family: var(--font-c); font-size: 1.05rem; font-weight: 700;
       letter-spacing: .04em; text-transform: uppercase; color: #111111; margin-bottom: 4px; line-height: 1.25;
     }
-    .product-research { font-size: .67rem; color: #888888; font-style: italic; margin-bottom: 9px; }
-    .product-desc { font-size: .8rem; color: #888888; line-height: 1.6; margin-bottom: 18px; flex: 1; }
+    .product-research { font-size: .67rem; color: #666666; font-style: italic; margin-bottom: 9px; }
+    .product-desc { font-size: .8rem; color: #666666; line-height: 1.6; margin-bottom: 18px; flex: 1; }
     .product-footer { display: flex; flex-direction: column; gap: 10px; }
     .product-price-row { display: flex; align-items: center; justify-content: space-between; }
     .product-price { font-family: var(--font-d); font-size: 1.6rem; letter-spacing: .04em; color: #111111; }
@@ -195,11 +193,11 @@
     }
     .bundle-qty-note {
       font-family: var(--font-c); font-size: .62rem; font-weight: 700;
-      letter-spacing: .1em; text-transform: uppercase; color: #888888;
+      letter-spacing: .1em; text-transform: uppercase; color: #666666;
       margin-bottom: 4px;
     }
     .bundle-unit-note {
-      font-size: .72rem; color: #888888; margin-top: 3px;
+      font-size: .72rem; color: #666666; margin-top: 3px;
     }
     .bundle-btn {
       width: 100%; padding: 12px 16px;
@@ -213,7 +211,7 @@
     .bundle-btn:hover { background: #f5c842; }
     .bundle-unavail {
       width: 100%; padding: 11px 16px;
-      background: transparent; color: #888888;
+      background: transparent; color: #666666;
       font-family: var(--font-c); font-size: .7rem; font-weight: 700;
       letter-spacing: .14em; text-transform: uppercase;
       border: 1px solid #E0E0E0; text-align: center;
@@ -234,7 +232,7 @@
 
     /* skeleton loading */
     .skeleton-card { background: #FFFFFF; border: 1px solid #E0E0E0; }
-    .skeleton-thumb { height: 200px; background: var(--charcoal, #222); }
+    .skeleton-thumb { height: 220px; background: var(--charcoal, #222); }
     .skeleton-info  { padding: 18px 20px 20px; }
     .skeleton-line  { border-radius: 2px; background: var(--charcoal, #222); }
     .skeleton-pulse { animation: skeletonPulse 1.4s ease-in-out infinite; }
@@ -281,7 +279,7 @@
   </script>
 </head>
 <body>
-<a href="#main-content" class="skip-link" style="position:absolute;top:-40px;left:0;padding:8px 16px;background:var(--red);color:#fff;font-family:var(--font-c);font-size:.7rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;z-index:999;transition:top .2s" onfocus="this.style.top='0'" onblur="this.style.top='-40px'">Skip to content</a>
+<a href="#main-content" class="skip-link" style="position:absolute;top:0;left:0;padding:8px 16px;background:var(--red);color:#fff;font-family:var(--font-c);font-size:.7rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;z-index:999;transform:translateY(-100%);transition:transform .2s;will-change:transform" onfocus="this.style.transform='translateY(0)'" onblur="this.style.transform='translateY(-100%)'">Skip to content</a>
   <div id="nav-mount"></div>
   <div id="banner-mount"></div>
 
@@ -317,7 +315,9 @@
               <div class="skeleton-line skeleton-pulse" style="width:40%;height:.55rem;margin-bottom:10px"></div>
               <div class="skeleton-line skeleton-pulse" style="width:80%;height:.8rem;margin-bottom:8px"></div>
               <div class="skeleton-line skeleton-pulse" style="width:95%;height:.7rem;margin-bottom:6px"></div>
-              <div class="skeleton-line skeleton-pulse" style="width:70%;height:.7rem"></div>
+              <div class="skeleton-line skeleton-pulse" style="width:70%;height:.7rem;margin-bottom:18px"></div>
+              <div class="skeleton-line skeleton-pulse" style="width:35%;height:1.6rem;margin-bottom:10px"></div>
+              <div class="skeleton-line skeleton-pulse" style="width:100%;height:42px"></div>
             </div>
           </div>`).join('')}
       </div>
@@ -344,7 +344,6 @@
     import { supabase } from './js/supabase.js';
     import './js/auth.js?v=15';
     import './js/cart.js?v=19';
-    import './js/products.js?v=15';
     import { loadProducts, allProducts, getProduct, pepperSVG, heatPips } from './js/products.js?v=15';
 
     await Promise.all([
@@ -354,7 +353,7 @@
 
     function thumbHTML(p) {
       if (p.images) {
-        return '<picture><source srcset="pdct img/' + p.images.replace(/.png$/, '.webp') + '" type="image/webp"><img src="pdct img/' + p.images + '" alt="' + p.name + '" style="width:auto;height:160px;object-fit:contain;object-position:center;position:relative;z-index:1;display:block;margin:auto" loading="lazy" decoding="async"></picture>';
+        return '<picture><source srcset="pdct img/' + p.images.replace(/.png$/, '.webp') + '" type="image/webp"><img src="pdct img/' + p.images + '" alt="' + p.name + '" width="160" height="160" style="width:auto;height:160px;object-fit:contain;object-position:center;position:relative;z-index:1;display:block;margin:auto" loading="lazy" decoding="async"></picture>';
       }
       return pepperSVG(p);
     }
@@ -434,7 +433,7 @@
                   .sort(function(a,b) { return a.id - b.id; });
         html = list.length
           ? list.map(buildBundleCard).join('')
-          : '<div style="grid-column:1/-1;padding:48px 0;text-align:center"><p style="font-family:var(--font-c);font-size:.75rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:#888888">No bundles available</p></div>';
+          : '<div style="grid-column:1/-1;padding:48px 0;text-align:center"><p style="font-family:var(--font-c);font-size:.75rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color: #666666">No bundles available</p></div>';
       } else {
         if (cat === 'In Stock') {
           list = all.filter(function(p) { return p.inventory > 0; }).sort(function(a,b) { return a.id - b.id; });
@@ -443,7 +442,7 @@
         }
         html = list.length
           ? list.map(buildCard).join('')
-          : '<div style="grid-column:1/-1;padding:48px 0;text-align:center"><p style="font-family:var(--font-c);font-size:.75rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:#888888">' + (all.length === 0 ? 'No products loaded — check browser console (F12) for errors' : 'No products in this category') + '</p></div>';
+          : '<div style="grid-column:1/-1;padding:48px 0;text-align:center"><p style="font-family:var(--font-c);font-size:.75rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color: #666666">' + (all.length === 0 ? 'No products loaded — check browser console (F12) for errors' : 'No products in this category') + '</p></div>';
       }
       grid.innerHTML = html;
     }
@@ -537,12 +536,12 @@
   <!-- Unsubscribe confirmation popup -->
   <div id="unsub-overlay">
     <div id="unsub-box">
-      <p style="font-family:'Barlow Condensed',sans-serif;font-size:.7rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:#888;margin-bottom:8px">Email Preferences</p>
+      <p style="font-family:'Barlow Condensed',sans-serif;font-size:.7rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color: #666;margin-bottom:8px">Email Preferences</p>
       <h2 style="font-family:'Bebas Neue',sans-serif;font-size:1.6rem;color:#111;letter-spacing:.04em;margin-bottom:12px">Unsubscribe?</h2>
       <p style="font-size:.85rem;color:#555;line-height:1.6;margin-bottom:24px">You'll stop receiving our weekly research updates and discount codes. You can always re-subscribe by contacting us.</p>
       <div style="display:flex;gap:10px;justify-content:center">
         <button onclick="doUnsubscribe()" style="padding:10px 22px;background:#B8892A;color:#fff;font-family:'Barlow Condensed',sans-serif;font-size:.75rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;border:none;border-radius:3px;cursor:pointer">Yes, Unsubscribe</button>
-        <button onclick="document.getElementById('unsub-overlay').classList.remove('open')" style="padding:10px 22px;background:transparent;color:#888;font-family:'Barlow Condensed',sans-serif;font-size:.75rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;border:1px solid #E0E0E0;border-radius:3px;cursor:pointer">Cancel</button>
+        <button onclick="document.getElementById('unsub-overlay').classList.remove('open')" style="padding:10px 22px;background:transparent;color: #666;font-family:'Barlow Condensed',sans-serif;font-size:.75rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;border:1px solid #E0E0E0;border-radius:3px;cursor:pointer">Cancel</button>
       </div>
       <p id="unsub-msg" style="margin-top:12px;font-size:.78rem;color:#B8892A;min-height:18px"></p>
     </div>
