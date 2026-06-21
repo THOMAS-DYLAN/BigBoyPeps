@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Research Peptides — BigBoyPeps</title>
+    <title>Research Peptides for Sale | Buy Online | BigBoyPeps</title>
   <meta name="description" content="Research-grade peptides from BigBoyPeps — Semaglutide, Tirzepatide, BPC-157, Retatrutide and more. For licensed research purposes only.">
   <meta property="og:type" content="product">
   <meta property="og:title" content="Research Peptides — BigBoyPeps">
@@ -274,8 +274,7 @@
     }
 
     function renderProduct(p, rating) {
-      document.title = p.name + ' — BigBoyPeps';
-      if (typeof updateProductMeta !== "undefined") updateProductMeta(p);
+      if (typeof updateProductMeta !== "undefined") updateProductMeta(p, rating);
       document.getElementById('breadcrumb-name').textContent = p.name;
       const avg = Math.round(rating.average || 0);
 
@@ -292,7 +291,7 @@
         // Info
         + '<div>'
         + '<div class="product-cat-tag">' + p.category + '</div>'
-        + '<div class="product-title">' + p.name + '</div>'
+        + '<h1 class="product-title">' + p.name + '</h1>'
         + '<div class="product-info-row"><span class="info-label">Rating</span>'
         + '<div style="display:flex;gap:3px">' + Array.from({length:5},(_,i)=>star(i<avg)).join('') + '</div>'
         + '<span style="font-family:var(--font-c);font-size:.62rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#888888">'
@@ -451,15 +450,16 @@
       await renderReviews(productId, rating);
     };
   
-    function updateProductMeta(p) {
-      var title = p.name + ' Research Peptide — BigBoyPeps';
+    function updateProductMeta(p, rating) {
+      var title = p.name + ' Research Peptide | Buy Online | BigBoyPeps';
       document.title = title;
-      var og = {'og:title': title, 'og:description': p.name + ': Research-grade peptide from BigBoyPeps. For research purposes only.', 'og:url': 'https://bigboypeps.com/product.html?id=' + p.id};
+      var og = {'og:title': title, 'og:description': 'Buy ' + p.name + ' research peptide online from BigBoyPeps. Research-grade, fast USPS shipping. For licensed research purposes only.', 'og:url': 'https://bigboypeps.com/product.html?id=' + p.id};
       Object.entries(og).forEach(([k,v]) => { var el = document.querySelector('meta[property="'+k+'"]'); if(el) el.setAttribute('content',v); });
       var canon = document.querySelector('link[rel="canonical"]');
       if (!canon) { canon = document.createElement('link'); canon.rel = 'canonical'; document.head.appendChild(canon); }
       canon.href = 'https://bigboypeps.com/product.html?id=' + p.id;
-      var ld = {"@context":"https://schema.org","@type":"Product","name":p.name,"brand":{"@type":"Brand","name":"BigBoyPeps"},"offers":{"@type":"Offer","price":p.price,"priceCurrency":"USD","availability":p.inventory>0?"https://schema.org/InStock":"https://schema.org/OutOfStock","seller":{"@type":"Organization","name":"BigBoyPeps"}}};
+      var ld = {"@context":"https://schema.org","@type":"Product","name":p.name + " Research Peptide","description":(p.description||("Research-grade " + p.name + " peptide for licensed research purposes only.")),"image":(p.images?"https://bigboypeps.com/pdct img/"+p.images:"https://bigboypeps.com/img/logo.png"),"category":(p.category||"Research Peptides"),"brand":{"@type":"Brand","name":"BigBoyPeps"},"offers":{"@type":"Offer","url":"https://bigboypeps.com/product.html?id="+p.id,"price":p.price,"priceCurrency":"USD","availability":p.inventory>0?"https://schema.org/InStock":"https://schema.org/OutOfStock","seller":{"@type":"Organization","name":"BigBoyPeps"}}};
+      if (rating && rating.count > 0) { ld.aggregateRating = {"@type":"AggregateRating","ratingValue":rating.average,"reviewCount":rating.count}; }
       var s = document.getElementById('product-ld'); if(s) s.remove();
       s = document.createElement('script'); s.id='product-ld'; s.type='application/ld+json'; s.textContent = JSON.stringify(ld); document.head.appendChild(s);
     }

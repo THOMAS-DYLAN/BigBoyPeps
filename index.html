@@ -61,7 +61,38 @@
       line-height: .92; letter-spacing: .03em; color: #111111; margin-bottom: 16px;
     }
     .shop-title em { color: var(--red); font-style: normal; }
-    .shop-desc { font-size: .9rem; color: #888888; max-width: 480px; line-height: 1.75; }
+    .shop-desc { font-size: .9rem; color: #666666; max-width: 560px; line-height: 1.75; }
+
+    /* SEO content section */
+    .seo-section { background: #FAFAFA; border-top: 1px solid #E8E8E8; padding: 64px 0 72px; margin-top: 48px; }
+    .seo-inner { max-width: 1100px; }
+    .seo-block { margin-bottom: 40px; }
+    .seo-block:last-child { margin-bottom: 0; }
+    .seo-h2 {
+      font-family: var(--font-d); font-size: clamp(1.6rem, 3.5vw, 2.4rem);
+      letter-spacing: .03em; color: #111; line-height: 1; margin-bottom: 16px;
+    }
+    .seo-h3 {
+      font-family: var(--font-c); font-size: .82rem; font-weight: 700;
+      letter-spacing: .12em; text-transform: uppercase; color: var(--red);
+      margin-bottom: 10px;
+    }
+    .seo-block p, .seo-card p {
+      font-family: var(--font-b); font-size: .92rem; color: #555;
+      line-height: 1.8; max-width: 760px;
+    }
+    .seo-block p + p { margin-top: 14px; }
+    .seo-block a { color: var(--red); text-decoration: underline; }
+    .seo-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 28px; margin: 8px 0 44px;
+    }
+    .seo-card { border-left: 2px solid var(--red); padding-left: 18px; }
+    .seo-disclaimer { font-size: .78rem !important; color: #999 !important; font-style: italic; margin-top: 18px !important; }
+    .seo-section-compact { padding: 56px 0 64px; }
+    .seo-inner-center { text-align: center; }
+    .seo-block-center { margin: 0 auto; max-width: 680px; }
+    .seo-block-center p { margin-left: auto; margin-right: auto; }
 
     .filters-bar {
       display: flex; align-items: center; gap: 8px;
@@ -242,7 +273,11 @@
     }
   </style>
   <script type="application/ld+json">
-  {"@context":"https://schema.org","@type":"WebSite","name":"BigBoyPeps","url":"https://bigboypeps.com","description":"Research-grade peptides for licensed research. Semaglutide, Tirzepatide, BPC-157 and more.","potentialAction":{"@type":"SearchAction","target":"https://bigboypeps.com/product.html?q={search_term_string}","query-input":"required name=search_term_string"}}
+  {"@context":"https://schema.org","@graph":[
+    {"@type":"Organization","@id":"https://bigboypeps.com/#org","name":"BigBoyPeps","url":"https://bigboypeps.com","logo":"https://bigboypeps.com/img/logo.png","description":"Online research peptide store supplying research-grade peptides to researchers and laboratories across the United States.","areaServed":"US","sameAs":[]},
+    {"@type":"WebSite","@id":"https://bigboypeps.com/#website","url":"https://bigboypeps.com","name":"BigBoyPeps","publisher":{"@id":"https://bigboypeps.com/#org"},"description":"Buy research-grade peptides online. Semaglutide, Tirzepatide, BPC-157, Retatrutide, Ipamorelin and more.","potentialAction":{"@type":"SearchAction","target":"https://bigboypeps.com/product.html?q={search_term_string}","query-input":"required name=search_term_string"}},
+    {"@type":"Store","@id":"https://bigboypeps.com/#store","name":"BigBoyPeps","image":"https://bigboypeps.com/img/logo.png","url":"https://bigboypeps.com","description":"Online research peptide store — GLP peptides, GH peptides, tissue repair peptides, and copper peptides for licensed research.","priceRange":"$10–$550","areaServed":{"@type":"Country","name":"United States"}}
+  ]}
   </script>
 </head>
 <body>
@@ -254,8 +289,8 @@
   <div class="shop-header">
     <div class="shop-header-inner container">
       <div class="shop-eyebrow">All Products</div>
-      <div class="shop-title">The Research <em>Catalog</em></div>
-      <p class="shop-desc">Premium research peptides and compounds. For research purposes only — not for human consumption.</p>
+      <div class="shop-title"><h1 style="all:inherit;margin:0">Research <em>Peptides</em> for Sale</h1></div>
+      <p class="shop-desc">Shop research-grade peptides online — Semaglutide, Tirzepatide, Retatrutide, BPC-157, Ipamorelin, GHK-Cu and more. US peptide supplier with fast USPS shipping. For licensed research purposes only — not for human consumption.</p>
     </div>
   </div>
 
@@ -290,6 +325,18 @@
   </div>
 
   </main>
+
+  <!-- SEO content section — research-grade copy, naturally keyword-rich -->
+  <section class="seo-section seo-section-compact" aria-label="Why buy from BigBoyPeps">
+    <div class="container seo-inner seo-inner-center">
+      <div class="seo-block seo-block-center">
+        <h2 class="seo-h2">Why Buy Research Peptides From BigBoyPeps</h2>
+        <p>As an online research peptide store, we focus on consistent quality, competitive pricing, and reliable fulfillment. Create a free account to track orders, join product waitlists, and receive restock notifications the moment sold-out research peptides return. Bundle pricing is available on most compounds. For background on individual compounds, visit our <a href="information.html">research information library</a>.</p>
+        <p class="seo-disclaimer">All products sold by BigBoyPeps are for licensed research purposes only and are not intended for human consumption, diagnosis, treatment, or prevention of any disease.</p>
+      </div>
+    </div>
+  </section>
+
   <div id="footer-mount"></div>
   <div class="add-flash" id="add-flash"></div>
 
