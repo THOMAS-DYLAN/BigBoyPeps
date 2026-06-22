@@ -529,7 +529,7 @@
       var res  = await fetch(ADMIN_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ password: pw }),
+        body: JSON.stringify({ password: pw, site: 'bbp' }),
       });
       var data = await res.json();
       if (!res.ok) { err.textContent = 'Wrong password.'; btn.textContent = 'Access Orders'; btn.disabled = false; return; }
@@ -661,7 +661,7 @@
       var res = await fetch('https://utqviljholfvpfztfuvx.supabase.co/functions/v1/admin-orders', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ password: _pw, action: 'confirm', token: token }),
+        body: JSON.stringify({ password: _pw, action: 'confirm', token: token, site: 'bbp' }),
       });
       var data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Failed');
