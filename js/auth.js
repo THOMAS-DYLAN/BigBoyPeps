@@ -74,7 +74,7 @@ window.Auth = {
       email,
       password,
       options: {
-        data: { first_name: firstName, last_name: lastName },
+        data: { first_name: firstName, last_name: lastName, source: 'bbp' },
         emailRedirectTo: 'https://bigboypeps.com/dashboard.html',
       }
     });

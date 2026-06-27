@@ -1,7 +1,10 @@
 // ═══════════════════════════════════════════════════════════
-// Weekly Email — Supabase Edge Function
-// Sends auto-generated weekly update to all registered users.
-// Deploy: supabase functions deploy weekly-email
+// Weekly Email — Unified Supabase Edge Function
+// Sends branded weekly update to each user based on their
+// signup source (bbp → BigBoyPeps email, 956labs → 956 Labs email).
+// Falls back to order history, then defaults to bbp.
+//
+// Deploy: supabase functions deploy weekly-email --no-verify-jwt
 // Schedule: Run via pg_cron every Monday at 9am CT
 //   SELECT cron.schedule('weekly-email','0 14 * * 1',
 //     $$SELECT net.http_post(
@@ -16,54 +19,109 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY")!;
 const SUPABASE_URL   = Deno.env.get("SUPABASE_URL")!;
 const SUPABASE_KEY   = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-const FROM_EMAIL     = "noreply@bigboypeps.com";
-const STORE_NAME     = "BigBoyPeps"; // Change to "956 Labs" for that deployment
+
+// ── Brand config ─────────────────────────────────────────
+const BRANDS: Record<string, {
+  name: string;
+  from: string;
+  shopUrl: string;
+  unsubBase: string;
+  headerBg: string;
+  accentBg: string;
+}> = {
+  bbp: {
+    name:        "BigBoyPeps",
+    from:        "noreply@bigboypeps.com",
+    shopUrl:     "https://bigboypeps.com/shop.html",
+    unsubBase:   "https://bigboypeps.com/supabase/functions/v1/unsubscribe",
+    headerBg:    "#006847",
+    accentBg:    "#CE1126",
+  },
+  "956labs": {
+    name:        "956 Labs",
+    from:        "noreply@bigboypeps.com",
+    shopUrl:     "https://956labs.bigboypeps.com/index.html",
+    unsubBase:   "https://utqviljholfvpfztfuvx.supabase.co/functions/v1/unsubscribe",
+    headerBg:    "#006847",
+    accentBg:    "#CE1126",
+  },
+};
 
 serve(async (req) => {
   try {
     const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    // ── 1. Get all confirmed user emails ────────────────
-    // Test mode — pass ?test=email to send only to one address
+    // ── 1. Get all confirmed users ────────────────────────
     const testEmail = new URL(req.url).searchParams.get("test");
+    const testSite  = new URL(req.url).searchParams.get("site") || "bbp";
 
-    let emails: { email: string; id: string }[];
+    let users: { email: string; id: string; source?: string }[];
 
     if (testEmail) {
-      // Test run — single address, use a placeholder UID
-      emails = [{ email: testEmail, id: "test-uid" }];
-      console.log("TEST MODE — sending only to:", testEmail);
+      users = [{ email: testEmail, id: "test-uid", source: testSite }];
+      console.log("TEST MODE — sending to:", testEmail, "as site:", testSite);
     } else {
-      // Get all confirmed subscribed users
-      const { data: users, error: uErr } = await sb.auth.admin.listUsers();
+      const { data: authData, error: uErr } = await sb.auth.admin.listUsers();
       if (uErr) throw uErr;
-      emails = users.users
+      users = authData.users
         .filter(u =>
           u.email_confirmed_at &&
           u.email &&
           u.app_metadata?.subscribed !== false
         )
-        .map(u => ({ email: u.email!, id: u.id }));
+        .map(u => ({
+          email:  u.email!,
+          id:     u.id,
+          source: (u.user_metadata?.source as string) || undefined,
+        }));
     }
 
-    if (!emails.length) {
+    if (!users.length) {
       return new Response(JSON.stringify({ sent: 0, msg: "No confirmed users" }), { status: 200 });
     }
 
-    // ── 2. Pull current products ─────────────────────────
+    // ── 2. Resolve source for users without metadata ──────
+    // Batch-fetch latest order source for users missing metadata source
+    const unknownIds = users.filter(u => !u.source).map(u => u.id);
+    const sourceMap: Record<string, string> = {};
+
+    if (unknownIds.length) {
+      // Get most recent order per user_id to determine their primary site
+      const { data: orders } = await sb
+        .from("orders")
+        .select("user_id, source_site")
+        .in("user_id", unknownIds)
+        .order("ordered_at", { ascending: false });
+
+      for (const o of orders ?? []) {
+        if (o.user_id && o.source_site && !sourceMap[o.user_id]) {
+          sourceMap[o.user_id] = o.source_site;
+        }
+      }
+    }
+
+    // Assign resolved source (metadata → order history → default bbp)
+    const resolvedUsers = users.map(u => ({
+      ...u,
+      source: u.source || sourceMap[u.id] || "bbp",
+    }));
+
+    // ── 3. Pull products ──────────────────────────────────
     const { data: products } = await sb
       .from("products")
       .select("name, price, bundle_price, inventory, category")
       .eq("active", true)
       .order("inventory", { ascending: true });
 
-    const inStock   = products?.filter(p => p.inventory > 0)  ?? [];
-    const lowStock  = products?.filter(p => p.inventory > 0 && p.inventory <= 5) ?? [];
-    const bundles   = products?.filter(p => p.bundle_price && p.inventory >= 10) ?? [];
-    const oos       = products?.filter(p => p.inventory === 0) ?? [];
+    const inStock  = products?.filter(p => p.inventory > 0)  ?? [];
+    const lowStock = products?.filter(p => p.inventory > 0 && p.inventory <= 5) ?? [];
+    const bundles  = products?.filter(p => p.bundle_price && p.inventory >= 10) ?? [];
+    const oos      = products?.filter(p => p.inventory === 0) ?? [];
 
-    // ── 3. Build email HTML ──────────────────────────────
-    const week  = new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
+    // ── 4. Build HTML per brand ───────────────────────────
+    const week = new Date().toLocaleDateString("en-US", {
+      month: "long", day: "numeric", year: "numeric"
+    });
 
     const productRow = (p: { name: string; price: number; inventory: number }) =>
       `<tr>
@@ -79,7 +137,7 @@ serve(async (req) => {
         <td style="padding:8px 12px;border-bottom:1px solid #eee;font-family:Arial,sans-serif;font-size:13px;color:#444;text-align:right">${Math.floor(p.inventory / 10)} bundles</td>
       </tr>`;
 
-    const html = `
+    const buildHtml = (brand: typeof BRANDS[string]) => `
 <!DOCTYPE html>
 <html>
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
@@ -87,22 +145,22 @@ serve(async (req) => {
   <div style="max-width:600px;margin:0 auto;background:#fff">
 
     <!-- Header -->
-    <div style="background:#006847;padding:28px 32px">
-      <h1 style="margin:0;font-family:'Bebas Neue',Arial,sans-serif;font-size:2rem;letter-spacing:.08em;color:#fff;line-height:1">${STORE_NAME}</h1>
+    <div style="background:${brand.headerBg};padding:28px 32px">
+      <h1 style="margin:0;font-family:'Bebas Neue',Arial,sans-serif;font-size:2rem;letter-spacing:.08em;color:#fff;line-height:1">${brand.name}</h1>
       <p style="margin:6px 0 0;font-size:12px;color:rgba(255,255,255,.7);letter-spacing:.1em;text-transform:uppercase">Weekly Research Update · ${week}</p>
     </div>
 
     <!-- Discount banner -->
-    <div style="background:#CE1126;padding:12px 32px;text-align:center">
+    <div style="background:${brand.accentBg};padding:12px 32px;text-align:center">
       <p style="margin:0;font-size:13px;color:#fff;font-weight:700;letter-spacing:.05em">
-        Use code <span style="background:#fff;color:#CE1126;padding:2px 8px;border-radius:2px;font-weight:900;font-size:14px">DYLAN10</span> for 10% off your order
+        Use code <span style="background:#fff;color:${brand.accentBg};padding:2px 8px;border-radius:2px;font-weight:900;font-size:14px">DYLAN10</span> for 10% off your order
       </p>
     </div>
 
     <!-- Body -->
     <div style="padding:28px 32px">
       <p style="font-size:14px;color:#444;line-height:1.7;margin-top:0">
-        Here's your weekly update from ${STORE_NAME}. All products are for <strong>research purposes only</strong>.
+        Here's your weekly update from ${brand.name}. All products are for <strong>research purposes only</strong>.
       </p>
 
       ${inStock.length ? `
@@ -157,7 +215,7 @@ serve(async (req) => {
 
       <!-- CTA -->
       <div style="text-align:center;margin-top:32px">
-        <a href="https://bigboypeps.com/shop.html" style="display:inline-block;background:#006847;color:#fff;font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:14px 32px;text-decoration:none;border-radius:3px">
+        <a href="${brand.shopUrl}" style="display:inline-block;background:#006847;color:#fff;font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:14px 32px;text-decoration:none;border-radius:3px">
           Shop Now →
         </a>
       </div>
@@ -166,9 +224,9 @@ serve(async (req) => {
     <!-- Footer -->
     <div style="background:#f6f6f6;border-top:1px solid #eee;padding:20px 32px;text-align:center">
       <p style="margin:0;font-size:11px;color:#999;line-height:1.6">
-        ${STORE_NAME} · For research purposes only · Not for human consumption<br>
+        ${brand.name} · For research purposes only · Not for human consumption<br>
         You're receiving this because you have an account with us.<br>
-        <a href="https://bigboypeps.com/supabase/functions/v1/unsubscribe?uid=__UNSUBSCRIBE_UID__" style="color:#999">Unsubscribe</a>
+        <a href="${brand.unsubBase}?uid=__UNSUBSCRIBE_UID__" style="color:#999">Unsubscribe</a>
       </p>
     </div>
 
@@ -176,42 +234,49 @@ serve(async (req) => {
 </body>
 </html>`;
 
-    // ── 4. Send to all users via Resend ──────────────────
-    let sent = 0;
-    let failed = 0;
+    // Pre-build both HTML templates (placeholders replaced per-user)
+    const htmlTemplates: Record<string, string> = {
+      bbp:      buildHtml(BRANDS.bbp),
+      "956labs": buildHtml(BRANDS["956labs"]),
+    };
 
-    // Send in batches of 50 to avoid rate limits
+    // ── 5. Send to all users ──────────────────────────────
+    let sent = 0, failed = 0;
     const BATCH = 50;
-    for (let i = 0; i < emails.length; i += BATCH) {
-      const batch = emails.slice(i, i + BATCH);
-      // Send individually so each has personalised unsubscribe link
+
+    for (let i = 0; i < resolvedUsers.length; i += BATCH) {
+      const batch = resolvedUsers.slice(i, i + BATCH);
+
       for (const user of batch) {
-        const personalHtml = html.replace(
-          "__UNSUBSCRIBE_UID__",
-          user.id
-        );
+        const brand    = BRANDS[user.source] ?? BRANDS.bbp;
+        const template = htmlTemplates[user.source] ?? htmlTemplates.bbp;
+        const html     = template.replace("__UNSUBSCRIBE_UID__", user.id);
+        const week     = new Date().toLocaleDateString("en-US", {
+          month: "long", day: "numeric", year: "numeric"
+        });
+
         const res = await fetch("https://api.resend.com/emails", {
           method: "POST",
           headers: {
             "Authorization": `Bearer ${RESEND_API_KEY}`,
-            "Content-Type": "application/json",
+            "Content-Type":  "application/json",
           },
           body: JSON.stringify({
-            from:    `${STORE_NAME} <${FROM_EMAIL}>`,
+            from:    `${brand.name} <${brand.from}>`,
             to:      [user.email],
-            subject: `${STORE_NAME} Weekly Update — ${week}`,
-            html:    personalHtml,
+            subject: `${brand.name} Weekly Update — ${week}`,
+            html,
           }),
         });
-        if (res.ok) sent++;
-        else { failed++; console.error("Resend failed for", user.email, await res.text()); }
+
+        if (res.ok) { sent++; }
+        else { failed++; console.error("Resend failed:", user.email, user.source, await res.text()); }
       }
 
-      // Small delay between batches
-      if (i + BATCH < emails.length) await new Promise(r => setTimeout(r, 500));
+      if (i + BATCH < resolvedUsers.length) await new Promise(r => setTimeout(r, 500));
     }
 
-    return new Response(JSON.stringify({ sent, failed, total: emails.length }), {
+    return new Response(JSON.stringify({ sent, failed, total: resolvedUsers.length }), {
       status: 200,
       headers: { "Content-Type": "application/json" },
     });
