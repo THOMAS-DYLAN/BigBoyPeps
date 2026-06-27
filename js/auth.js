@@ -86,9 +86,25 @@ window.Auth = {
     return { ok: true, user: data.user, needsConfirmation };
   },
 
+  // ── Source stamping ─────────────────────────────────────────
+  // Only stamps 'bbp' if user isn't already '956labs' — never downgrades.
+  // Accepts an optional userOverride to avoid session cache race on login.
+  async stampSource(userOverride = null) {
+    try {
+      const user = userOverride || await this.getUser();
+      if (!user) return;
+      if (user.user_metadata?.source === '956labs') return; // never downgrade
+      if (user.user_metadata?.source === 'bbp') return;     // already set
+      await supabase.auth.updateUser({ data: { ...user.user_metadata, source: 'bbp' } });
+    } catch(e) { /* non-critical */ }
+  },
+
   async login(email, password) {
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    if (!error) return { ok: true };
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    if (!error) {
+      await this.stampSource(data.user); // pass fresh user directly, avoid cache race
+      return { ok: true };
+    }
     const msg = error.message.toLowerCase();
     if (msg.includes('email not confirmed') || msg.includes('confirmation')) {
       return { ok: false, err: 'email_not_confirmed' };
@@ -398,6 +414,9 @@ window.Auth = {
       .maybeSingle();
 
     if (existing) return { ok: false, err: 'already_on_waitlist' };
+
+    // Stamp source on waitlist join
+    this.stampSource();
 
     // Insert waitlist row
     const { error } = await supabase.from('waitlist').insert({

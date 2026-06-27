@@ -303,13 +303,18 @@ async function trackCartUpdate() {
     // Only upsert to DB if logged in — guest carts can't be emailed
     var { data: { session } } = await supabase.auth.getSession();
     if (session) {
+      // Use user's stored source so a 956labs user carting on BBP still gets
+      // a 956labs-branded reminder. Only fall back to CART_SOURCE if unset.
+      var userSource = session.user.user_metadata?.source || window.CART_SOURCE || 'bbp';
+      // Stamp BBP source on cart if not already tagged
+      if (!session.user.user_metadata?.source && typeof Auth !== 'undefined') Auth.stampSource();
       await supabase.from('cart_reminders').upsert({
         user_id:          session.user.id,
         email:            session.user.email,
         cart_snapshot:    snapshot,
         last_cart_update: new Date().toISOString(),
         converted:        false,
-        source:           window.CART_SOURCE || 'bbp',
+        source:           userSource,
       }, { onConflict: 'user_id' });
     }
   } catch(e) { console.warn('cart track error:', e); }
