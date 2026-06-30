@@ -18,7 +18,6 @@
   <meta property="og:image" content="https://bigboypeps.com/img/logo.png">
   <link rel="canonical" href="">
   <meta name="robots" content="index,follow">
-  <meta name="description" content="Research-grade peptides for the Rio Grande Valley — McAllen, Edinburg, Harlingen, Brownsville. For research purposes only."/>
   <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin/>
   <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700&family=Barlow:wght@300;400;500;600&display=swap" onload="this.rel='stylesheet'" />
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700&family=Barlow:wght@300;400;500;600&display=swap"></noscript>
@@ -363,7 +362,7 @@
     }
 
     function renderRelated(p) {
-      const others = allProducts().filter(x => x.id !== p.id && x.category === p.category && x.inventory > 0).slice(0,6);
+      const others = allProducts().filter(x => x.id !== p.id && x.category === p.category && x.inventory > 0 && x.images).slice(0,6);
       if (!others.length) return;
       const m = document.getElementById('related-mount');
       m.style.display = '';

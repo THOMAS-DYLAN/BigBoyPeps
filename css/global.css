@@ -22,7 +22,7 @@ html { scroll-behavior: smooth; }
 body {
   font-family: var(--font-b);
   background: #FFFFFF;
-  color: #222222; /* was: #222222;
+  color: #222222;
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
