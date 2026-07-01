@@ -1557,6 +1557,8 @@
       var imageBlob = _processedBlob || _originalFile;
       if (imageBlob) {
         var safeName = name.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'')+'.png';
+        setImgStatus('processing', '⏳ Resizing image…');
+        imageBlob = await resizeToCanvas(imageBlob);
         var b64 = await blobToBase64(imageBlob);
         var upRes = await fetch(ADMIN_URL, { method:'POST', headers:{'Content-Type':'application/json'},
           body: JSON.stringify({ password:_pw, action:'uploadImage',
@@ -1599,6 +1601,32 @@
       var r=new FileReader();
       r.onload=function(){ resolve(r.result); }; r.onerror=reject;
       r.readAsDataURL(blob instanceof File ? blob : new Blob([blob]));
+    });
+  }
+
+  // Resize image to 500x500 canvas before upload to keep payload small
+  function resizeToCanvas(blob) {
+    return new Promise(function(resolve, reject) {
+      var url = URL.createObjectURL(blob instanceof File ? blob : new Blob([blob]));
+      var img = new Image();
+      img.onload = function() {
+        var canvas = document.createElement('canvas');
+        canvas.width = 500; canvas.height = 500;
+        var ctx = canvas.getContext('2d');
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, 500, 500);
+        // Scale to fit within 500x500 maintaining aspect ratio
+        var scale = Math.min(400 / img.width, 400 / img.height);
+        var sw = Math.round(img.width * scale);
+        var sh = Math.round(img.height * scale);
+        var sx = Math.round((500 - sw) / 2);
+        var sy = Math.round((500 - sh) / 2);
+        ctx.drawImage(img, sx, sy, sw, sh);
+        URL.revokeObjectURL(url);
+        canvas.toBlob(function(b){ resolve(b); }, 'image/png');
+      };
+      img.onerror = reject;
+      img.src = url;
     });
   }
 
