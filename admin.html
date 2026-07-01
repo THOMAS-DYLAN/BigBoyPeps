@@ -461,9 +461,194 @@
       header, .filter-bar, .orders-body { padding-left: 16px; padding-right: 16px; }
       .order-customer { gap: 16px; }
     }
+
+    /* ── Tab Nav ─────────────────────────────────────────── */
+    .tab-nav { display:flex; gap:2px; background:#0a0a1a; padding:0 28px; border-bottom:1px solid #1a1a2e; }
+    .tab-btn { font-family:var(--font-c); font-size:.7rem; font-weight:700; letter-spacing:.14em; text-transform:uppercase;
+      padding:12px 18px; background:none; border:none; color:#555; cursor:pointer; border-bottom:2px solid transparent;
+      transition:color .15s, border-color .15s; }
+    .tab-btn.active { color:var(--gold); border-bottom-color:var(--gold); }
+    .tab-btn:hover:not(.active) { color:#999; }
+    .tab-panel { display:none; }
+    .tab-panel.active { display:block; }
+
+    /* ── Products Tab ─────────────────────────────────────── */
+    .products-body { padding:24px 28px; max-width:1100px; }
+    .products-table { width:100%; border-collapse:collapse; font-family:var(--font-b); font-size:.84rem; }
+    .products-table th { font-family:var(--font-c); font-size:.6rem; font-weight:700; letter-spacing:.14em;
+      text-transform:uppercase; color:#555; padding:10px 12px; border-bottom:1px solid #1a1a2e; text-align:left; }
+    .products-table td { padding:10px 12px; border-bottom:1px solid #13131f; color:#BCC; vertical-align:middle; }
+    .products-table tr:hover td { background:#0d0d1f; }
+    .price-input { background:#111; border:1px solid #2a2a4a; color:#EEF4FF; font-family:var(--font-d);
+      font-size:1rem; padding:5px 8px; width:80px; border-radius:2px; text-align:right; }
+    .price-input:focus { outline:none; border-color:var(--gold); }
+    .save-row-btn { font-family:var(--font-c); font-size:.6rem; font-weight:700; letter-spacing:.1em;
+      text-transform:uppercase; background:var(--gold); color:#000; border:none; padding:6px 12px;
+      border-radius:2px; cursor:pointer; transition:opacity .15s; }
+    .save-row-btn:hover { opacity:.8; }
+    .save-row-btn.saved { background:#2a7a2a; color:#fff; }
+    .cat-badge { font-family:var(--font-c); font-size:.55rem; font-weight:700; letter-spacing:.1em;
+      text-transform:uppercase; padding:2px 7px; border-radius:2px; background:#1a1a2e; color:#667; }
+
+    /* ── Deals & Codes Tab ────────────────────────────────── */
+    .dc-body { padding:24px 28px; max-width:900px; display:grid; gap:32px; }
+    .dc-section { background:#0d0d1a; border:1px solid #1a1a2e; border-radius:3px; overflow:hidden; }
+    .dc-section-head { display:flex; align-items:center; justify-content:space-between;
+      padding:14px 20px; border-bottom:1px solid #1a1a2e; }
+    .dc-section-title { font-family:var(--font-c); font-size:.75rem; font-weight:700; letter-spacing:.15em;
+      text-transform:uppercase; color:#EEF4FF; }
+    .dc-add-btn { font-family:var(--font-c); font-size:.6rem; font-weight:700; letter-spacing:.1em;
+      text-transform:uppercase; background:var(--gold); color:#000; border:none; padding:7px 14px;
+      border-radius:2px; cursor:pointer; }
+    .dc-add-btn:hover { opacity:.85; }
+    .dc-table { width:100%; border-collapse:collapse; font-size:.82rem; }
+    .dc-table th { font-family:var(--font-c); font-size:.55rem; font-weight:700; letter-spacing:.12em;
+      text-transform:uppercase; color:#444; padding:8px 16px; border-bottom:1px solid #1a1a2e; text-align:left; }
+    .dc-table td { padding:10px 16px; border-bottom:1px solid #111; color:#AAB; }
+    .dc-table tr:last-child td { border-bottom:none; }
+    .dc-table tr:hover td { background:#0a0a14; }
+    .status-pill { font-family:var(--font-c); font-size:.55rem; font-weight:700; letter-spacing:.1em;
+      text-transform:uppercase; padding:3px 8px; border-radius:10px; }
+    .status-pill.on  { background:#1a3a1a; color:#5BC75B; }
+    .status-pill.off { background:#2a1a1a; color:#CE1126; }
+    .dc-action-btn { font-family:var(--font-c); font-size:.55rem; font-weight:700; letter-spacing:.08em;
+      text-transform:uppercase; border:1px solid #2a2a4a; background:none; color:#667; padding:4px 10px;
+      border-radius:2px; cursor:pointer; margin-left:4px; transition:border-color .15s, color .15s; }
+    .dc-action-btn:hover { border-color:#667; color:#AAB; }
+    .dc-action-btn.del:hover { border-color:var(--warn); color:var(--warn); }
+    .dc-empty { padding:20px 16px; text-align:center; color:#333;
+      font-family:var(--font-c); font-size:.65rem; letter-spacing:.1em; text-transform:uppercase; }
+
+    /* Add form (slide-in) */
+    .dc-form { display:none; padding:16px 20px; border-top:1px solid #1a1a2e; background:#0a0a14; gap:10px; flex-wrap:wrap; align-items:flex-end; }
+    .dc-form.open { display:flex; }
+    .dc-field { display:flex; flex-direction:column; gap:5px; }
+    .dc-label { font-family:var(--font-c); font-size:.55rem; font-weight:700; letter-spacing:.12em;
+      text-transform:uppercase; color:#555; }
+    .dc-input { background:#111; border:1px solid #2a2a4a; color:#EEF4FF; font-family:var(--font-b);
+      font-size:.82rem; padding:7px 10px; border-radius:2px; min-width:120px; }
+    .dc-input:focus { outline:none; border-color:var(--gold); }
+    .dc-select { background:#111; border:1px solid #2a2a4a; color:#EEF4FF; font-family:var(--font-b);
+      font-size:.82rem; padding:7px 10px; border-radius:2px; appearance:none; }
+    .dc-save-btn { font-family:var(--font-c); font-size:.6rem; font-weight:700; letter-spacing:.1em;
+      text-transform:uppercase; background:#2a7a2a; color:#fff; border:none; padding:8px 16px;
+      border-radius:2px; cursor:pointer; }
+    .dc-cancel-btn { background:none; border:1px solid #2a2a4a; color:#667; font-family:var(--font-c);
+      font-size:.6rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase;
+      padding:8px 14px; border-radius:2px; cursor:pointer; }
+
+    /* ── Quick Actions ───────────────────────────────────── */
+    .qa-bar { display:flex; gap:10px; padding:14px 28px; background:#080810;
+      border-bottom:1px solid #1a1a2e; overflow-x:auto; flex-wrap:wrap; }
+    .qa-card { display:flex; flex-direction:column; align-items:center; justify-content:center;
+      gap:5px; min-width:90px; padding:10px 14px; background:#0d0d1a; border:1px solid #1a1a2e;
+      border-radius:3px; cursor:pointer; transition:border-color .15s, background .15s;
+      font-family:var(--font-c); font-size:.6rem; font-weight:700; letter-spacing:.12em;
+      text-transform:uppercase; color:#667; white-space:nowrap; user-select:none; }
+    .qa-card:hover { border-color:var(--gold); color:var(--gold); background:#0a0a14; }
+    .qa-icon { font-size:1.3rem; line-height:1; }
+
+    /* ── Modal overlay ───────────────────────────────────── */
+    .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.75);
+      z-index:1000; align-items:center; justify-content:center; padding:20px; }
+    .modal-overlay.open { display:flex; }
+    .modal-box { background:#0d0d1a; border:1px solid #1a1a2e; border-radius:4px;
+      width:100%; max-width:820px; max-height:90vh; overflow-y:auto; position:relative; }
+    .modal-box::-webkit-scrollbar { width:4px; }
+    .modal-box::-webkit-scrollbar-thumb { background:#2a2a4a; }
+    .modal-head { display:flex; align-items:center; justify-content:space-between;
+      padding:16px 22px; border-bottom:1px solid #1a1a2e; position:sticky; top:0;
+      background:#0d0d1a; z-index:1; }
+    .modal-title { font-family:var(--font-c); font-size:.75rem; font-weight:700;
+      letter-spacing:.15em; text-transform:uppercase; color:#EEF4FF; }
+    .modal-close { background:none; border:none; color:#555; font-size:1.2rem;
+      cursor:pointer; padding:4px 8px; border-radius:2px; transition:color .15s; }
+    .modal-close:hover { color:#EEF4FF; }
+    .modal-body { padding:22px; }
+
+    /* ── Add Product modal ───────────────────────────────── */
+    .ap-grid { display:grid; grid-template-columns:1fr 1fr; gap:22px; }
+    @media(max-width:640px) { .ap-grid { grid-template-columns:1fr; } }
+
+    /* Image drop zone */
+    .img-dropzone { border:2px dashed #2a2a4a; border-radius:3px; padding:28px 16px;
+      text-align:center; cursor:pointer; transition:border-color .2s, background .2s;
+      min-height:180px; display:flex; flex-direction:column; align-items:center;
+      justify-content:center; gap:8px; position:relative; }
+    .img-dropzone:hover, .img-dropzone.drag { border-color:var(--gold); background:#0a0a14; }
+    .img-dropzone-icon { font-size:2rem; opacity:.4; }
+    .img-dropzone-text { font-family:var(--font-c); font-size:.62rem; font-weight:700;
+      letter-spacing:.12em; text-transform:uppercase; color:#555; }
+    #img-file-input { display:none; }
+
+    .img-preview-wrap { display:none; flex-direction:column; gap:10px; }
+    .img-preview-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+    .img-preview-col { display:flex; flex-direction:column; gap:5px; }
+    .img-preview-label { font-family:var(--font-c); font-size:.55rem; font-weight:700;
+      letter-spacing:.1em; text-transform:uppercase; color:#444; text-align:center; }
+    .img-preview-col img { width:100%; aspect-ratio:1; object-fit:contain;
+      background:#111; border:1px solid #1a1a2e; border-radius:2px; }
+    .img-status { font-family:var(--font-c); font-size:.62rem; font-weight:700;
+      letter-spacing:.1em; text-transform:uppercase; text-align:center; padding:6px; }
+    .img-status.processing { color:var(--gold); }
+    .img-status.done { color:#5BC75B; }
+    .img-status.err { color:var(--warn); }
+    .img-retry-btn { font-family:var(--font-c); font-size:.58rem; font-weight:700;
+      letter-spacing:.1em; text-transform:uppercase; background:none; border:1px solid #2a2a4a;
+      color:#667; padding:5px 12px; border-radius:2px; cursor:pointer; width:100%; margin-top:4px; }
+    .img-retry-btn:hover { border-color:#667; color:#AAB; }
+
+    /* Product form fields */
+    .ap-fields { display:flex; flex-direction:column; gap:12px; }
+    .ap-field { display:flex; flex-direction:column; gap:5px; }
+    .ap-label { font-family:var(--font-c); font-size:.58rem; font-weight:700;
+      letter-spacing:.12em; text-transform:uppercase; color:#555; }
+    .ap-input, .ap-select, .ap-textarea { background:#111; border:1px solid #2a2a4a;
+      color:#EEF4FF; font-family:var(--font-b); font-size:.84rem;
+      padding:8px 10px; border-radius:2px; width:100%; }
+    .ap-input:focus, .ap-select:focus, .ap-textarea:focus { outline:none; border-color:var(--gold); }
+    .ap-textarea { resize:vertical; min-height:70px; }
+    .ap-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+    .ap-potency { display:flex; gap:6px; }
+    .pip-btn { width:30px; height:30px; border-radius:2px; background:#1a1a2e;
+      border:1px solid #2a2a4a; color:#555; cursor:pointer; font-family:var(--font-d);
+      font-size:.9rem; transition:background .15s, color .15s; }
+    .pip-btn.on { background:var(--gold); color:#000; border-color:var(--gold); }
+
+    .ap-submit { margin-top:6px; width:100%; padding:12px; background:var(--gold);
+      color:#000; font-family:var(--font-c); font-size:.7rem; font-weight:700;
+      letter-spacing:.14em; text-transform:uppercase; border:none; border-radius:2px;
+      cursor:pointer; transition:opacity .15s; }
+    .ap-submit:hover { opacity:.85; }
+    .ap-submit:disabled { opacity:.4; cursor:not-allowed; }
+    .ap-msg { font-family:var(--font-c); font-size:.62rem; font-weight:700;
+      letter-spacing:.08em; text-transform:uppercase; text-align:center;
+      padding:8px; min-height:24px; }
+    .ap-msg.err { color:var(--warn); }
+    .ap-msg.ok  { color:#5BC75B; }
+
+    /* ── Inventory Update modal ──────────────────────────── */
+    .inv-list { display:flex; flex-direction:column; gap:2px; max-height:400px; overflow-y:auto; }
+    .inv-row { display:grid; grid-template-columns:1fr 100px 80px; gap:10px;
+      align-items:center; padding:8px 12px; border-radius:2px; }
+    .inv-row:hover { background:#0a0a14; }
+    .inv-name { font-size:.83rem; color:#CCD; }
+    .inv-input { background:#111; border:1px solid #2a2a4a; color:#EEF4FF;
+      font-family:var(--font-d); font-size:1rem; padding:5px 8px; border-radius:2px;
+      text-align:center; width:100%; }
+    .inv-input:focus { outline:none; border-color:var(--gold); }
+    .inv-save-btn { font-family:var(--font-c); font-size:.58rem; font-weight:700;
+      letter-spacing:.08em; text-transform:uppercase; background:var(--gold); color:#000;
+      border:none; padding:6px 10px; border-radius:2px; cursor:pointer; width:100%; }
+    .inv-save-btn.saved { background:#2a7a2a; color:#fff; }
   </style>
 </head>
 <body>
+<script type="module">
+  import { removeBackground } from 'https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.4.5/dist/browser/index.mjs';
+  window._removeBackground = removeBackground;
+</script>
+
 
 <!-- Login -->
 <div id="login-screen">
@@ -489,21 +674,272 @@
     </div>
   </header>
 
-  <div class="filter-bar">
-    <span class="filter-label">Filter</span>
-    <button class="filter-btn active" onclick="setFilter('all',this)">All</button>
-    <button class="filter-btn" onclick="setFilter('discount',this)">🏷 Discounts</button>
-    <button class="filter-btn" onclick="setFilter('processing',this)">Processing</button>
-    <button class="filter-btn" onclick="setFilter('pending_cashapp',this)">⚠ Cash App</button>
-    <button class="filter-btn" onclick="setFilter('payment_processed',this)">Confirmed</button>
-    <button class="filter-btn" onclick="setFilter('completed',this)">Completed</button>
-    <button class="filter-btn" onclick="setFilter('discount',this)">🏷 Discounts</button>
-    <button class="filter-btn" onclick="setFilter('discount',this)">🏷 Discount Codes</button>
+
+  <!-- Quick Actions bar -->
+  <div class="qa-bar" id="qa-bar">
+    <div class="qa-card" onclick="openModal('add-product-modal')">
+      <div class="qa-icon">➕</div>
+      <div>Add Product</div>
+    </div>
+    <div class="qa-card" onclick="openModal('inv-modal')">
+      <div class="qa-icon">📦</div>
+      <div>Update Inventory</div>
+    </div>
+    <div class="qa-card" onclick="switchTab('deals', document.querySelectorAll('.tab-btn')[2]); openModal('coupon-form-modal')">
+      <div class="qa-icon">🏷️</div>
+      <div>Add Coupon</div>
+    </div>
+    <div class="qa-card" onclick="switchTab('deals', document.querySelectorAll('.tab-btn')[2]); openModal('deal-form-modal')">
+      <div class="qa-icon">🎯</div>
+      <div>Add Deal</div>
+    </div>
   </div>
 
-  <div class="orders-body" id="orders-body">
-    <div class="loader"><div class="spinner"></div>Loading orders…</div>
+  <!-- ══════════════════════════════════════════════════════
+       ADD PRODUCT MODAL
+  ════════════════════════════════════════════════════════ -->
+  <div class="modal-overlay" id="add-product-modal">
+    <div class="modal-box">
+      <div class="modal-head">
+        <div class="modal-title">Add New Product</div>
+        <button class="modal-close" onclick="closeModal('add-product-modal')">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="ap-grid">
+
+          <!-- Left: Image upload + bg removal -->
+          <div>
+            <div id="img-dropzone" class="img-dropzone" onclick="document.getElementById('img-file-input').click()"
+              ondragover="event.preventDefault();this.classList.add('drag')"
+              ondragleave="this.classList.remove('drag')"
+              ondrop="handleImgDrop(event)">
+              <div class="img-dropzone-icon">🖼️</div>
+              <div class="img-dropzone-text">Click or drag image here</div>
+              <div style="font-family:var(--font-c);font-size:.55rem;letter-spacing:.08em;color:#333;margin-top:4px">PNG · JPG · WEBP</div>
+            </div>
+            <input type="file" id="img-file-input" accept="image/*" onchange="handleImgFile(this.files[0])"/>
+
+            <div class="img-preview-wrap" id="img-preview-wrap">
+              <div class="img-preview-row">
+                <div class="img-preview-col">
+                  <div class="img-preview-label">Original</div>
+                  <img id="img-original" src="" alt="original"/>
+                </div>
+                <div class="img-preview-col">
+                  <div class="img-preview-label">Background Removed</div>
+                  <img id="img-processed" src="" alt="processed"/>
+                </div>
+              </div>
+              <div class="img-status" id="img-status"></div>
+              <button class="img-retry-btn" id="img-retry-btn" style="display:none" onclick="retryBgRemoval()">↻ Retry Background Removal</button>
+              <button class="img-retry-btn" style="margin-top:4px" onclick="document.getElementById('img-file-input').click()">Choose Different Image</button>
+            </div>
+          </div>
+
+          <!-- Right: Product fields -->
+          <div class="ap-fields">
+            <div class="ap-field">
+              <div class="ap-label">Product Name *</div>
+              <input class="ap-input" id="ap-name" placeholder="e.g. BPC-157 10mg"/>
+            </div>
+            <div class="ap-field">
+              <div class="ap-label">Category</div>
+              <select class="ap-select" id="ap-category">
+                <option value="">— Select —</option>
+              </select>
+            </div>
+            <div class="ap-row">
+              <div class="ap-field">
+                <div class="ap-label">Price ($) *</div>
+                <input class="ap-input" id="ap-price" type="number" min="0" step="0.01" placeholder="25.00"/>
+              </div>
+              <div class="ap-field">
+                <div class="ap-label">Bundle Price ($)</div>
+                <input class="ap-input" id="ap-bundle" type="number" min="0" step="0.01" placeholder="optional"/>
+              </div>
+            </div>
+            <div class="ap-row">
+              <div class="ap-field">
+                <div class="ap-label">Inventory</div>
+                <input class="ap-input" id="ap-inventory" type="number" min="0" placeholder="0"/>
+              </div>
+              <div class="ap-field">
+                <div class="ap-label">Potency (1–5)</div>
+                <div class="ap-potency" id="ap-potency-row">
+                  <button class="pip-btn" onclick="setPotency(1)" id="pip-1">1</button>
+                  <button class="pip-btn" onclick="setPotency(2)" id="pip-2">2</button>
+                  <button class="pip-btn" onclick="setPotency(3)" id="pip-3">3</button>
+                  <button class="pip-btn" onclick="setPotency(4)" id="pip-4">4</button>
+                  <button class="pip-btn" onclick="setPotency(5)" id="pip-5">5</button>
+                </div>
+              </div>
+            </div>
+            <div class="ap-field">
+              <div class="ap-label">Description</div>
+              <textarea class="ap-textarea" id="ap-desc" placeholder="Research compound description…"></textarea>
+            </div>
+            <button class="ap-submit" id="ap-submit" onclick="submitProduct()">Add Product</button>
+            <div class="ap-msg" id="ap-msg"></div>
+          </div>
+
+        </div>
+      </div>
+    </div>
   </div>
+
+  <!-- ══════════════════════════════════════════════════════
+       INVENTORY UPDATE MODAL
+  ════════════════════════════════════════════════════════ -->
+  <div class="modal-overlay" id="inv-modal">
+    <div class="modal-box" style="max-width:540px">
+      <div class="modal-head">
+        <div class="modal-title">Update Inventory</div>
+        <button class="modal-close" onclick="closeModal('inv-modal')">✕</button>
+      </div>
+      <div class="modal-body" style="padding:12px">
+        <div class="inv-list" id="inv-list">
+          <div class="loader"><div class="spinner"></div>Loading…</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab Nav -->
+  <div class="tab-nav">
+    <button class="tab-btn active" onclick="switchTab('orders',this)">Orders</button>
+    <button class="tab-btn" onclick="switchTab('products',this)">Products</button>
+    <button class="tab-btn" onclick="switchTab('deals',this)">Deals &amp; Codes</button>
+  </div>
+
+  <!-- ── ORDERS TAB ─────────────────────────────────────── -->
+  <div class="tab-panel active" id="tab-orders">
+    <div class="filter-bar">
+      <span class="filter-label">Filter</span>
+      <button class="filter-btn active" onclick="setFilter('all',this)">All</button>
+      <button class="filter-btn" onclick="setFilter('discount',this)">🏷 Discounts</button>
+      <button class="filter-btn" onclick="setFilter('processing',this)">Processing</button>
+      <button class="filter-btn" onclick="setFilter('pending_cashapp',this)">⚠ Cash App</button>
+      <button class="filter-btn" onclick="setFilter('payment_processed',this)">Confirmed</button>
+      <button class="filter-btn" onclick="setFilter('completed',this)">Completed</button>
+    </div>
+    <div class="orders-body" id="orders-body">
+      <div class="loader"><div class="spinner"></div>Loading orders…</div>
+    </div>
+  </div>
+
+  <!-- ── PRODUCTS TAB ───────────────────────────────────── -->
+  <div class="tab-panel" id="tab-products">
+    <div class="products-body">
+      <div class="loader" id="products-loader"><div class="spinner"></div>Loading products…</div>
+      <table class="products-table" id="products-table" style="display:none">
+        <thead>
+          <tr>
+            <th>Product</th>
+            <th>Category</th>
+            <th>Price</th>
+            <th>Bundle ×10</th>
+            <th>Stock</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="products-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ── DEALS & CODES TAB ─────────────────────────────── -->
+  <div class="tab-panel" id="tab-deals">
+    <div class="dc-body">
+
+      <!-- Coupon Codes -->
+      <div class="dc-section">
+        <div class="dc-section-head">
+          <div class="dc-section-title">Coupon Codes</div>
+          <button class="dc-add-btn" onclick="toggleForm('coupon-form')">+ Add Code</button>
+        </div>
+        <div class="dc-form" id="coupon-form">
+          <div class="dc-field">
+            <div class="dc-label">Code</div>
+            <input class="dc-input" id="cf-code" placeholder="SUMMER20" style="text-transform:uppercase;width:140px"/>
+          </div>
+          <div class="dc-field">
+            <div class="dc-label">Discount %</div>
+            <input class="dc-input" id="cf-pct" type="number" min="1" max="100" placeholder="10" style="width:80px"/>
+          </div>
+          <div class="dc-field">
+            <div class="dc-label">Max Uses (optional)</div>
+            <input class="dc-input" id="cf-uses" type="number" min="1" placeholder="∞" style="width:90px"/>
+          </div>
+          <div class="dc-field">
+            <div class="dc-label">Expires (optional)</div>
+            <input class="dc-input" id="cf-exp" type="date" style="width:140px"/>
+          </div>
+          <div style="display:flex;gap:8px;align-items:flex-end">
+            <button class="dc-save-btn" onclick="saveCoupon()">Save</button>
+            <button class="dc-cancel-btn" onclick="toggleForm('coupon-form')">Cancel</button>
+          </div>
+          <div id="coupon-err" style="width:100%;font-size:.72rem;color:var(--warn);font-family:var(--font-c);letter-spacing:.08em;min-height:16px"></div>
+        </div>
+        <table class="dc-table">
+          <thead>
+            <tr><th>Code</th><th>Discount</th><th>Uses</th><th>Expires</th><th>Status</th><th></th></tr>
+          </thead>
+          <tbody id="coupons-tbody">
+            <tr><td colspan="6" class="dc-empty">Loading…</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Active Deals -->
+      <div class="dc-section">
+        <div class="dc-section-head">
+          <div class="dc-section-title">Deals</div>
+          <button class="dc-add-btn" onclick="toggleForm('deal-form')">+ Add Deal</button>
+        </div>
+        <div class="dc-form" id="deal-form">
+          <div class="dc-field">
+            <div class="dc-label">Deal Name</div>
+            <input class="dc-input" id="df-name" placeholder="Summer Sale" style="width:160px"/>
+          </div>
+          <div class="dc-field">
+            <div class="dc-label">Type</div>
+            <select class="dc-select" id="df-type" onchange="onDealTypeChange()" style="width:130px">
+              <option value="storewide">Store-wide</option>
+              <option value="category">By Category</option>
+              <option value="product">By Product ID</option>
+            </select>
+          </div>
+          <div class="dc-field" id="df-scope-wrap" style="display:none">
+            <div class="dc-label" id="df-scope-label">Scope</div>
+            <input class="dc-input" id="df-scope" placeholder="" style="width:160px"/>
+          </div>
+          <div class="dc-field">
+            <div class="dc-label">Discount %</div>
+            <input class="dc-input" id="df-pct" type="number" min="1" max="100" placeholder="15" style="width:80px"/>
+          </div>
+          <div class="dc-field">
+            <div class="dc-label">Expires (optional)</div>
+            <input class="dc-input" id="df-exp" type="date" style="width:140px"/>
+          </div>
+          <div style="display:flex;gap:8px;align-items:flex-end">
+            <button class="dc-save-btn" onclick="saveDeal()">Save</button>
+            <button class="dc-cancel-btn" onclick="toggleForm('deal-form')">Cancel</button>
+          </div>
+          <div id="deal-err" style="width:100%;font-size:.72rem;color:var(--warn);font-family:var(--font-c);letter-spacing:.08em;min-height:16px"></div>
+        </div>
+        <table class="dc-table">
+          <thead>
+            <tr><th>Name</th><th>Type</th><th>Scope</th><th>Discount</th><th>Expires</th><th>Status</th><th></th></tr>
+          </thead>
+          <tbody id="deals-tbody">
+            <tr><td colspan="7" class="dc-empty">Loading…</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </div>
+
 </div>
 
 <script>

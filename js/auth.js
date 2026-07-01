@@ -232,6 +232,7 @@ window.Auth = {
       qty
     });
     return error ? { ok: false } : { ok: true };
+    return orderRow?.id || null;
   },
 
   async incrementInventory(productId, qty) {
@@ -284,6 +285,7 @@ window.Auth = {
       cashapp_cashtag: order.cashapp_cashtag || null,
       paypal_email:    order.paypal_email    || null,
       paypal_name:     order.paypal_name     || null,
+      discount_code:   order.discount_code  || null,
       discount_code:   order.discount_code  || null,
       discount_pct:    order.discount_pct   || null,
       source_site:     order.source_site     || 'bbp',

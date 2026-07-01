@@ -1,12 +1,8 @@
 // ═══════════════════════════════════════════════════════════
-// Unified Admin Orders Edge Function — BigBoyPeps + 956 Labs
-// Both sites call this SAME function (same Supabase project).
-// The "site" field in the request body determines which
-// store's orders are returned — this prevents one site's
-// admin panel from showing the other site's orders.
+// Unified Admin Edge Function — BigBoyPeps + 956 Labs
+// Handles: orders, products, coupon codes, deals
 //
-// Deploy ONCE: supabase functions deploy admin-orders --no-verify-jwt
-// (Deploying from either repo works — keep both copies identical.)
+// Deploy: supabase functions deploy admin-orders --no-verify-jwt
 // ═══════════════════════════════════════════════════════════
 import { serve }        from "https://deno.land/std@0.177.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
@@ -21,64 +17,193 @@ const cors = {
   "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
 
+const json = (data: unknown, status = 200) =>
+  new Response(JSON.stringify(data), { status, headers: { "Content-Type": "application/json", ...cors } });
+
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: cors });
 
   try {
-    const body = await req.json();
+    const body     = await req.json();
     const { password, action, token } = body;
-    const site = body.site === "956labs" ? "956labs" : "bbp"; // defaults to bbp if unspecified
+    const site     = body.site === "956labs" ? "956labs" : "bbp";
 
-    if (password !== ADMIN_PASSWORD) {
-      return new Response(JSON.stringify({ error: "Unauthorized" }), {
-        status: 401, headers: { "Content-Type": "application/json", ...cors },
-      });
-    }
+    if (password !== ADMIN_PASSWORD) return json({ error: "Unauthorized" }, 401);
 
     const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    // ── Confirm order — scoped to the same site to avoid cross-site confirms ──
+    // ══════════════════════════════════════════════════
+    // ORDERS
+    // ══════════════════════════════════════════════════
+
     if (action === "confirm" && token) {
-      let query = sb
-        .from("orders")
+      let q = sb.from("orders")
         .update({ status: "payment_processed", confirmed_at: new Date().toISOString() })
         .eq("confirm_token", token)
-        .in("status", ["processing", "pending_cashapp", "pending_zelle", "pending_bitcoin"]);
-
-      if (site === "956labs") {
-        query = query.eq("source_site", "956labs");
-      } else {
-        query = query.or("source_site.eq.bbp,source_site.is.null");
-      }
-
-      const { data, error } = await query.select("id");
+        .in("status", ["processing","pending_cashapp","pending_zelle","pending_bitcoin"]);
+      if (site === "956labs") q = q.eq("source_site","956labs");
+      else q = q.or("source_site.eq.bbp,source_site.is.null");
+      const { data, error } = await q.select("id");
       if (error) throw error;
-      return new Response(JSON.stringify({ ok: true, updated: data?.length ?? 0 }), {
-        status: 200, headers: { "Content-Type": "application/json", ...cors },
+      return json({ ok: true, updated: data?.length ?? 0 });
+    }
+
+    if (!action || action === "listOrders") {
+      let q = sb.from("orders").select("*").order("ordered_at", { ascending: false }).limit(200);
+      if (site === "956labs") q = q.eq("source_site","956labs");
+      else q = q.or("source_site.eq.bbp,source_site.is.null");
+      const { data: orders, error } = await q;
+      if (error) throw error;
+      return json({ orders: orders || [] });
+    }
+
+    // ══════════════════════════════════════════════════
+    // PRODUCTS
+    // ══════════════════════════════════════════════════
+
+    if (action === "getProducts") {
+      const { data, error } = await sb
+        .from("products")
+        .select("id, name, category, price, bundle_price, inventory, active, images")
+        .order("id");
+      if (error) throw error;
+      return json({ products: data || [] });
+    }
+
+    if (action === "updateProduct") {
+      const { id, price, bundle_price, inventory } = body;
+      if (!id) return json({ error: "Missing id" }, 400);
+      const updates: Record<string, unknown> = {};
+      if (price        !== undefined) updates.price        = Number(price);
+      if (bundle_price !== undefined) updates.bundle_price = bundle_price !== null ? Number(bundle_price) : null;
+      if (inventory    !== undefined) updates.inventory    = Number(inventory);
+      const { error } = await sb.from("products").update(updates).eq("id", id);
+      if (error) throw error;
+      return json({ ok: true });
+    }
+
+    if (action === "addProduct") {
+      const { name, category, price, bundle_price, inventory, potency, description, images } = body;
+      if (!name || price === undefined) return json({ error: "Missing name or price" }, 400);
+      const { data, error } = await sb.from("products").insert({
+        name,
+        category:     category || null,
+        price:        Number(price),
+        bundle_price: bundle_price ? Number(bundle_price) : null,
+        inventory:    Number(inventory) || 0,
+        potency:      Number(potency)   || 3,
+        description:  description       || null,
+        images:       images            || null,
+        active:       true,
+      }).select("id").single();
+      if (error) throw error;
+      return json({ ok: true, id: data.id });
+    }
+
+    if (action === "uploadImage") {
+      const { filename, imageBase64 } = body;
+      if (!filename || !imageBase64) return json({ error: "Missing filename or imageBase64" }, 400);
+
+      // Decode base64 to bytes
+      const bytes   = Uint8Array.from(atob(imageBase64), c => c.charCodeAt(0));
+      const safeName = filename.replace(/[^a-zA-Z0-9._-]/g, "-");
+
+      const { error } = await sb.storage
+        .from("product-images")
+        .upload(safeName, bytes, {
+          contentType: "image/png",
+          upsert:      true,
+        });
+      if (error) throw error;
+
+      return json({ ok: true, filename: safeName });
+    }
+
+    // ══════════════════════════════════════════════════
+    // COUPON CODES
+    // ══════════════════════════════════════════════════
+
+    if (action === "getCoupons") {
+      const { data, error } = await sb
+        .from("coupon_codes")
+        .select("*")
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      return json({ coupons: data || [] });
+    }
+
+    if (action === "addCoupon") {
+      const { code, discount_pct, uses_limit, expires_at } = body;
+      if (!code || !discount_pct) return json({ error: "Missing code or discount_pct" }, 400);
+      const { error } = await sb.from("coupon_codes").insert({
+        code: code.toUpperCase().trim(),
+        discount_pct: Number(discount_pct),
+        uses_limit:   uses_limit || null,
+        expires_at:   expires_at || null,
       });
+      if (error) throw error;
+      return json({ ok: true });
     }
 
-    // ── List orders — filtered to the requesting site ──────
-    let listQuery = sb.from("orders").select("*").order("ordered_at", { ascending: false }).limit(200);
-
-    if (site === "956labs") {
-      listQuery = listQuery.eq("source_site", "956labs");
-    } else {
-      // bbp orders: explicit 'bbp' OR legacy rows from before source_site existed (null)
-      listQuery = listQuery.or("source_site.eq.bbp,source_site.is.null");
+    if (action === "toggleCoupon") {
+      const { id, active } = body;
+      const { error } = await sb.from("coupon_codes").update({ active }).eq("id", id);
+      if (error) throw error;
+      return json({ ok: true });
     }
 
-    const { data: orders, error } = await listQuery;
-    if (error) throw error;
+    if (action === "deleteCoupon") {
+      const { id } = body;
+      const { error } = await sb.from("coupon_codes").delete().eq("id", id);
+      if (error) throw error;
+      return json({ ok: true });
+    }
 
-    return new Response(JSON.stringify({ orders: orders || [] }), {
-      status: 200, headers: { "Content-Type": "application/json", ...cors },
-    });
+    // ══════════════════════════════════════════════════
+    // DEALS
+    // ══════════════════════════════════════════════════
+
+    if (action === "getDeals") {
+      const { data, error } = await sb
+        .from("deals")
+        .select("*")
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      return json({ deals: data || [] });
+    }
+
+    if (action === "addDeal") {
+      const { name, type, scope, discount_pct, expires_at } = body;
+      if (!name || !type || !discount_pct) return json({ error: "Missing fields" }, 400);
+      const { error } = await sb.from("deals").insert({
+        name,
+        type,
+        scope: scope || null,
+        discount_pct: Number(discount_pct),
+        expires_at:   expires_at || null,
+      });
+      if (error) throw error;
+      return json({ ok: true });
+    }
+
+    if (action === "toggleDeal") {
+      const { id, active } = body;
+      const { error } = await sb.from("deals").update({ active }).eq("id", id);
+      if (error) throw error;
+      return json({ ok: true });
+    }
+
+    if (action === "deleteDeal") {
+      const { id } = body;
+      const { error } = await sb.from("deals").delete().eq("id", id);
+      if (error) throw error;
+      return json({ ok: true });
+    }
+
+    return json({ error: "Unknown action" }, 400);
 
   } catch (err) {
     console.error("admin-orders error:", err);
-    return new Response(JSON.stringify({ error: String(err) }), {
-      status: 500, headers: { "Content-Type": "application/json", ...cors },
-    });
+    return json({ error: String(err) }, 500);
   }
 });

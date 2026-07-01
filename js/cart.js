@@ -4,25 +4,73 @@
 
 import { supabase } from './supabase.js';
 
-// ── Discount Codes ───────────────────────────────────────
-const DISCOUNT_CODES = {
-  'DEZI10':   { pct: 10, label: 'DEZI10'   },
-  'DYLAN10':  { pct: 10, label: 'DYLAN10'  },
-};
+// ── Discount Codes — loaded from DB ─────────────────────
+// Codes are managed in the admin panel (coupon_codes table).
+// Falls back to empty object if the fetch fails.
+let _couponMap = {}; // populated on first applyDiscount call
+let _dealsCache = null; // active deals from DB
+
+async function _loadCoupons() {
+  if (Object.keys(_couponMap).length) return; // already loaded
+  try {
+    const { data } = await supabase
+      .from('coupon_codes')
+      .select('code, discount_pct')
+      .eq('active', true);
+    (data || []).forEach(r => {
+      _couponMap[r.code.toUpperCase()] = { pct: Number(r.discount_pct), label: r.code };
+    });
+  } catch(e) { console.warn('Could not load coupon codes:', e); }
+}
+
+async function _loadDeals() {
+  if (_dealsCache !== null) return _dealsCache;
+  try {
+    const now = new Date().toISOString();
+    const { data } = await supabase
+      .from('deals')
+      .select('*')
+      .eq('active', true)
+      .or('expires_at.is.null,expires_at.gt.' + now);
+    _dealsCache = data || [];
+  } catch(e) { _dealsCache = []; }
+  return _dealsCache;
+}
+
+// Returns the best deal discount % for a given cart item array
+// Each item: { id, category, price }
+export async function getBestDeal(items) {
+  const deals = await _loadDeals();
+  if (!deals.length || !items.length) return null;
+  let best = null;
+  for (const deal of deals) {
+    let applies = false;
+    if (deal.type === 'storewide') {
+      applies = true;
+    } else if (deal.type === 'category') {
+      applies = items.some(i => i.category === deal.scope);
+    } else if (deal.type === 'product') {
+      applies = items.some(i => String(i.id) === String(deal.scope));
+    }
+    if (applies && (!best || deal.discount_pct > best.pct)) {
+      best = { pct: Number(deal.discount_pct), label: deal.name };
+    }
+  }
+  return best;
+}
 
 let _appliedDiscount = null; // { code, pct, label } or null
 
-window.applyDiscount = function(code) {
-  const key    = (code || '').trim().toUpperCase();
-  const match  = DISCOUNT_CODES[key];
-  const errEl  = document.getElementById('discount-err');
-  const okEl   = document.getElementById('discount-ok');
+window.applyDiscount = async function(code) {
+  const key   = (code || '').trim().toUpperCase();
+  const errEl = document.getElementById('discount-err');
+  const okEl  = document.getElementById('discount-ok');
   if (errEl) errEl.textContent = '';
   if (okEl)  okEl.textContent  = '';
-
-  if (!key)   { if (errEl) errEl.textContent = 'Enter a code first.'; return; }
+  if (!key) { if (errEl) errEl.textContent = 'Enter a code first.'; return; }
+  await _loadCoupons();
+  const match = _couponMap[key];
   if (!match) { if (errEl) errEl.textContent = 'Invalid discount code.'; return; }
-
   _appliedDiscount = { code: match.label, pct: match.pct };
   if (okEl) okEl.textContent = match.pct + '% discount applied!';
   if (typeof window.renderCart === 'function') window.renderCart();

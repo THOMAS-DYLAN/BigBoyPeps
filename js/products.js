@@ -130,7 +130,8 @@ function hueFromHeat(level) {
 // Uses real product image if available, falls back to CSS vial shape
 export function pepperSVG(product) {
   if (product.images) {
-    return '<img src="pdct img/' + product.images + '" alt="' + product.name + '" style="width:auto;height:160px;object-fit:contain;object-position:center;position:relative;z-index:1;display:block;margin:auto" />';
+    var _imgSrc = product.images.startsWith('http') ? product.images : 'pdct img/' + product.images;
+    return '<img src="' + _imgSrc + '" alt="' + product.name + '" style="width:auto;height:160px;object-fit:contain;object-position:center;position:relative;z-index:1;display:block;margin:auto" />';
   }
   const hue   = hueFromHeat(product.potency);
   const shape = product.shape_key || 'tall';
@@ -139,7 +140,8 @@ export function pepperSVG(product) {
 
 export function miniPepperSVG(product) {
   if (product.images) {
-    return '<img src="pdct img/' + product.images + '" alt="' + product.name + '" style="width:auto;height:52px;object-fit:contain;object-position:center;display:block;margin:auto" />';
+    var _miniSrc = product.images.startsWith('http') ? product.images : 'pdct img/' + product.images;
+    return '<img src="' + _miniSrc + '" alt="' + product.name + '" style="width:auto;height:52px;object-fit:contain;object-position:center;display:block;margin:auto" />';
   }
   const hue   = hueFromHeat(product.potency);
   const shape = product.shape_key || 'tall';
