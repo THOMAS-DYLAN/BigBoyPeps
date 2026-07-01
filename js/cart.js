@@ -50,7 +50,7 @@ export async function getBestDeal(items) {
     } else if (deal.type === 'category') {
       applies = items.some(i => i.category === deal.scope);
     } else if (deal.type === 'product') {
-      applies = items.some(i => String(i.id) === String(deal.scope));
+      applies = items.some(i => i.name === deal.scope);
     }
     if (applies && (!best || deal.discount_pct > best.pct)) {
       best = { pct: Number(deal.discount_pct), label: deal.name };

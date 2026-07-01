@@ -645,7 +645,7 @@
 </head>
 <body>
 <script type="module">
-  import { removeBackground } from 'https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.4.5/dist/browser/index.mjs';
+  import { removeBackground } from 'https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.5.5/+esm';
   window._removeBackground = removeBackground;
 </script>
 
@@ -677,19 +677,19 @@
 
   <!-- Quick Actions bar -->
   <div class="qa-bar" id="qa-bar">
-    <div class="qa-card" onclick="openModal('add-product-modal')">
+    <div class="qa-card" data-modal="add-product-modal">
       <div class="qa-icon">➕</div>
       <div>Add Product</div>
     </div>
-    <div class="qa-card" onclick="openModal('inv-modal')">
+    <div class="qa-card" data-modal="inv-modal">
       <div class="qa-icon">📦</div>
       <div>Update Inventory</div>
     </div>
-    <div class="qa-card" onclick="switchTab('deals', document.querySelectorAll('.tab-btn')[2]); openModal('coupon-form-modal')">
+    <div class="qa-card" data-modal="coupon-form" data-tab="deals">
       <div class="qa-icon">🏷️</div>
       <div>Add Coupon</div>
     </div>
-    <div class="qa-card" onclick="switchTab('deals', document.querySelectorAll('.tab-btn')[2]); openModal('deal-form-modal')">
+    <div class="qa-card" data-modal="deal-form" data-tab="deals">
       <div class="qa-icon">🎯</div>
       <div>Add Deal</div>
     </div>
@@ -805,10 +805,10 @@
   </div>
 
   <!-- Tab Nav -->
-  <div class="tab-nav">
-    <button class="tab-btn active" onclick="switchTab('orders',this)">Orders</button>
-    <button class="tab-btn" onclick="switchTab('products',this)">Products</button>
-    <button class="tab-btn" onclick="switchTab('deals',this)">Deals &amp; Codes</button>
+  <div class="tab-nav" id="tab-nav">
+    <button class="tab-btn active" data-tab="orders">Orders</button>
+    <button class="tab-btn" data-tab="products">Products</button>
+    <button class="tab-btn" data-tab="deals">Deals &amp; Codes</button>
   </div>
 
   <!-- ── ORDERS TAB ─────────────────────────────────────── -->
@@ -906,7 +906,7 @@
             <select class="dc-select" id="df-type" onchange="onDealTypeChange()" style="width:130px">
               <option value="storewide">Store-wide</option>
               <option value="category">By Category</option>
-              <option value="product">By Product ID</option>
+              <option value="product">By Product Name</option>
             </select>
           </div>
           <div class="dc-field" id="df-scope-wrap" style="display:none">
@@ -1219,6 +1219,468 @@
   window.closeDetail = function() {
     document.getElementById('detail-overlay').classList.remove('open');
   }
+
+  // ══════════════════════════════════════════════════════════
+  // TAB SWITCHING
+  // ══════════════════════════════════════════════════════════
+  var _activeTab = 'orders';
+  window.switchTab = function(tab, btn) {
+    document.querySelectorAll('.tab-panel').forEach(function(p){ p.classList.remove('active'); });
+    document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active'); });
+    document.getElementById('tab-' + tab).classList.add('active');
+    if (btn) btn.classList.add('active');
+    _activeTab = tab;
+    if (tab === 'products' && !_productsLoaded) loadProductsTab();
+    if (tab === 'deals'    && !_dealsLoaded)    loadDealsTab();
+  };
+
+  // ══════════════════════════════════════════════════════════
+  // MODAL SYSTEM
+  // ══════════════════════════════════════════════════════════
+  window.openModal = function(id) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    el.classList.add('open');
+    if (id === 'inv-modal')          loadInvModal();
+    if (id === 'add-product-modal')  populateCategoryDropdown();
+  };
+  window.closeModal = function(id) {
+    var el = document.getElementById(id);
+    if (el) el.classList.remove('open');
+  };
+  document.addEventListener('click', function(e) {
+    if (e.target.classList.contains('modal-overlay')) e.target.classList.remove('open');
+  });
+
+  // ══════════════════════════════════════════════════════════
+  // PRODUCTS TAB
+  // ══════════════════════════════════════════════════════════
+  var _productsLoaded = false;
+  var _productsData   = [];
+
+  function loadProductsTab() {
+    fetch(ADMIN_URL, { method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ password: _pw, action: 'getProducts' })
+    }).then(function(r){ return r.json(); }).then(function(d){
+      _productsLoaded = true;
+      _productsData   = d.products || [];
+      document.getElementById('products-loader').style.display = 'none';
+      var tbl = document.getElementById('products-table');
+      tbl.style.display = '';
+      renderProductsTable();
+    });
+  }
+
+  function renderProductsTable() {
+    var tbody = document.getElementById('products-tbody');
+    tbody.innerHTML = _productsData.map(function(p){
+      return '<tr id="prod-row-'+p.id+'">'
+        + '<td style="color:#EEF4FF;font-weight:500">'+p.name+'</td>'
+        + '<td><span class="cat-badge">'+(p.category||'—')+'</span></td>'
+        + '<td><span style="color:#667;font-size:.7rem;margin-right:3px">$</span>'
+        +   '<input class="price-input" id="price-'+p.id+'" value="'+Number(p.price).toFixed(2)+'" onchange="markDirty('+p.id+')" /></td>'
+        + '<td>'+(p.bundle_price
+            ? '<span style="color:#667;font-size:.7rem;margin-right:3px">$</span><input class="price-input" id="bundle-'+p.id+'" value="'+Number(p.bundle_price).toFixed(2)+'" onchange="markDirty('+p.id+')" />'
+            : '<span style="color:#333;font-size:.75rem">N/A</span>')
+        +'</td>'
+        + '<td style="color:'+(p.inventory>5?'#5BC75B':p.inventory>0?'#D4A843':'#CE1126')+'">'+p.inventory+'</td>'
+        + '<td><button class="save-row-btn" id="save-'+p.id+'" onclick="saveProduct('+p.id+')">Save</button></td>'
+        + '</tr>';
+    }).join('');
+  }
+
+  window.markDirty = function(id) {
+    var btn = document.getElementById('save-'+id);
+    if (btn) { btn.textContent='Save'; btn.className='save-row-btn'; }
+  };
+
+  window.saveProduct = function(id) {
+    var priceEl  = document.getElementById('price-'+id);
+    var bundleEl = document.getElementById('bundle-'+id);
+    var price        = priceEl  ? parseFloat(priceEl.value)  : null;
+    var bundle_price = bundleEl ? parseFloat(bundleEl.value) : null;
+    var btn = document.getElementById('save-'+id);
+    btn.textContent = '…';
+    fetch(ADMIN_URL, { method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ password: _pw, action: 'updateProduct', id: id, price: price, bundle_price: bundle_price })
+    }).then(function(r){ return r.json(); }).then(function(d){
+      if (d.ok) { btn.textContent='✓ Saved'; btn.className='save-row-btn saved';
+        setTimeout(function(){ btn.textContent='Save'; btn.className='save-row-btn'; }, 2500); }
+      else { btn.textContent='Error'; }
+    });
+  };
+
+  // ══════════════════════════════════════════════════════════
+  // DEALS & CODES TAB
+  // ══════════════════════════════════════════════════════════
+  var _dealsLoaded = false;
+
+  function loadDealsTab() {
+    Promise.all([
+      fetch(ADMIN_URL, { method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ password: _pw, action: 'getCoupons' }) }).then(function(r){return r.json();}),
+      fetch(ADMIN_URL, { method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ password: _pw, action: 'getDeals' }) }).then(function(r){return r.json();})
+    ]).then(function(results){
+      _dealsLoaded = true;
+      renderCoupons(results[0].coupons || []);
+      renderDeals(results[1].deals || []);
+    });
+  }
+
+  var _couponsCache = [];
+  var _dealsCache   = [];
+
+  function renderCoupons(coupons) {
+    _couponsCache = coupons;
+    var tbody = document.getElementById('coupons-tbody');
+    if (!coupons.length) { tbody.innerHTML='<tr><td colspan="6" class="dc-empty">No codes yet.</td></tr>'; return; }
+    tbody.innerHTML = coupons.map(function(c, i){
+      var exp  = c.expires_at ? new Date(c.expires_at).toLocaleDateString() : '\u2014';
+      var uses = c.uses_limit ? (c.uses_count+' / '+c.uses_limit) : (c.uses_count+' / \u221e');
+      return '<tr>'
+        + '<td style="color:#EEF4FF;font-family:var(--font-d);letter-spacing:.06em">'+c.code+'</td>'
+        + '<td style="color:var(--gold);font-family:var(--font-d)">'+c.discount_pct+'%</td>'
+        + '<td>'+uses+'</td><td>'+exp+'</td>'
+        + '<td><span class="status-pill '+(c.active?'on':'off')+'">'+(c.active?'Active':'Off')+'</span></td>'
+        + '<td>'
+        +   '<button class="dc-action-btn" onclick="couponAction('+i+',false)">'+(c.active?'Disable':'Enable')+'</button>'
+        +   '<button class="dc-action-btn del" onclick="couponAction('+i+',true)">Delete</button>'
+        + '</td></tr>';
+    }).join('');
+  }
+
+  function renderDeals(deals) {
+    _dealsCache = deals;
+    var tbody = document.getElementById('deals-tbody');
+    if (!deals.length) { tbody.innerHTML='<tr><td colspan="7" class="dc-empty">No deals yet.</td></tr>'; return; }
+    tbody.innerHTML = deals.map(function(d, i){
+      var exp   = d.expires_at ? new Date(d.expires_at).toLocaleDateString() : '\u2014';
+      var scope = d.scope || (d.type==='storewide'?'All products':'\u2014');
+      var typeLabel = d.type==='storewide'?'Store-wide': d.type==='category'?'Category':'Product';
+      return '<tr>'
+        + '<td style="color:#EEF4FF">'+d.name+'</td>'
+        + '<td><span class="cat-badge">'+typeLabel+'</span></td>'
+        + '<td style="color:#667">'+scope+'</td>'
+        + '<td style="color:var(--gold);font-family:var(--font-d)">'+d.discount_pct+'%</td>'
+        + '<td>'+exp+'</td>'
+        + '<td><span class="status-pill '+(d.active?'on':'off')+'">'+(d.active?'Active':'Off')+'</span></td>'
+        + '<td>'
+        +   '<button class="dc-action-btn" onclick="dealAction('+i+',false)">'+(d.active?'Pause':'Enable')+'</button>'
+        +   '<button class="dc-action-btn del" onclick="dealAction('+i+',true)">Delete</button>'
+        + '</td></tr>';
+    }).join('');
+  }
+
+  window.couponAction = function(i, isDel) {
+    var c = _couponsCache[i];
+    if (!c) return;
+    if (isDel) { deleteCoupon(c.id); } else { toggleCoupon(c.id, !c.active); }
+  };
+
+  window.dealAction = function(i, isDel) {
+    var d = _dealsCache[i];
+    if (!d) return;
+    if (isDel) { deleteDeal(d.id); } else { toggleDeal(d.id, !d.active); }
+  };
+
+  window.toggleForm = function(id) {
+    var el = document.getElementById(id);
+    if (el) el.classList.toggle('open');
+  };
+
+  window.onDealTypeChange = function() {
+    var type = document.getElementById('df-type').value;
+    var wrap = document.getElementById('df-scope-wrap');
+    var lbl  = document.getElementById('df-scope-label');
+    var inp  = document.getElementById('df-scope');
+    if (type === 'storewide') { wrap.style.display='none'; return; }
+    wrap.style.display = '';
+    lbl.textContent = type==='category' ? 'Category Name' : 'Product Name';
+    inp.placeholder = type==='category' ? 'e.g. GLP-1' : 'e.g. BPC-157 10mg';
+  };
+
+  window.saveCoupon = function() {
+    var code = (document.getElementById('cf-code').value||'').trim().toUpperCase();
+    var pct  = document.getElementById('cf-pct').value;
+    var uses = document.getElementById('cf-uses').value;
+    var exp  = document.getElementById('cf-exp').value;
+    var err  = document.getElementById('coupon-err');
+    err.textContent = '';
+    if (!code || !pct) { err.textContent='Code and discount % are required.'; return; }
+    fetch(ADMIN_URL, { method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ password: _pw, action: 'addCoupon', code: code,
+        discount_pct: pct, uses_limit: uses||null, expires_at: exp||null })
+    }).then(function(r){return r.json();}).then(function(d){
+      if (d.ok) { toggleForm('coupon-form'); _dealsLoaded=false; loadDealsTab(); }
+      else { err.textContent = d.error||'Error saving.'; }
+    });
+  };
+
+  window.toggleCoupon = function(id, active) {
+    fetch(ADMIN_URL, { method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ password: _pw, action: 'toggleCoupon', id: id, active: active })
+    }).then(function(){ _dealsLoaded=false; loadDealsTab(); });
+  };
+
+  window.deleteCoupon = function(id) {
+    if (!confirm('Delete this coupon code?')) return;
+    fetch(ADMIN_URL, { method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ password: _pw, action: 'deleteCoupon', id: id })
+    }).then(function(){ _dealsLoaded=false; loadDealsTab(); });
+  };
+
+  window.saveDeal = function() {
+    var name  = (document.getElementById('df-name').value||'').trim();
+    var type  = document.getElementById('df-type').value;
+    var scope = (document.getElementById('df-scope') ? document.getElementById('df-scope').value : '');
+    var pct   = document.getElementById('df-pct').value;
+    var exp   = document.getElementById('df-exp').value;
+    var err   = document.getElementById('deal-err');
+    err.textContent = '';
+    if (!name || !pct) { err.textContent='Name and discount % are required.'; return; }
+    if (type !== 'storewide' && !scope) { err.textContent='Scope is required.'; return; }
+    fetch(ADMIN_URL, { method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ password: _pw, action: 'addDeal', name: name,
+        type: type, scope: type==='storewide'?null:scope, discount_pct: pct, expires_at: exp||null })
+    }).then(function(r){return r.json();}).then(function(d){
+      if (d.ok) { toggleForm('deal-form'); _dealsLoaded=false; loadDealsTab(); }
+      else { err.textContent = d.error||'Error saving.'; }
+    });
+  };
+
+  window.toggleDeal = function(id, active) {
+    fetch(ADMIN_URL, { method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ password: _pw, action: 'toggleDeal', id: id, active: active })
+    }).then(function(){ _dealsLoaded=false; loadDealsTab(); });
+  };
+
+  window.deleteDeal = function(id) {
+    if (!confirm('Delete this deal?')) return;
+    fetch(ADMIN_URL, { method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ password: _pw, action: 'deleteDeal', id: id })
+    }).then(function(){ _dealsLoaded=false; loadDealsTab(); });
+  };
+
+  // ══════════════════════════════════════════════════════════
+  // ADD PRODUCT MODAL
+  // ══════════════════════════════════════════════════════════
+  var _apPotency    = 3;
+  var _processedBlob = null;
+  var _originalFile  = null;
+
+  window.setPotency = function(n) {
+    _apPotency = n;
+    for (var i=1;i<=5;i++) {
+      var b = document.getElementById('pip-'+i);
+      if (b) b.className = 'pip-btn' + (i<=n?' on':'');
+    }
+  };
+  setPotency(3);
+
+  function populateCategoryDropdown() {
+    var sel = document.getElementById('ap-category');
+    if (!sel) return;
+    var cats = Array.from(new Set((_productsData||[]).map(function(p){return p.category;}).filter(Boolean))).sort();
+    if (!cats.length) cats = ['GLP-1','GHK-Cu','BPC','Peptide','Nootropic','Vitamin','HGH','Other'];
+    sel.innerHTML = '<option value="">— Select —</option>'
+      + cats.map(function(c){ return '<option value="'+c+'">'+c+'</option>'; }).join('');
+  }
+
+  window.handleImgDrop = function(e) {
+    e.preventDefault();
+    document.getElementById('img-dropzone').classList.remove('drag');
+    var file = e.dataTransfer.files[0];
+    if (file) handleImgFile(file);
+  };
+
+  window.handleImgFile = async function(file) {
+    if (!file) return;
+    _originalFile = file; _processedBlob = null;
+    var reader = new FileReader();
+    reader.onload = function(e){ document.getElementById('img-original').src = e.target.result; };
+    reader.readAsDataURL(file);
+    document.getElementById('img-dropzone').style.display = 'none';
+    document.getElementById('img-preview-wrap').style.display = 'flex';
+    document.getElementById('img-processed').src = '';
+    document.getElementById('img-retry-btn').style.display = 'none';
+    setImgStatus('processing','⏳ Removing background…');
+    await runBgRemoval(file);
+  };
+
+  async function runBgRemoval(file) {
+    try {
+      if (!window._removeBackground) {
+        setImgStatus('err','⚠ BG remover still loading — try again in a moment.');
+        document.getElementById('img-retry-btn').style.display='block'; return;
+      }
+      var blob = await window._removeBackground(file, { output:{ format:'image/png', quality:1 } });
+      _processedBlob = blob;
+      document.getElementById('img-processed').src = URL.createObjectURL(blob);
+      setImgStatus('done','✓ Background removed');
+      document.getElementById('img-retry-btn').style.display='none';
+    } catch(err) {
+      console.error('BG removal error:',err);
+      setImgStatus('err','⚠ BG removal failed — original will be used.');
+      document.getElementById('img-retry-btn').style.display='block';
+      _processedBlob = file;
+      document.getElementById('img-processed').src = document.getElementById('img-original').src;
+    }
+  }
+
+  window.retryBgRemoval = async function() {
+    if (_originalFile) { setImgStatus('processing','⏳ Retrying…');
+      document.getElementById('img-retry-btn').style.display='none';
+      await runBgRemoval(_originalFile); }
+  };
+
+  function setImgStatus(type, msg) {
+    var el = document.getElementById('img-status');
+    el.className='img-status '+type; el.textContent=msg;
+  }
+
+  window.submitProduct = async function() {
+    var name      = (document.getElementById('ap-name').value||'').trim();
+    var category  = document.getElementById('ap-category').value;
+    var price     = parseFloat(document.getElementById('ap-price').value);
+    var bundle    = document.getElementById('ap-bundle').value;
+    var inventory = parseInt(document.getElementById('ap-inventory').value)||0;
+    var desc      = (document.getElementById('ap-desc').value||'').trim();
+    var msgEl     = document.getElementById('ap-msg');
+    var btn       = document.getElementById('ap-submit');
+    msgEl.className='ap-msg'; msgEl.textContent='';
+    if (!name)        { msgEl.className='ap-msg err'; msgEl.textContent='Product name is required.'; return; }
+    if (isNaN(price)) { msgEl.className='ap-msg err'; msgEl.textContent='Valid price is required.'; return; }
+    btn.disabled=true; btn.textContent='Saving…';
+    try {
+      var imageFilename = null;
+      var imageBlob = _processedBlob || _originalFile;
+      if (imageBlob) {
+        var safeName = name.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'')+'.png';
+        var b64 = await blobToBase64(imageBlob);
+        var upRes = await fetch(ADMIN_URL, { method:'POST', headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({ password:_pw, action:'uploadImage',
+            filename:safeName, imageBase64:b64.split(',')[1] })
+        }).then(function(r){return r.json();});
+        if (!upRes.ok) throw new Error('Image upload failed: '+(upRes.error||''));
+        imageFilename = upRes.filename;
+      }
+      var addRes = await fetch(ADMIN_URL, { method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ password:_pw, action:'addProduct',
+          name:name, category:category, price:price,
+          bundle_price: bundle ? parseFloat(bundle) : null,
+          inventory:inventory, potency:_apPotency,
+          description:desc, images:imageFilename })
+      }).then(function(r){return r.json();});
+      if (!addRes.ok) throw new Error(addRes.error||'Failed to add product.');
+      msgEl.className='ap-msg ok'; msgEl.textContent='✓ Product added successfully!';
+      btn.textContent='Add Product'; btn.disabled=false;
+      if (_productsLoaded) { _productsLoaded=false; loadProductsTab(); }
+      setTimeout(function(){ resetProductForm(); closeModal('add-product-modal'); }, 3000);
+    } catch(err) {
+      msgEl.className='ap-msg err'; msgEl.textContent=err.message||'Error.';
+      btn.textContent='Add Product'; btn.disabled=false;
+    }
+  };
+
+  function resetProductForm() {
+    ['ap-name','ap-price','ap-bundle','ap-inventory','ap-desc'].forEach(function(id){
+      var el=document.getElementById(id); if(el) el.value='';
+    });
+    var sel=document.getElementById('ap-category'); if(sel) sel.value='';
+    var msg=document.getElementById('ap-msg'); if(msg) msg.textContent='';
+    var dz=document.getElementById('img-dropzone'); if(dz) dz.style.display='';
+    var pw=document.getElementById('img-preview-wrap'); if(pw) pw.style.display='none';
+    _processedBlob=null; _originalFile=null; setPotency(3);
+  }
+
+  function blobToBase64(blob) {
+    return new Promise(function(resolve,reject){
+      var r=new FileReader();
+      r.onload=function(){ resolve(r.result); }; r.onerror=reject;
+      r.readAsDataURL(blob instanceof File ? blob : new Blob([blob]));
+    });
+  }
+
+  // ══════════════════════════════════════════════════════════
+  // INVENTORY MODAL
+  // ══════════════════════════════════════════════════════════
+  function loadInvModal() {
+    if (_productsData && _productsData.length) { renderInvList(); return; }
+    fetch(ADMIN_URL, { method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ password:_pw, action:'getProducts' })
+    }).then(function(r){return r.json();}).then(function(d){
+      _productsData=d.products||[]; renderInvList();
+    });
+  }
+
+  function renderInvList() {
+    var list=document.getElementById('inv-list');
+    var active=_productsData.filter(function(p){return p.active!==false;});
+    list.innerHTML=active.map(function(p){
+      return '<div class="inv-row">'
+        +'<div class="inv-name">'+p.name+'</div>'
+        +'<input class="inv-input" id="inv-'+p.id+'" type="number" min="0" value="'+p.inventory+'" />'
+        +'<button class="inv-save-btn" id="inv-save-'+p.id+'" onclick="saveInventory('+p.id+')">Save</button>'
+        +'</div>';
+    }).join('');
+  }
+
+  window.saveInventory = function(id) {
+    var val=parseInt(document.getElementById('inv-'+id).value)||0;
+    var btn=document.getElementById('inv-save-'+id);
+    btn.textContent='…';
+    fetch(ADMIN_URL, { method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ password:_pw, action:'updateProduct', id:id, inventory:val })
+    }).then(function(r){return r.json();}).then(function(d){
+      if (d.ok) {
+        var p=(_productsData||[]).find(function(x){return x.id===id;});
+        if(p) p.inventory=val;
+        btn.textContent='✓'; btn.className='inv-save-btn saved';
+        setTimeout(function(){ btn.textContent='Save'; btn.className='inv-save-btn'; },2000);
+      } else { btn.textContent='Err'; }
+    });
+  };
+
+
+  // ── Delegated event listeners (replaces all inline onclicks on tabs/QA) ──
+  document.addEventListener('DOMContentLoaded', function() {
+    // Tab nav
+    var tabNav = document.getElementById('tab-nav');
+    if (tabNav) {
+      tabNav.addEventListener('click', function(e) {
+        var btn = e.target.closest('.tab-btn');
+        if (!btn) return;
+        var tab = btn.dataset.tab;
+        if (tab) window.switchTab(tab, btn);
+      });
+    }
+
+    // Quick Actions bar
+    var qaBar = document.getElementById('qa-bar');
+    if (qaBar) {
+      qaBar.addEventListener('click', function(e) {
+        var card = e.target.closest('.qa-card');
+        if (!card) return;
+        var tab   = card.dataset.tab;
+        var modal = card.dataset.modal;
+        if (tab) {
+          var tabBtn = document.querySelector('[data-tab="' + tab + '"]');
+          window.switchTab(tab, tabBtn);
+        }
+        if (modal) {
+          if (modal === 'coupon-form') {
+            window.toggleForm('coupon-form');
+          } else if (modal === 'deal-form') {
+            window.toggleForm('deal-form');
+          } else {
+            window.openModal(modal);
+          }
+        }
+      });
+    }
+  });
+
 </script>
 
 <!-- Detail modal -->
