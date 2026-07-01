@@ -1562,7 +1562,7 @@
           body: JSON.stringify({ password:_pw, action:'uploadImage',
             filename:safeName, imageBase64:b64.split(',')[1] })
         }).then(function(r){return r.json();});
-        if (!upRes.ok) throw new Error('Image upload failed: '+(upRes.error||''));
+        if (!upRes.ok) throw new Error('Image upload failed: '+(typeof upRes.error==='object'?JSON.stringify(upRes.error):upRes.error||'unknown'));
         imageFilename = upRes.filename;
       }
       var addRes = await fetch(ADMIN_URL, { method:'POST', headers:{'Content-Type':'application/json'},
@@ -1572,7 +1572,7 @@
           inventory:inventory, potency:_apPotency,
           description:desc, images:imageFilename })
       }).then(function(r){return r.json();});
-      if (!addRes.ok) throw new Error(addRes.error||'Failed to add product.');
+      if (!addRes.ok) throw new Error(typeof addRes.error==='object'?JSON.stringify(addRes.error):addRes.error||'Failed to add product.');
       msgEl.className='ap-msg ok'; msgEl.textContent='✓ Product added successfully!';
       btn.textContent='Add Product'; btn.disabled=false;
       if (_productsLoaded) { _productsLoaded=false; loadProductsTab(); }
