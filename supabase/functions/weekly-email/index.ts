@@ -1,7 +1,7 @@
 // ═══════════════════════════════════════════════════════════
 // Weekly Email — Unified Supabase Edge Function
 // Sends branded weekly update to each user based on their
-// signup source (bbp → BigBoyPeps email, 956labs → 956 Labs email).
+// signup source (bbp → CTXLabz email, 956labs → 956 Labs email).
 // Falls back to order history, then defaults to bbp.
 //
 // Deploy: supabase functions deploy weekly-email --no-verify-jwt
@@ -30,17 +30,17 @@ const BRANDS: Record<string, {
   accentBg: string;
 }> = {
   bbp: {
-    name:        "BigBoyPeps",
-    from:        "noreply@bigboypeps.com",
-    shopUrl:     "https://bigboypeps.com/shop.html",
-    unsubBase:   "https://bigboypeps.com/supabase/functions/v1/unsubscribe",
+    name:        "CTXLabz",
+    from:        "noreply@ctxlabz.com",
+    shopUrl:     "https://ctxlabz.com/shop.html",
+    unsubBase:   "https://ctxlabz.com/supabase/functions/v1/unsubscribe",
     headerBg:    "#006847",
     accentBg:    "#CE1126",
   },
   "956labs": {
     name:        "956 Labs",
-    from:        "noreply@bigboypeps.com",
-    shopUrl:     "https://956labs.bigboypeps.com/index.html",
+    from:        "noreply@ctxlabz.com",
+    shopUrl:     "https://956labs.ctxlabz.com/index.html",
     unsubBase:   "https://utqviljholfvpfztfuvx.supabase.co/functions/v1/unsubscribe",
     headerBg:    "#006847",
     accentBg:    "#CE1126",

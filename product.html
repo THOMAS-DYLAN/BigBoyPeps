@@ -10,14 +10,15 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Research Peptides for Sale | Buy Online | BigBoyPeps</title>
-  <meta name="description" content="Research-grade peptides from BigBoyPeps — Semaglutide, Tirzepatide, BPC-157, Retatrutide and more. For licensed research purposes only.">
+    <title>Research Peptides for Sale | Buy Online | CTXLabz</title>
+  <meta name="description" content="Research-grade peptides from CTXLabz — Semaglutide, Tirzepatide, BPC-157, Retatrutide and more. For licensed research purposes only.">
   <meta property="og:type" content="product">
-  <meta property="og:title" content="Research Peptides — BigBoyPeps">
-  <meta property="og:url" content="https://bigboypeps.com/product.html">
-  <meta property="og:image" content="https://bigboypeps.com/img/logo.png">
+  <meta property="og:title" content="Research Peptides — CTXLabz">
+  <meta property="og:url" content="https://ctxlabz.com/product.html">
+  <meta property="og:image" content="https://ctxlabz.com/img/logo.png">
   <link rel="canonical" href="">
   <meta name="robots" content="index,follow">
+  <meta name="description" content="Research-grade peptides for the Rio Grande Valley — McAllen, Edinburg, Harlingen, Brownsville. For research purposes only."/>
   <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin/>
   <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700&family=Barlow:wght@300;400;500;600&display=swap" onload="this.rel='stylesheet'" />
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700&family=Barlow:wght@300;400;500;600&display=swap"></noscript>
@@ -281,7 +282,7 @@
         + '<div class="product-main-thumb">'
         + (p.inventory <= 0 ? '<div class="oos-overlay"><div class="oos-label">Out of Stock</div></div>' : '')
         + (p.badge ? '<div class="product-visual-badge">' + p.badge + '</div>' : '')
-        + (p.images ? '<img src="./pdct img/' + p.images + '" alt="' + p.name + '" width="280" height="280"/>' : pepperSVG(p))
+        + (p.images ? '<img src="' + (p.images.startsWith('http') ? p.images : './pdct img/' + p.images) + '" alt="' + p.name + '" width="280" height="280"/>' : pepperSVG(p))
         + '</div>'
         + '<div class="research-tag">⚠️ For research purposes only · Not intended for human consumption · Handle with care</div>'
         + '</div>'
@@ -368,7 +369,7 @@
       m.style.display = '';
       m.innerHTML = '<div class="related-section"><div class="related-title">More <em>Research</em></div><div class="related-row">'
         + others.map(r => '<div class="related-card" onclick="location.href=\'product.html?id='+r.id+'\'">'
-            + '<div class="related-thumb">' + (r.images ? '<img src="./pdct img/'+r.images+'" alt="'+r.name+'" width="76" height="76"/>' : miniPepperSVG(r)) + '</div>'
+            + '<div class="related-thumb">' + (r.images ? '<img src="'+(r.images.startsWith('http') ? r.images : './pdct img/'+r.images)+'" alt="'+r.name+'" width="76" height="76"/>' : miniPepperSVG(r)) + '</div>'
             + '<div class="related-info"><div class="related-name">'+r.name+'</div><div class="related-price">$'+Number(r.price).toFixed(2)+'</div></div>'
             + '</div>').join('')
         + '</div></div>';
@@ -448,14 +449,14 @@
     };
   
     function updateProductMeta(p, rating) {
-      var title = p.name + ' Research Peptide | Buy Online | BigBoyPeps';
+      var title = p.name + ' Research Peptide | Buy Online | CTXLabz';
       document.title = title;
-      var og = {'og:title': title, 'og:description': 'Buy ' + p.name + ' research peptide online from BigBoyPeps. Research-grade, fast USPS shipping. For licensed research purposes only.', 'og:url': 'https://bigboypeps.com/product.html?id=' + p.id};
+      var og = {'og:title': title, 'og:description': 'Buy ' + p.name + ' research peptide online from CTXLabz. Research-grade, fast USPS shipping. For licensed research purposes only.', 'og:url': 'https://ctxlabz.com/product.html?id=' + p.id};
       Object.entries(og).forEach(([k,v]) => { var el = document.querySelector('meta[property="'+k+'"]'); if(el) el.setAttribute('content',v); });
       var canon = document.querySelector('link[rel="canonical"]');
       if (!canon) { canon = document.createElement('link'); canon.rel = 'canonical'; document.head.appendChild(canon); }
-      canon.href = 'https://bigboypeps.com/product.html?id=' + p.id;
-      var ld = {"@context":"https://schema.org","@type":"Product","name":p.name + " Research Peptide","description":(p.description||("Research-grade " + p.name + " peptide for licensed research purposes only.")),"image":(p.images?"https://bigboypeps.com/pdct img/"+p.images:"https://bigboypeps.com/img/logo.png"),"category":(p.category||"Research Peptides"),"brand":{"@type":"Brand","name":"BigBoyPeps"},"offers":{"@type":"Offer","url":"https://bigboypeps.com/product.html?id="+p.id,"price":p.price,"priceCurrency":"USD","availability":p.inventory>0?"https://schema.org/InStock":"https://schema.org/OutOfStock","seller":{"@type":"Organization","name":"BigBoyPeps"}}};
+      canon.href = 'https://ctxlabz.com/product.html?id=' + p.id;
+      var ld = {"@context":"https://schema.org","@type":"Product","name":p.name + " Research Peptide","description":(p.description||("Research-grade " + p.name + " peptide for licensed research purposes only.")),"image":(p.images?"https://ctxlabz.com/pdct img/"+p.images:"https://ctxlabz.com/img/logo.png"),"category":(p.category||"Research Peptides"),"brand":{"@type":"Brand","name":"CTXLabz"},"offers":{"@type":"Offer","url":"https://ctxlabz.com/product.html?id="+p.id,"price":p.price,"priceCurrency":"USD","availability":p.inventory>0?"https://schema.org/InStock":"https://schema.org/OutOfStock","seller":{"@type":"Organization","name":"CTXLabz"}}};
       if (rating && rating.count > 0) { ld.aggregateRating = {"@type":"AggregateRating","ratingValue":rating.average,"reviewCount":rating.count}; }
       var s = document.getElementById('product-ld'); if(s) s.remove();
       s = document.createElement('script'); s.id='product-ld'; s.type='application/ld+json'; s.textContent = JSON.stringify(ld); document.head.appendChild(s);

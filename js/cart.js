@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════════════════════
-// BigBoyPeps — Cart + Shared UI
+// CTXLabz — Cart + Shared UI
 // ═══════════════════════════════════════════════════════
 
 import { supabase } from './supabase.js';
@@ -172,7 +172,7 @@ window.Cart = {
 // ── Nav logo ─────────────────────────────────────────────
 const NAV_LOGO =
   '<div style="display:flex;align-items:center;gap:9px">'
-  + '<img src="/img/logo.png" alt="BigBoyPeps" width="38" height="38" style="height:38px;width:38px;object-fit:contain;border-radius:3px;background:#FFFFFF;padding:2px" loading="eager"/>'
+  + '<img src="/img/logo.png" alt="CTXLabz" width="38" height="38" style="height:38px;width:38px;object-fit:contain;border-radius:3px;background:#FFFFFF;padding:2px" loading="eager"/>'
   + '<span style="font-family:\'Bebas Neue\',sans-serif;font-size:1.15rem;letter-spacing:.06em;color:#111111;line-height:1">Big<span style="color:#B8892A">Boy</span>Peps</span>'
   + '</div>';
 
@@ -241,11 +241,11 @@ window.buildBanner = function() {
 window.buildFooter = async function() {
   const { data } = await supabase.auth.getSession();
   const href = data.session ? 'dashboard.html' : 'index.html';
-  return '<footer><div class="footer-inner"><a href="' + href + '" class="footer-brand" style="text-decoration:none;display:flex;align-items:center"><img src="/img/logo.png" alt="BigBoyPeps" width="32" height="32" style="height:32px;width:32px;object-fit:contain"></a><div class="footer-copy">© 2025 BigBoyPeps · For research purposes only</div><div class="footer-links"><a href="information.html" class="footer-link" style="font-family:var(--font-c);font-size:.56rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#888;text-decoration:none">Research Info</a></div></div></footer>';
+  return '<footer><div class="footer-inner"><a href="' + href + '" class="footer-brand" style="text-decoration:none;display:flex;align-items:center"><img src="/img/logo.png" alt="CTXLabz" width="32" height="32" style="height:32px;width:32px;object-fit:contain"></a><div class="footer-copy">© 2025 CTXLabz · For research purposes only</div><div class="footer-links"><a href="information.html" class="footer-link" style="font-family:var(--font-c);font-size:.56rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#888;text-decoration:none">Research Info</a></div></div></footer>';
 };
 
 function buildFooterFromSession() {
-  return '<footer><div class="footer-inner"><a href="dashboard.html" class="footer-brand" style="text-decoration:none;display:flex;align-items:center"><picture><source srcset="img/logo.webp" type="image/webp"><img src="/img/logo.png" alt="BigBoyPeps" width="32" height="32" style="height:32px;width:32px;object-fit:contain" loading="lazy"></picture></a><div class="footer-copy">© 2025 BigBoyPeps · For research purposes only</div><div class="footer-links"><a href="information.html" class="footer-link" style="font-family:var(--font-c);font-size:.56rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#888;text-decoration:none">Research Info</a></div></div></footer>';
+  return '<footer><div class="footer-inner"><a href="dashboard.html" class="footer-brand" style="text-decoration:none;display:flex;align-items:center"><picture><source srcset="img/logo.webp" type="image/webp"><img src="/img/logo.png" alt="CTXLabz" width="32" height="32" style="height:32px;width:32px;object-fit:contain" loading="lazy"></picture></a><div class="footer-copy">© 2025 CTXLabz · For research purposes only</div><div class="footer-links"><a href="information.html" class="footer-link" style="font-family:var(--font-c);font-size:.56rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#888;text-decoration:none">Research Info</a></div></div></footer>';
 }
 
 // ── Placeholder nav — renders instantly before auth ───────
@@ -287,7 +287,7 @@ function buildPublicNav(activePage) {
 }
 
 function buildPublicFooter() {
-  return '<footer style="background:#F6F6F6;border-top:1px solid #E0E0E0"><div class="footer-inner"><a href="index.html" class="footer-brand" style="text-decoration:none;display:flex;align-items:center"><picture><source srcset="img/logo.webp" type="image/webp"><img src="/img/logo.png" alt="BigBoyPeps" width="32" height="32" style="height:32px;width:32px;object-fit:contain" loading="lazy"></picture></a><div class="footer-copy">© 2025 BigBoyPeps · For research purposes only</div><div class="footer-links"><a href="information.html" class="footer-link" style="font-family:var(--font-c);font-size:.56rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#888;text-decoration:none">Research Info</a></div></div></footer>';
+  return '<footer style="background:#F6F6F6;border-top:1px solid #E0E0E0"><div class="footer-inner"><a href="index.html" class="footer-brand" style="text-decoration:none;display:flex;align-items:center"><picture><source srcset="img/logo.webp" type="image/webp"><img src="/img/logo.png" alt="CTXLabz" width="32" height="32" style="height:32px;width:32px;object-fit:contain" loading="lazy"></picture></a><div class="footer-copy">© 2025 CTXLabz · For research purposes only</div><div class="footer-links"><a href="information.html" class="footer-link" style="font-family:var(--font-c);font-size:.56rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#888;text-decoration:none">Research Info</a></div></div></footer>';
 }
 
 // ── BBP Auth popup ───────────────────────────────────────
@@ -935,8 +935,8 @@ async function sendOrderNotification(items, shipping, profile, paymentStatus, co
     headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
     body: JSON.stringify({
       access_key:  '8eec27a9-6e50-4206-a71a-a2c6f0c4c8bb',
-      subject:     isPending ? '⚠ CASH APP ORDER — AWAITING VERIFICATION' : '✅ New Order — BigBoyPeps',
-      from_name:   'BigBoyPeps Store',
+      subject:     isPending ? '⚠ CASH APP ORDER — AWAITING VERIFICATION' : '✅ New Order — CTXLabz',
+      from_name:   'CTXLabz Store',
       name:        (shipping.first_name || '') + ' ' + (shipping.last_name || ''),
       email:       profile?.email || 'unknown',
       message:

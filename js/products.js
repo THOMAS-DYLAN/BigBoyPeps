@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════════════════════════════
-// BigBoyPeps — Products Module
+// CTXLabz — Products Module
 //
 // One import, one fetch. Products are loaded from Supabase once
 // and cached in window.ProductCache so shop, cart, and dashboard

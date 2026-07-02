@@ -9,7 +9,7 @@ import { serve } from "https://deno.land/std@0.177.0/http/server.ts";
 
 const RESEND_KEY   = Deno.env.get("RESEND_API_KEY")!;
 const BRANDON_EMAIL = "txmade76543@gmail.com";
-const FROM_EMAIL   = "noreply@bigboypeps.com";
+const FROM_EMAIL   = "noreply@ctxlabz.com";
 const CONFIRM_BASE = "https://utqviljholfvpfztfuvx.supabase.co/functions/v1/confirm-order";
 
 serve(async (req) => {
@@ -94,7 +94,7 @@ serve(async (req) => {
   </div>
 
   <div style="background:#f6f6f6;padding:14px 28px;text-align:center;border-top:1px solid #eee">
-    <p style="margin:0;font-size:11px;color:#999">BigBoyPeps · For research purposes only</p>
+    <p style="margin:0;font-size:11px;color:#999">CTXLabz · For research purposes only</p>
   </div>
 
 </div>
@@ -108,9 +108,9 @@ serve(async (req) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        from:    "BigBoyPeps Orders <noreply@bigboypeps.com>",
+        from:    "CTXLabz Orders <noreply@ctxlabz.com>",
         to:      [BRANDON_EMAIL],
-        subject: isPending ? `⚠ CASH APP ORDER — $${orderTotal.toFixed(2)} — Verify Before Shipping` : `✅ New Order — $${orderTotal.toFixed(2)} — BigBoyPeps`,
+        subject: isPending ? `⚠ CASH APP ORDER — $${orderTotal.toFixed(2)} — Verify Before Shipping` : `✅ New Order — $${orderTotal.toFixed(2)} — CTXLabz`,
         html,
       }),
     });

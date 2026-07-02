@@ -25,9 +25,9 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY")!;
 const SUPABASE_URL   = Deno.env.get("SUPABASE_URL")!;
 const SUPABASE_KEY   = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-const FROM_EMAIL     = "noreply@bigboypeps.com";
-const STORE_NAME     = "BigBoyPeps";
-const SHOP_URL       = "https://bigboypeps.com/index.html";
+const FROM_EMAIL     = "noreply@ctxlabz.com";
+const STORE_NAME     = "CTXLabz";
+const SHOP_URL       = "https://ctxlabz.com/index.html";
 
 const FIRST_DELAY_DAYS    = 7;
 const FOLLOWUP_DELAY_DAYS = 30;
@@ -134,7 +134,7 @@ async function sendWaitlistReminder(sb: any, entry: {
   const isFirst   = entry.reminder_count === 0;
   const price     = entry.product_price ?? 0;
   const discounted = (price * 0.90).toFixed(2);
-  const productUrl = `https://bigboypeps.com/product.html?id=${entry.product_id ?? ""}`;
+  const productUrl = `https://ctxlabz.com/product.html?id=${entry.product_id ?? ""}`;
 
   const subject = isFirst
     ? `Still available: ${entry.product_name} — ${STORE_NAME}`

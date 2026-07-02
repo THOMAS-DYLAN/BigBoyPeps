@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════════════════════════════
-// BigBoyPeps — Restock Notify Edge Function
+// CTXLabz — Restock Notify Edge Function
 // Supabase Edge Function (Deno runtime)
 // ═══════════════════════════════════════════════════════════════
 
@@ -10,7 +10,7 @@ const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY')!;
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!;
 const SUPABASE_SERVICE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
 
-const FROM_EMAIL = 'noreply@bigboypeps.com';
+const FROM_EMAIL = 'noreply@ctxlabz.com';
 
 // Types
 interface ProductRow {
@@ -81,7 +81,7 @@ Deno.serve(async (req: Request): Promise<Response> => {
           body: JSON.stringify({
             from: FROM_EMAIL,
             to: entry.email,
-            subject: `${productName} is back in stock — BigBoyPeps`,
+            subject: `${productName} is back in stock — CTXLabz`,
             html: buildEmail(
               entry.name?.trim() || 'there',
               productName
@@ -187,7 +187,7 @@ function buildEmail(
               <table cellpadding="0" cellspacing="0">
                 <tr>
                   <td style="background:#CC1F1F;">
-                    <a href="https://bigboypeps.com/shop.html"
+                    <a href="https://ctxlabz.com/shop.html"
                       style="display:inline-block;padding:14px 32px;font-size:12px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#ffffff;text-decoration:none;">
                       Shop Now →
                     </a>

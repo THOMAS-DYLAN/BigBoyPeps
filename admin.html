@@ -4,7 +4,7 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <meta name="robots" content="noindex,nofollow"/>
-  <title>BBP Admin — Orders</title>
+  <title>CTXLabz Admin — Orders</title>
   <link rel="icon" type="image/png" href="/img/logo.png"/>
   <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700&family=Barlow:wght@300;400;500;600&display=swap" onload="this.rel='stylesheet'" />
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700&family=Barlow:wght@300;400;500;600&display=swap"></noscript>
@@ -1073,7 +1073,7 @@
         +   '<div class="customer-field"><div class="customer-label">Customer</div><div class="customer-value">' + (first.shipping_first_name || '') + ' ' + (first.shipping_last_name || '') + '</div></div>'
         +   (first.customer_email ? '<div class="customer-field"><div class="customer-label">Email</div><div class="customer-value">' + first.customer_email + '</div></div>' : '')
         +   (first.shipping_method ? '<div class="customer-field"><div class="customer-label">Ship via</div><div class="customer-value">' + first.shipping_method + '</div></div>' : '')
-        +   '<span class="store-badge ' + (first.source_site === '956labs' ? 'labs956' : 'bbp') + '">' + (first.source_site === '956labs' ? '956 Labs' : 'BigBoyPeps') + '</span>'
+        +   '<span class="store-badge ' + (first.source_site === '956labs' ? 'labs956' : 'bbp') + '">' + (first.source_site === '956labs' ? '956 Labs' : 'CTXLabz') + '</span>'
         + '</div>'
         + '<div class="order-items">' + itemsHtml + '</div>'
         + '<div class="order-footer">'
@@ -1176,7 +1176,7 @@
       '<div class="detail-section">'
         + '<div class="detail-section-title">Status</div>'
         + '<span class="order-status-badge ' + statusClass + '">' + statusLabel + '</span>'
-        + '<span class="store-badge ' + (first.source_site === '956labs' ? 'labs956' : 'bbp') + '" style="margin-left:8px">' + (first.source_site === '956labs' ? '956 Labs' : 'BigBoyPeps') + '</span>'
+        + '<span class="store-badge ' + (first.source_site === '956labs' ? 'labs956' : 'bbp') + '" style="margin-left:8px">' + (first.source_site === '956labs' ? '956 Labs' : 'CTXLabz') + '</span>'
         + '<div class="detail-row" style="margin-top:10px"><div class="detail-key">Date</div><div class="detail-val">' + date + '</div></div>'
       + '</div>'
       + '<div class="detail-section">'
@@ -1482,9 +1482,20 @@
     var sel = document.getElementById('ap-category');
     if (!sel) return;
     var cats = Array.from(new Set((_productsData||[]).map(function(p){return p.category;}).filter(Boolean))).sort();
-    if (!cats.length) cats = ['GLP-1','GHK-Cu','BPC','Peptide','Nootropic','Vitamin','HGH','Other'];
-    sel.innerHTML = '<option value="">— Select —</option>'
+    sel.innerHTML = '<option value="">— None —</option>'
       + cats.map(function(c){ return '<option value="'+c+'">'+c+'</option>'; }).join('');
+    // If no products loaded yet, fetch them for the category list
+    if (!cats.length && !_productsLoaded) {
+      fetch(ADMIN_URL, { method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ password: _pw, action: 'getProducts' })
+      }).then(function(r){return r.json();}).then(function(d){
+        _productsData = d.products || [];
+        _productsLoaded = true;
+        var loaded = Array.from(new Set(_productsData.map(function(p){return p.category;}).filter(Boolean))).sort();
+        sel.innerHTML = '<option value="">— None —</option>'
+          + loaded.map(function(c){ return '<option value="'+c+'">'+c+'</option>'; }).join('');
+      });
+    }
   }
 
   window.handleImgDrop = function(e) {
@@ -1558,8 +1569,9 @@
       if (imageBlob) {
         var safeName = name.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'')+'.png';
         setImgStatus('processing', '⏳ Resizing image…');
-        imageBlob = await resizeToCanvas(imageBlob);
-        var b64 = await blobToBase64(imageBlob);
+        var resized = await resizeToCanvas(imageBlob);  // resize to 500x500 first
+        setImgStatus('processing', '⏳ Uploading image…');
+        var b64 = await blobToBase64(resized);
         var upRes = await fetch(ADMIN_URL, { method:'POST', headers:{'Content-Type':'application/json'},
           body: JSON.stringify({ password:_pw, action:'uploadImage',
             filename:safeName, imageBase64:b64.split(',')[1] })

@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════════════════════════
-// Unified Admin Edge Function — BigBoyPeps + 956 Labs
+// Unified Admin Edge Function — CTXLabz + 956 Labs
 // Handles: orders, products, coupon codes, deals
 //
 // Deploy: supabase functions deploy admin-orders --no-verify-jwt
@@ -85,9 +85,10 @@ serve(async (req) => {
     if (action === "addProduct") {
       const { name, category, price, bundle_price, inventory, potency, description, images } = body;
       if (!name || price === undefined) return json({ error: "Missing name or price" }, 400);
-      const { data, error } = await sb.from("products").insert({
+
+      const insertPayload = {
         name,
-        category:     category || null,
+        category:     (category && category.trim()) ? category.trim() : null,
         price:        Number(price),
         bundle_price: bundle_price ? Number(bundle_price) : null,
         inventory:    Number(inventory) || 0,
@@ -95,28 +96,57 @@ serve(async (req) => {
         description:  description       || null,
         images:       images            || null,
         active:       true,
-      }).select("id").single();
-      if (error) throw error;
-      return json({ ok: true, id: data.id });
+      };
+
+      console.log("addProduct payload:", JSON.stringify(insertPayload));
+
+      const { data, error } = await sb.from("products").insert(insertPayload).select("id");
+
+      if (error) {
+        console.error("addProduct DB error:", error.message, error.details, error.hint, error.code);
+        return json({
+          error: error.message,
+          details: error.details,
+          hint: error.hint,
+          code: error.code,
+        }, 500);
+      }
+
+      return json({ ok: true, id: data?.[0]?.id });
     }
 
     if (action === "uploadImage") {
       const { filename, imageBase64 } = body;
       if (!filename || !imageBase64) return json({ error: "Missing filename or imageBase64" }, 400);
 
-      // Decode base64 to bytes
-      const bytes   = Uint8Array.from(atob(imageBase64), c => c.charCodeAt(0));
       const safeName = filename.replace(/[^a-zA-Z0-9._-]/g, "-");
 
-      const { error } = await sb.storage
-        .from("product-images")
-        .upload(safeName, bytes, {
-          contentType: "image/png",
-          upsert:      true,
-        });
-      if (error) throw error;
+      try {
+        // Decode base64 to bytes using a reliable loop (avoids memory issues with atob spread)
+        const binaryStr = atob(imageBase64);
+        const bytes = new Uint8Array(binaryStr.length);
+        for (let i = 0; i < binaryStr.length; i++) {
+          bytes[i] = binaryStr.charCodeAt(i);
+        }
 
-      return json({ ok: true, filename: safeName });
+        const { error: storageError } = await sb.storage
+          .from("product-images")
+          .upload(safeName, bytes, {
+            contentType: "image/png",
+            upsert:      true,
+          });
+
+        if (storageError) {
+          console.error("Storage error:", storageError.message, storageError);
+          return json({ error: storageError.message, details: storageError }, 500);
+        }
+
+        const publicUrl = `https://utqviljholfvpfztfuvx.supabase.co/storage/v1/object/public/product-images/${safeName}`;
+        return json({ ok: true, filename: publicUrl });
+      } catch (uploadErr) {
+        console.error("uploadImage error:", String(uploadErr));
+        return json({ error: String(uploadErr) }, 500);
+      }
     }
 
     // ══════════════════════════════════════════════════

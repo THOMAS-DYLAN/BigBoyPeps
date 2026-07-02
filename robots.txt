@@ -6,4 +6,4 @@ Disallow: /orders.html
 Disallow: /reset.html
 Disallow: /*?wc-ajax=*
 
-Sitemap: https://bigboypeps.com/sitemap.xml
+Sitemap: https://ctxlabz.com/sitemap.xml

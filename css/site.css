@@ -1,4 +1,4 @@
-/* Fonts are loaded non-blocking via <link rel="preload"> in each HTML page. */
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Permanent+Marker&family=Barlow:wght@300;400;500;600&family=Barlow+Condensed:wght@600;700&display=swap');
 
 :root {
   --red:     #B8892A;
@@ -22,7 +22,7 @@ html { scroll-behavior: smooth; }
 body {
   font-family: var(--font-b);
   background: #FFFFFF;
-  color: #222222;
+  color: #222222; /* was: #222222;
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
@@ -59,7 +59,7 @@ img    { max-width: 100%; height: auto; display: block; }
 .nav-signout-tab { display: none; }
 
 /* ══════════════════════════════════════════════════════════
-   BigBoyPeps — Shared Styles
+   CTXLabz — Shared Styles
    Mobile-first: base = mobile, scale up with min-width
    Breakpoints:
      480px  = small phone landscape / large phone
@@ -626,7 +626,7 @@ nav {
 }
 
 /* ══════════════════════════════════════════════════════════
-   BigBoyPeps — Mobile & Tablet Styles
+   CTXLabz — Mobile & Tablet Styles
    Rebuilt from ground up. Mobile-first.
    Breakpoints:
      max-width: 480px  = small phone

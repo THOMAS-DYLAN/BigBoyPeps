@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════════════════════
-// BigBoyPeps — Supabase Client
+// CTXLabz — Supabase Client
 //
 // SETUP: Replace YOUR_ANON_KEY_HERE with your anon/public
 // key from: Supabase → Project Settings → API → anon key

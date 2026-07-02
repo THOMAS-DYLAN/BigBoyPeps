@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════════════════════════════
-// BigBoyPeps — Auth & User Data (Supabase)
+// CTXLabz — Auth & User Data (Supabase)
 // ═══════════════════════════════════════════════════════════════
 
 import { supabase } from './supabase.js';
@@ -75,7 +75,7 @@ window.Auth = {
       password,
       options: {
         data: { first_name: firstName, last_name: lastName, source: 'bbp' },
-        emailRedirectTo: 'https://bigboypeps.com/dashboard.html',
+        emailRedirectTo: 'https://ctxlabz.com/dashboard.html',
       }
     });
 
@@ -116,7 +116,7 @@ window.Auth = {
     const { error } = await supabase.auth.resend({
       type: 'signup',
       email,
-      options: { emailRedirectTo: 'https://bigboypeps.com/dashboard.html' },
+      options: { emailRedirectTo: 'https://ctxlabz.com/dashboard.html' },
     });
     return error ? { ok: false, err: error.message } : { ok: true };
   },
@@ -436,7 +436,7 @@ window.Auth = {
       body: JSON.stringify({
         access_key: '8eec27a9-6e50-4206-a71a-a2c6f0c4c8bb',
         subject:    'BBP Waitlist — ' + productName,
-        from_name:  'BigBoyPeps',
+        from_name:  'CTXLabz',
         to:         'Brandon.burnell@hotmail.com',
         message:    'New waitlist signup:\nProduct: ' + productName + '\nEmail: ' + user.email,
       })
